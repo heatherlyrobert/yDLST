@@ -1,0 +1,132 @@
+." heatherly hand crafted (like a dope)
+."
+." sections, break up the document into pieces
+."   .SH <str>   begin a new section
+."   .SS <str>   begin a new sub-section
+."
+." paragraphs, if not special formatting is used, these are unnecessary
+."   .PP         before a set of contiguous lines will run them together into
+."               a single paragraph -- helps if macros separate by accident
+."   .RS <n>     start a paragraph indented by <n> characters (i use 3 mostly)
+."   .RE         end that relative paragraph
+."   .IP <str>   uses <str> as an outdent and the next line is indented
+."   .TP         tag paragraph which has a more controllable outdent than .IP
+."   .HP         start hanging paragraph where all following lines are indented
+."
+."
+."
+."
+."
+
+
+.TH yDLST 3 2011-May "linux" "heatherly custom tools manual"
+
+
+.SH NAME
+yDLST \- clear, resiliant, reusable quad/doubly-linked list with deps
+
+.SH SYNOPSIS
+.nf
+.B #include  <yDLST.h>
+.sp
+.R  to start and stop the capability...
+.BI "char  " "rc " " = yDLST_begin        (void);"
+.BI "char  " "rc " " = yDLST_end          (void);"
+.sp
+.R  to create, clear, and delete a list...
+.BI "char  " "rc " " = yDLST_create       (int  *a_list, char *a_name, void *a_data);"
+.BI "char  " "rc " " = yDLST_purge        (int   a_list);"
+.BI "char  " "rc " " = yDLST_destroy      (int   a_list);"
+.sp
+.R  to find a particular list...
+.BI "void* " "rc " " = yDLST_lists        (int   a_list);"
+.BI "int   " "rc " " = yDLST_find         (char *a_name);"
+.sp
+.R  to add or remove a particular link from a list...
+.BI "char    " yDLST_new        " "(int   " "a_list    , " "int  *a_link, char *a_name, void *a_data);
+.BI "char    " yDLST_free       " "(int   " "a_link    ");
+.sp
+.R  to add or remove a particular link from a list...
+.BI "void*   " "yDLST_links     " "(int   " "a_index   );"
+.BI "void*   " "yDLST_list      " "(int   " "a_list    , " "int   " "a_index   );"
+.BI "int     " "yDLST_search    " "(char* " "a_name    );"
+.BI "void*   " "yDLST_index     " "(int   " "a_index   );"
+
+.SH SUMMARY
+yDLST is a clear, resiliant, reusable quad/doubly-linked list with built-in
+dependency links that can be broadly and easily used by our applications
+ranging from khronos (cron), to s (spreadsheet), to eos (init system).
+
+.SH DESCRIPTION
+yDLST is a very specific data structure surrounded by a set of shared
+functions to provide clean, consistent, and a reliable quad/doubly linked
+list that can be built, tested, and maintained once.  its primary goals are
+reusability, resiliance, and reliability; not performance and generality.
+
+somewhere after building both khronos and s, i realized that i was using a
+very similar structure for job/cell organization and was about to replicate
+it in other programs (including eos) -- worst case.
+
+so, even though there are packaged options out there, i must continue to
+learn the art of abstracting interface from implementation as well as
+refine my theories on proper library design.
+
+yDLST overriding principles (library design)...
+   - don't want to clutter our using programs with pointers and such
+   - so, no yDLST related pointers ever leave the library (safer)
+   - use completely invisible/private data structures (clean)
+
+yDLST will provide for...
+   - creation of any number of lists
+   - creation of any number of links tied to those lists (but one each)
+   - easy iterator access to the links in a specific list
+   - alternatively, iterator access to all links as a single larger list
+   - ability to add links to two different sub lists, focus and active
+   - iterator access to either of those two lists
+   - requirement/dependecy framework (could also act like edges)
+   - ability to access down from a link throught requirements
+   - ability to access up from a link through dependencies
+   - all iterators return the data payload pointer (for clarity/speed)
+   - hash indexing of both lists and links to make lookup faster
+
+yDLST will not...
+   - any sorting which is not required for my use
+   - any data/context type searching as that's invisible to the library
+   - focus on any speed tweaking that would make it more complex
+
+as always, there are many, stable, accepted, existing programs and
+utilities built by better programmers that are likely superior in speed,
+size, capability, and reliability; BUT, i would not have learned nearly as
+much using them, so i follow the adage...
+
+TO TRULY LEARN> do not seek to follow in the footsteps of the men of old;
+seek what they sought ~ Matsuo Basho
+
+the underlying idea is to use this build process to learn new programming
+capabilities and put additional pressure on me to improve my standards,
+maintenance, and coding environment.  just using programs and ideas does
+not lead to understanding -- so get messy ;)
+
+any one who wishes to become a good writer [programmer] should endeavour,
+before he allows himself to be tempted by the more showy qualities, to be
+direct, simple, brief, vigourous, and lucid -- henry watson fowler (1908)
+
+simplicity is prerequisite for reliability and security
+
+
+
+khronos is a fast, simplified, modernized, and technical version of the
+classic posix-defined crond time-based process scheduler that combines both
+crond and crontab to allow deeper verification, flexibility, and traceablity.
+
+
+.SH BUGS
+unit testing is presently clean, but who knows till it rears its ugly head
+
+.SH AUTHOR
+the_heatherlys
+
+.SH COLOPHON
+this page is part of a documentation package meant to make the use of our
+heatherly tools easier and faster
+
