@@ -18,8 +18,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define YDLST_VER_NUM   "0.3a"
-#define YDLST_VER_TXT   "modernized and totally rewriting.  lists is back and unit tested"
+#define YDLST_VER_NUM   "0.3b"
+#define YDLST_VER_TXT   "linet create, destroy is nicely unit tested, lots of fixes"
 
 
 
@@ -75,14 +75,17 @@ struct  cLINE
    char     *title;               /* name of list                             */
    void     *data;                /* pointer to data payload                  */
    /*---(lines)----------------*/
+   tLIST    *prev;
+   tLIST    *next;
+   /*---(lists)----------------*/
    tLIST    *parent;              /* pointer to the owning list               */
    tLINE    *p_next;              /* forward  link in lists links             */
    tLINE    *p_prev;              /* backward link in lists links             */
-   /*---(focus dll)------------*/
+   /*---(focus)----------------*/
    char      focus;               /* flag to indicate focused 'y' or not '-'  */
    tLINE    *f_prev;              /* backward link in list of focus links     */
    tLINE    *f_next;              /* forward  link in list of focus links     */
-   /*---(run  DLL)-------------*/
+   /*---(active)---------------*/
    char      active;              /* flag to indicate active  'y' or not '-'  */
    tLINE    *a_prev;              /* backward link in list of active links    */
    tLINE    *a_next;              /* forward  link in list of active links    */

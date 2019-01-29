@@ -68,7 +68,7 @@ ydlst_active__unhook    (tLINE *a_line)
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defense)---------------------*/
    DEBUG_YDLST  yLOG_spoint  (a_line);
    --rce;  if (a_line == NULL) {

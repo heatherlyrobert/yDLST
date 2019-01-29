@@ -131,6 +131,7 @@ void*       yDLST_list_seek         (char a_pos);
 void*       yDLST_list_find         (char *a_title);
 char        yDLST_list_create       (char *a_title, void *a_data);
 char        yDLST_list_destroy      (char *a_title);
+char        ydlst_list__purge       (void);
 char        ydlst_list_init         (void);
 char        ydlst_list_wrap         (void);
 
@@ -139,6 +140,7 @@ void*       yDLST_line_seek         (char a_pos);
 void*       yDLST_line_find         (char *a_title);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
+char        ydlst_line__purge       (void);
 char        ydlst_line_init         (void);
 char        ydlst_line_wrap         (void);
 

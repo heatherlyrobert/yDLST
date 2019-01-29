@@ -82,7 +82,7 @@ ydlst_list__new         (void)
    ++s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return x_new;
 }
 
@@ -116,7 +116,7 @@ ydlst_list__del         (tLIST *a_old)
    --s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 

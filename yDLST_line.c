@@ -25,6 +25,9 @@ ydlst_line__wipe         (tLINE *a_dst)
    /*---(master)---------------*/
    a_dst->title   = NULL;
    a_dst->data    = NULL;
+   /*---(lines)----------------*/
+   a_dst->prev    = NULL;
+   a_dst->next    = NULL;
    /*---(list)-----------------*/
    a_dst->parent  = NULL;
    a_dst->p_prev  = NULL;
@@ -72,15 +75,15 @@ ydlst_line__new         (void)
       s_tail         = x_new;
    } else {
       DEBUG_YDLST  yLOG_snote   ("append to end");
-      x_new->p_prev  = s_tail;
-      s_tail->p_next = x_new;
+      x_new->prev    = s_tail;
+      s_tail->next   = x_new;
       s_tail         = x_new;
    }
    /*---(update count)-------------------*/
    ++s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return x_new;
 }
 
@@ -100,10 +103,10 @@ ydlst_line__del         (tLINE *a_old)
    }
    /*---(remove from main DLL)-----------*/
    DEBUG_YDLST  yLOG_snote   ("remove from list");
-   if (a_old->p_next != NULL)  a_old->p_next->p_prev = a_old->p_prev;
-   else                        s_tail                = a_old->p_prev;
-   if (a_old->p_prev != NULL)  a_old->p_prev->p_next = a_old->p_next;
-   else                        s_head                = a_old->p_next;
+   if (a_old->next != NULL)  a_old->next->prev = a_old->prev;
+   else                      s_tail            = a_old->prev;
+   if (a_old->prev != NULL)  a_old->prev->next = a_old->next;
+   else                      s_head            = a_old->next;
    /*---(free data)----------------------*/
    DEBUG_YDLST  yLOG_spoint  (a_old->title);
    if (a_old->title)    free (a_old->title);
@@ -114,7 +117,7 @@ ydlst_line__del         (tLINE *a_old)
    --s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -319,8 +322,6 @@ ydlst_line__unhook      (tLINE *a_line)
    DEBUG_YDLST  yLOG_snote   ("clear");
    a_line->p_next    = NULL;
    a_line->p_prev    = NULL;
-   /*---(tie to parent)---------------*/
-   DEBUG_YDLST  yLOG_snote   ("parent");
    a_line->parent    = NULL;
    /*---(update count)-------------------*/
    --x_list->count;
@@ -432,6 +433,42 @@ yDLST_line_destroy      (char *a_title)
 
 
 
+
+/*====================------------------------------------====================*/
+/*===----                        program level                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___PROGRAM_________o () { return; }
+
+char       /*----: clear all links from a list -------------------------------*/
+ydlst_line__purge       (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tLIST      *x_list      = NULL;
+   tLINE      *x_line      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   --rce;  if (x_list  == NULL) {
+      DEBUG_INPT   yLOG_note    ("no list is selected");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YDLST  yLOG_note    (x_list->title);
+   /*---(walk through attached links)----*/
+   x_line = x_list->head;
+   while (x_line != NULL) {
+      rc = ydlst_line__unhook (x_line);
+      rc = ydlst_line__del    (x_line);
+      x_line  = x_list->head;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char
 ydlst_line_init         (void)
 {
@@ -461,6 +498,64 @@ ydlst_line_wrap         (void)
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___UNITTEST________o () { return; }
+
+char*        /*-> tbd --------------------------------[ light  [us.JC0.271.X1]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
+ydlst_line__unit        (char *a_question, int a_num)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         x_fore      =    0;
+   int         x_back      =    0;
+   tLINE      *u           = NULL;
+   int         c           =    0;
+   char        t           [LEN_RECD]  = "[]";
+   int         x_len       =    0;
+   /*---(defense)------------------------*/
+   snprintf (unit_answer, LEN_RECD, "LINE unit        : question unknown");
+   /*---(simple)-------------------------*/
+   if  (strcmp (a_question, "count"     )     == 0) {
+      u = s_head; while (u != NULL) { ++x_fore; u = u->next; }
+      u = s_tail; while (u != NULL) { ++x_back; u = u->prev; }
+      snprintf (unit_answer, LEN_RECD, "LINE count       : %3dc  %3df  %3db", s_count, x_fore, x_back);
+      return unit_answer;
+   }
+   else if (strcmp (a_question, "current")     == 0) {
+      u = s_curr;
+      if (u != NULL) {
+         x_len = strlen (u->title);
+         sprintf  (t, "[%.20s]", u->title);
+         snprintf (unit_answer, LEN_RECD, "LINE current     : %2d%-22.22s   %c  %c", x_len, t, u->focus, u->active);
+      } else {
+         snprintf (unit_answer, LEN_RECD, "LINE current     :  0[]                       -  -");
+      }
+      return unit_answer;
+   }
+   /*---(complex)------------------------*/
+   u = s_head;
+   while (u != NULL) {
+      if (c >= a_num)  break;
+      ++c;
+      u = u->next;
+   }
+   if (strcmp (a_question, "entry"     )     == 0) {
+      if (u != NULL) {
+         x_len = strlen (u->title);
+         sprintf  (t, "[%.20s]", u->title);
+         snprintf (unit_answer, LEN_RECD, "LINE entry  (%2d) : %2d%-22.22s   %c  %c", a_num, x_len, t, u->focus, u->active);
+      } else {
+         snprintf (unit_answer, LEN_RECD, "LINE entry  (%2d) :  0[]                       -  -", a_num);
+      }
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
+
 
 
 

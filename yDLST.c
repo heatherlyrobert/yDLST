@@ -96,6 +96,8 @@ yDLST_begin        (void)
 {
    /*---(locals)-------*-----------------*/
    int       rc        = 0;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
    rc = ydlst_list_init   ();
    rc = ydlst_line_init   ();
@@ -103,6 +105,7 @@ yDLST_begin        (void)
    rc = ydlst_active_init ();
    rc = ydlst_seq_init    ();
    /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -115,6 +118,8 @@ yDLST_end          (void)
     *> tTIES    *xtie      = NULL;                                                    <* 
     *> tTIES    *xtien     = NULL;                                                    <*/
    int       rc        = 0;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(kills all ties)-----------------*/
    /*
     *
@@ -147,6 +152,7 @@ yDLST_end          (void)
    rc = ydlst_active_wrap ();
    rc = ydlst_seq_wrap    ();
    /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
