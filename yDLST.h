@@ -96,35 +96,16 @@
 #define     YDLST_CURR   '-'
 #define     YDLST_NEXT   '>'
 #define     YDLST_TAIL   ']'
-#define     YDLST_NULL    0
 
 
-#define   CURR               -1
-#define   HEAD               -2
-#define   NEXT               -3
 
 
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char*       yDLST_version      (void);
 
-/*---(act on the whole library)-----------------*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yDLST_begin        (void);
 char        yDLST_end          (void);
-
-/*---(act on a whole list)----------------------*/
-/*> char        yDLST_create       (int  *a_list, char *a_name, void *a_data);        <* 
- *> char        yDLST_purge        (int   a_list);                                    <* 
- *> char        yDLST_destroy      (int   a_list);                                    <* 
- *> void       *yDLST_lists        (int   a_index);                                   <* 
- *> int         yDLST_find         (char *a_name);                                    <*/
-
-/*---(act on specific link)---------------------*/
-/*> char        yDLST_new          (int   a_list, int  *a_link, char *a_name, void *a_data);   <* 
- *> char        yDLST_free         (int   a_link);                                             <* 
- *> void       *yDLST_links        (int   a_index);                                            <* 
- *> void       *yDLST_list         (int   a_list, int a_index);                                <* 
- *> int         yDLST_search       (char *a_name);                                             <* 
- *> void       *yDLST_index        (int   a_index);                                            <*/
-
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 void*       yDLST_list_seek         (char a_pos);
@@ -137,6 +118,7 @@ char        ydlst_list_wrap         (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 void*       yDLST_line_seek         (char a_pos);
+void*       yDLST_line_fullseek     (char a_pos);
 void*       yDLST_line_find         (char *a_title);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
@@ -147,6 +129,7 @@ char        ydlst_line_wrap         (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yDLST_focus_on          (void);
 char        yDLST_focus_off         (void);
+char        yDLST_focus_clearall    (void);
 void*       yDLST_focus_seek        (char a_pos);
 char        ydlst_focus_init        (void);
 char        ydlst_focus_wrap        (void);
@@ -154,6 +137,7 @@ char        ydlst_focus_wrap        (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yDLST_active_on         (void);
 char        yDLST_active_off        (void);
+char        yDLST_active_clearall   (void);
 void*       yDLST_active_seek       (char a_pos);
 char        ydlst_active_init       (void);
 char        ydlst_active_wrap       (void);

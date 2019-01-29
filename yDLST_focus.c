@@ -228,6 +228,24 @@ yDLST_focus_seek        (char a_pos)
 
 
 
+char       /*----: clear all focus from lines --------------------------------*/
+yDLST_focus_clearall    (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tLINE      *x_line      = NULL;
+   /*---(walk through attached links)----*/
+   x_line = s_head;
+   while (x_line != NULL) {
+      rc = ydlst_focus__unhook  (x_line);
+      x_line  = s_head;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
 char
 ydlst_focus_init        (void)
 {
@@ -255,4 +273,35 @@ ydlst_focus_wrap        (void)
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___UNITTEST________o () { return; }
+
+char*        /*-> tbd --------------------------------[ light  [us.JC0.271.X1]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
+ydlst_focus__unit       (char *a_question, int a_num)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         x_fore      =    0;
+   int         x_back      =    0;
+   tLINE      *u           = NULL;
+   int         c           =    0;
+   char        t           [LEN_RECD]  = "[]";
+   int         x_len       =    0;
+   /*---(defense)------------------------*/
+   snprintf (unit_answer, LEN_RECD, "FOCUS unit       : question unknown");
+   /*---(simple)-------------------------*/
+   if  (strcmp (a_question, "count"     )     == 0) {
+      u = s_head; while (u != NULL) { ++x_fore; u = u->f_next; }
+      u = s_tail; while (u != NULL) { ++x_back; u = u->f_prev; }
+      snprintf (unit_answer, LEN_RECD, "FOCUS count      : %3dc  %3df  %3db", s_count, x_fore, x_back);
+      return unit_answer;
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
+
 

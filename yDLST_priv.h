@@ -18,8 +18,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define YDLST_VER_NUM   "0.3c"
-#define YDLST_VER_TXT   "line public functions unit tested, lots of fixes"
+#define YDLST_VER_NUM   "0.3d"
+#define YDLST_VER_TXT   "focus and active unit testing complete"
 
 
 
@@ -158,6 +158,10 @@ char        ydlst_line_setcurr      (tLINE *a_curr);
 char        ydlst__test_quiet    (void);
 char        ydlst__test_loud     (void);
 char        ydlst__test_end      (void);
+
+char*       ydlst_list__unit        (char *a_question, int a_num);
+char*       ydlst_line__unit        (char *a_question, int a_num);
+char*       ydlst_focus__unit       (char *a_question, int a_num);
 
 
 #endif

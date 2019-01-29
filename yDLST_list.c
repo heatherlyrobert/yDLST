@@ -107,11 +107,8 @@ ydlst_list__del         (tLIST *a_old)
    if (a_old->prev != NULL)  a_old->prev->next = a_old->next;
    else                      s_head            = a_old->next;
    /*---(free data)----------------------*/
-   DEBUG_YDLST  yLOG_spoint  (a_old->title);
-   if (a_old->title)    free (a_old->title);
    DEBUG_YDLST  yLOG_spoint  (a_old);
    free (a_old);
-   DEBUG_YDLST  yLOG_spoint  (a_old);
    /*---(update count)-------------------*/
    --s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
@@ -266,7 +263,7 @@ yDLST_list_create       (char *a_title, void *a_data)
       return rce;
    }
    /*---(populate)-----------------------*/
-   x_new->title  = strdup (a_title);
+   x_new->title = a_title;
    DEBUG_YDLST  yLOG_info    ("->title"   , x_new->title);
    x_new->data  = a_data;
    DEBUG_YDLST  yLOG_point   ("->data"    , x_new->data);

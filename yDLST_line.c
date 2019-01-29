@@ -108,11 +108,8 @@ ydlst_line__del         (tLINE *a_old)
    if (a_old->prev != NULL)  a_old->prev->next = a_old->next;
    else                      s_head            = a_old->next;
    /*---(free data)----------------------*/
-   DEBUG_YDLST  yLOG_spoint  (a_old->title);
-   if (a_old->title)    free (a_old->title);
    DEBUG_YDLST  yLOG_spoint  (a_old);
    free (a_old);
-   DEBUG_YDLST  yLOG_spoint  (a_old);
    /*---(update count)-------------------*/
    --s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
@@ -188,6 +185,56 @@ yDLST_line_seek         (char a_pos)
       break;
    case YDLST_TAIL :
       s_curr = x_list->tail;
+      break;
+   default         :
+      s_curr = NULL;
+      rc = -3;
+      break;
+   }
+   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   /*---(check)--------------------------*/
+   if (rc < 0) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rc);
+      return NULL;
+   }
+   --rce;  if (s_curr == NULL) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   return s_curr->data;
+}
+
+void*      /*--> find a list using its title ---------------------------------*/
+yDLST_line_fullseek     (char a_pos)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_spoint  (s_head);
+   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   DEBUG_YDLST  yLOG_spoint  (s_tail);
+   /*---(switch)-------------------------*/
+   switch (a_pos) {
+   case YDLST_HEAD :
+      s_curr = s_head;
+      break;
+   case YDLST_PREV :
+      if (s_curr != NULL)   s_curr = s_curr->prev;
+      else                  rc = -1;
+      break;
+   case YDLST_CURR :
+      break;
+   case YDLST_NEXT :
+      if (s_curr != NULL)   s_curr = s_curr->next;
+      else                  rc = -2;
+      break;
+   case YDLST_TAIL :
+      s_curr = s_tail;
       break;
    default         :
       s_curr = NULL;
@@ -389,7 +436,7 @@ yDLST_line_create       (char *a_title, void *a_data)
       return rce;
    }
    /*---(populate)-----------------------*/
-   x_new->title  = strdup (a_title);
+   x_new->title = a_title;
    DEBUG_YDLST  yLOG_info    ("->title"   , x_new->title);
    x_new->data  = a_data;
    DEBUG_YDLST  yLOG_point   ("->data"    , x_new->data);
