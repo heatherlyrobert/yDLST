@@ -165,14 +165,26 @@ yDLST_line_seek         (char a_pos)
       s_curr = x_list->head;
       break;
    case YDLST_PREV :
-      if (s_curr != NULL)   s_curr = s_curr->p_prev;
-      else                  rc = -1;
+      if (s_curr != NULL && s_curr->parent != x_list) {
+         s_curr = NULL;
+         rc = -4;
+      }
+      else if (s_curr != NULL)   s_curr = s_curr->p_prev;
+      else                       rc = -1;
       break;
    case YDLST_CURR :
+      if (s_curr != NULL && s_curr->parent != x_list)  {
+         s_curr = NULL;
+         rc = -4;
+      }
       break;
    case YDLST_NEXT :
-      if (s_curr != NULL)   s_curr = s_curr->p_next;
-      else                  rc = -2;
+      if (s_curr != NULL && s_curr->parent != x_list) {
+         s_curr = NULL;
+         rc = -4;
+      }
+      else if (s_curr != NULL)   s_curr = s_curr->p_next;
+      else                       rc = -2;
       break;
    case YDLST_TAIL :
       s_curr = x_list->tail;

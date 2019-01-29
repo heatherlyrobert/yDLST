@@ -18,8 +18,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define YDLST_VER_NUM   "0.3b"
-#define YDLST_VER_TXT   "linet create, destroy is nicely unit tested, lots of fixes"
+#define YDLST_VER_NUM   "0.3c"
+#define YDLST_VER_TXT   "line public functions unit tested, lots of fixes"
 
 
 
