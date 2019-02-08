@@ -5,11 +5,13 @@
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-static      tSEQ       *s_head      = NULL;
-static      tSEQ       *s_tail      = NULL;
+static      tDLST_SEQ  *s_head      = NULL;
+static      tDLST_SEQ  *s_tail      = NULL;
+static      tDLST_SEQ  *s_curr      = NULL;
 static      int         s_count     =    0;
 
-
+static      tDLST_LIST *s_alpha     = NULL;
+static      tDLST_LIST *s_omega     = NULL;
 
 /*====================------------------------------------====================*/
 /*===----                      fundamental actions                     ----===*/
@@ -17,40 +19,43 @@ static      int         s_count     =    0;
 static void  o___PRIMATIVE_______o () { return; }
 
 char
-ydlst_seq__wipe          (tSEQ *a_dst)
+ydlst_seq__wipe          (tDLST_SEQ *a_dst)
 {
    /*---(defense)--------------*/
    if (a_dst == NULL)  return -1;
-   /*---(master)---------------*/
-   a_dst->pred  = NULL;
-   a_dst->same  = NULL;
-   a_dst->succ  = NULL;
    /*---(seq)------------------*/
    a_dst->prev  = NULL;
    a_dst->next  = NULL;
+   /*---(master)---------------*/
+   a_dst->pred    = NULL;
+   a_dst->p_prev  = NULL;
+   a_dst->p_next  = NULL;
+   a_dst->succ    = NULL;
+   a_dst->s_prev  = NULL;
+   a_dst->s_next  = NULL;
    /*---(complete)-------------*/
    return 0;
 }
 
-tSEQ*
+tDLST_SEQ*
 ydlst_seq__new          (void)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
    int         rc          =    0;
    int         x_tries     =    0;
-   tSEQ       *x_new       = NULL;
+   tDLST_SEQ  *x_new       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(create)-------------------------*/
    while (++x_tries < 10) {
-      x_new = (tSEQ *) malloc (sizeof (tSEQ));
+      x_new = (tDLST_SEQ *) malloc (sizeof (tDLST_SEQ));
       if (x_new != NULL)     break;
    }
    DEBUG_YDLST  yLOG_sint    (x_tries);
    DEBUG_YDLST  yLOG_spoint  (x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return NULL;
    }
    /*---(wipe)---------------------------*/
@@ -71,12 +76,12 @@ ydlst_seq__new          (void)
    ++s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return x_new;
 }
 
 char
-ydlst_seq__del          (tSEQ *a_old)
+ydlst_seq__del          (tDLST_SEQ *a_old)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
@@ -86,7 +91,7 @@ ydlst_seq__del          (tSEQ *a_old)
    /*---(defense)------------------------*/
    DEBUG_YDLST  yLOG_spoint  (a_old);
    --rce;  if (a_old == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return NULL;
    }
    /*---(remove from main DLL)-----------*/
@@ -102,7 +107,7 @@ ydlst_seq__del          (tSEQ *a_old)
    --s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -114,88 +119,230 @@ ydlst_seq__del          (tSEQ *a_old)
 static void  o___ATTACH__________o () { return; }
 
 char
-ydlst_seq__hook         (tLIST *a_list, tSEQ *a_seq)
+ydlst_seq__hook         (tDLST_LIST *a_pred, tDLST_LIST *a_succ, tDLST_SEQ *a_seq)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defenses)-----------------------*/
-   DEBUG_YDLST  yLOG_spoint  (a_list);
-   --rce;  if (a_list  == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+   DEBUG_YDLST  yLOG_spoint  (a_pred);
+   --rce;  if (a_pred  == NULL) {
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YDLST  yLOG_spoint  (a_succ);
+   --rce;  if (a_succ  == NULL) {
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_YDLST  yLOG_spoint  (a_seq);
    --rce;  if (a_seq  == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare links)---------------*/
    DEBUG_YDLST  yLOG_snote   ("clear");
-   a_seq->same       = NULL;
-   /*---(into lists links)------------*/
-   if (a_list->preds == NULL) {
-      DEBUG_YDLST  yLOG_snote   ("first seq");
-      a_list->preds        = a_seq;
+   a_seq->p_next     = NULL;
+   a_seq->p_prev     = NULL;
+   a_seq->s_next     = NULL;
+   a_seq->s_prev     = NULL;
+   /*---(into predecessor)------------*/
+   if (a_pred->s_head == NULL) {
+      DEBUG_YDLST  yLOG_snote   ("first on pred");
+      a_pred->s_head         = a_seq;
+      a_pred->s_tail         = a_seq;
    } else {
-      DEBUG_YDLST  yLOG_snote   ("prepend seq");
-      a_seq->same          = a_list->preds;
-      a_list->preds        = a_seq;
+      DEBUG_YDLST  yLOG_snote   ("append to pred");
+      a_seq->s_prev          = a_pred->s_tail;
+      a_pred->s_tail->s_next = a_seq;
+      a_pred->s_tail         = a_seq;
    }
    /*---(update count)-------------------*/
-   ++a_list->npred;
-   DEBUG_YDLST  yLOG_sint    (a_list->npred);
+   ++a_pred->s_count;
+   DEBUG_YDLST  yLOG_sint    (a_pred->s_count);
+   /*---(into predecessor)------------*/
+   if (a_succ->p_head == NULL) {
+      DEBUG_YDLST  yLOG_snote   ("first on pred");
+      a_succ->p_head         = a_seq;
+      a_succ->p_tail         = a_seq;
+   } else {
+      DEBUG_YDLST  yLOG_snote   ("append to pred");
+      a_seq->p_prev          = a_succ->p_tail;
+      a_succ->p_tail->p_next = a_seq;
+      a_succ->p_tail         = a_seq;
+   }
+   /*---(update count)-------------------*/
+   ++a_succ->p_count;
+   DEBUG_YDLST  yLOG_sint    (a_succ->p_count);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
 char
-ydlst_seq__unhook       (tSEQ *a_seq)
+ydlst_seq__unhook       (tDLST_SEQ *a_seq)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
-   tLIST      *x_list      = NULL;
-   tSEQ       *x_seq       = NULL;
+   tDLST_LIST *x_pred      = NULL;
+   tDLST_LIST *x_succ      = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defenses)-----------------------*/
    DEBUG_YDLST  yLOG_spoint  (a_seq);
    --rce;  if (a_seq  == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   x_list = a_seq->pred;
-   DEBUG_YDLST  yLOG_spoint  (x_list);
-   --rce;  if (x_list  == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+   /*---(predecessor)--------------------*/
+   x_pred = a_seq->pred;
+   DEBUG_YDLST  yLOG_spoint  (x_pred);
+   --rce;  if (x_pred  == NULL) {
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   /*---(find seq)--------------------*/
-   x_seq = x_list->preds;
-   if (x_seq == a_seq) {
-      DEBUG_YDLST  yLOG_snote   ("at head");
-      x_list->preds = a_seq->same;
-   } else {
-      DEBUG_YDLST  yLOG_snote   ("find");
-      while (x_seq != NULL) {
-         if (x_seq->same == a_seq)  break;
-         x_seq = x_seq->same;
-      }
-      DEBUG_YDLST  yLOG_spoint  (x_seq);
-      if (x_seq == NULL) {
-         DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
-         return rce;
-      }
-      x_seq->same = x_seq->next;
-   }
+   /*---(remove from lists)--------------*/
+   DEBUG_YDLST  yLOG_snote   ("remove from pred");
+   if (a_seq->s_next != NULL)  a_seq->s_next->s_prev = a_seq->s_prev;
+   else                        x_pred->s_tail        = a_seq->s_prev;
+   if (a_seq->s_prev != NULL)  a_seq->s_prev->s_next = a_seq->s_next;
+   else                        x_pred->s_head        = a_seq->s_next;
    /*---(update count)-------------------*/
-   --x_list->npred;
-   DEBUG_YDLST  yLOG_sint    (x_list->npred);
+   --x_pred->s_count;
+   DEBUG_YDLST  yLOG_sint    (x_pred->s_count);
+   /*---(predecessor)--------------------*/
+   x_succ = a_seq->succ;
+   DEBUG_YDLST  yLOG_spoint  (x_succ);
+   --rce;  if (x_succ  == NULL) {
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(remove from lists)--------------*/
+   DEBUG_YDLST  yLOG_snote   ("remove from succ");
+   if (a_seq->p_next != NULL)  a_seq->p_next->p_prev = a_seq->p_prev;
+   else                        x_succ->p_tail        = a_seq->p_prev;
+   if (a_seq->p_prev != NULL)  a_seq->p_prev->p_next = a_seq->p_next;
+   else                        x_succ->p_head        = a_seq->p_next;
+   /*---(update count)-------------------*/
+   --x_succ->p_count;
+   DEBUG_YDLST  yLOG_sint    (x_succ->p_count);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
+}
+
+char
+ydlst_seq__alpha  (tDLST_LIST *a_list)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_SEQ  *u           = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);
+   --rce;  if (a_list == NULL) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("s_head"    , s_alpha->s_head);
+   u = s_alpha->s_head;
+   /*---(walk)---------------------------*/
+   while (u != NULL) {
+      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", u, u->succ, u->succ->title);
+      if (u->succ == a_list) {
+         DEBUG_YDLST  yLOG_note    ("FOUND IT");
+         ydlst_seq__unhook (u);
+         ydlst_seq__del    (u);
+         DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      u = u->s_next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, -1);
+   return -1;
+}
+
+char
+ydlst_seq__omega  (tDLST_LIST *a_list)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_SEQ  *u           = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);
+   --rce;  if (a_list == NULL) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("p_head"    , s_omega->p_head);
+   u = s_omega->p_head;
+   /*---(walk)---------------------------*/
+   while (u != NULL) {
+      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", u, u->pred, u->pred->title);
+      if (u->pred == a_list) {
+         DEBUG_YDLST  yLOG_note    ("FOUND IT");
+         ydlst_seq__unhook (u);
+         ydlst_seq__del    (u);
+         DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+         return 0;
+      }
+      u = u->p_next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, -1);
+   return -1;
+}
+
+char
+ydlst_seq__cycle  (int a_lvl, tDLST_LIST *a_curr, tDLST_LIST *a_look)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_SEQ  *u           = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YDLST  yLOG_value   ("a_lvl"     , a_lvl);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_look"    , a_look);
+   --rce;  if (a_look == NULL) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(touched front)------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_curr"    , a_curr);
+   --rce;  if (a_curr == NULL) {
+      DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("p_head"    , a_curr->p_head);
+   u = a_curr->p_head;
+   /*---(walk)---------------------------*/
+   while (u != NULL) {
+      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", u, u->pred, u->pred->title);
+      if (u->pred == a_look) {
+         DEBUG_YDLST  yLOG_note    ("FOUND IT");
+         DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+         return 1;
+      } else {
+         rc = ydlst_seq__cycle (a_lvl + 1, u->pred, a_look);
+         if (rc > 0)  return rc;
+      }
+      u = u->p_next;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, -1);
+   return -1;
 }
 
 
@@ -211,45 +358,72 @@ yDLST_seq_after         (char *a_before)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tSEQ       *x_new       = NULL;
-   tLIST      *x_list      = NULL;
-   tLIST      *x_before    = NULL;
+   tDLST_SEQ  *x_new       = NULL;
+   tDLST_LIST *x_list      = NULL;
+   tDLST_LIST *x_before    = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_before"  , a_before);
+   --rce;  if (a_before  == NULL) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(get list)-----------------------*/
    x_list = ydlst_list_getcurr  ();
    --rce;  if (x_list  == NULL) {
-      DEBUG_INPT   yLOG_snote   ("no list is selected");
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_note    ("no list is selected");
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return NULL;
    }
-   DEBUG_YDLST  yLOG_snote   (x_list->title);
+   DEBUG_YDLST  yLOG_note    (x_list->title);
    /*---(find list)----------------------*/
-   yDLST_list_find  (a_before);
-   x_before = ydlst_list_getcurr  ();
-   DEBUG_YDLST  yLOG_point   ("x_before"  , x_before);
-   --rce;  if (x_before == NULL) {
-      ydlst_list_setcurr  (x_list);
-      DEBUG_INPT   yLOG_note    ("could not find before list");
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+   if (strcmp (a_before, "SEQ_ALPHA") == 0)   x_before = s_alpha;
+   else {
+      yDLST_list_find  (a_before);
+      x_before = ydlst_list_getcurr  ();
+      DEBUG_YDLST  yLOG_point   ("x_before"  , x_before);
+      --rce;  if (x_before == NULL) {
+         ydlst_list_setcurr  (x_list);
+         DEBUG_YDLST   yLOG_note    ("could not find before list");
+         DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      rc = ydlst_seq__cycle  (0, x_list, x_before);
+      DEBUG_YDLST  yLOG_value   ("cycle"     , rc);
+      --rce;  if (rc > 0) {
+         ydlst_list_setcurr  (x_list);
+         DEBUG_YDLST   yLOG_note    ("found a cycle");
+         DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(check match)--------------------*/
+   --rce;  if (x_list == x_before) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(create)-------------------------*/
    x_new = ydlst_seq__new ();
    DEBUG_YDLST  yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(populate)-----------------------*/
    x_new->pred = x_before;
    x_new->succ = x_list;
    /*---(hook)---------------------------*/
-   rc = ydlst_seq__hook (x_before, x_new);
+   rc = ydlst_seq__hook (x_before, x_list, x_new);
    DEBUG_YDLST  yLOG_value   ("hook"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
+   }
+   /*---(alpha and omega)----------------*/
+   if (strcmp (a_before, "SEQ_ALPHA") != 0) {
+      rc = ydlst_seq__alpha  (x_list);
+      rc = ydlst_seq__omega  (x_before);
    }
    /*---(make current)-------------------*/
    ydlst_list_setcurr  (x_list);
@@ -258,7 +432,280 @@ yDLST_seq_after         (char *a_before)
    return 0;
 }
 
+char       /*----: prepare a new list for use --------------------------------*/
+ydlst_seq_before        (char *a_after)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_SEQ  *x_new       = NULL;
+   tDLST_LIST *x_list      = NULL;
+   tDLST_LIST *x_after     = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_after"   , a_after);
+   --rce;  if (a_after  == NULL) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   --rce;  if (x_list  == NULL) {
+      DEBUG_YDLST   yLOG_note    ("no list is selected");
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return NULL;
+   }
+   DEBUG_YDLST  yLOG_note    (x_list->title);
+   /*---(find list)----------------------*/
+   if (strcmp (a_after , "SEQ_OMEGA") == 0)   x_after  = s_omega;
+   else {
+      yDLST_list_find  (a_after);
+      x_after = ydlst_list_getcurr  ();
+      DEBUG_YDLST  yLOG_point   ("x_after"   , x_after);
+      --rce;  if (x_after == NULL) {
+         ydlst_list_setcurr  (x_list);
+         DEBUG_YDLST   yLOG_note    ("could not find before list");
+         DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(create)-------------------------*/
+   x_new = ydlst_seq__new ();
+   DEBUG_YDLST  yLOG_point   ("x_new"     , x_new);
+   --rce;  if (x_new == NULL) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(populate)-----------------------*/
+   x_new->pred = x_list;
+   x_new->succ = x_after;
+   /*---(hook)---------------------------*/
+   rc = ydlst_seq__hook (x_list, x_after, x_new);
+   DEBUG_YDLST  yLOG_value   ("hook"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(alpha and omega)----------------*/
+   if (strcmp (a_after , "SEQ_OMEGA") != 0)  rc = ydlst_seq__omega  (x_list);
+   /*---(make current)-------------------*/
+   ydlst_list_setcurr  (x_list);
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
+void*      /*--> find a seq using sequential pos -----------------------------*/
+yDLST_seq_entry         (int a_pos, void **a_after)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         c           =    0;
+   tDLST_SEQ  *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST  yLOG_sint    (a_pos);
+   /*---(prepare)------------------------*/
+   if (a_after != NULL)  *a_after = NULL;
+   /*---(move)---------------------------*/
+   DEBUG_YDLST  yLOG_spoint  (s_head);
+   x_seq = s_head;
+   while (x_seq != NULL) {
+      if (c >= a_pos)  break;
+      x_seq = x_seq->next;
+      ++c;
+   }
+   DEBUG_YDLST  yLOG_spoint  (x_seq);
+   DEBUG_YDLST  yLOG_sint    (c);
+   /*---(check)--------------------------*/
+   if (c != a_pos) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rc);
+      return NULL;
+   }
+   --rce;  if (x_seq == NULL) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   /*---(save)---------------------------*/
+   if (a_after != NULL && x_seq->succ != NULL)  *a_after = x_seq->succ->data;
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   if (x_seq->pred == NULL) return NULL;
+   return x_seq->pred->data;
+}
+
+int
+yDLST_pred_count     (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_LIST *x_list      = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   --rce;  if (x_list  == NULL) {
+      DEBUG_YDLST   yLOG_snote   ("no list is selected");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   DEBUG_YDLST  yLOG_snote   (x_list->title);
+   DEBUG_YDLST  yLOG_sint    (x_list->p_count);
+   /*---(return)-------------------------*/
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   return x_list->p_count;
+}
+
+void*      /*--> find a list using its title ---------------------------------*/
+yDLST_pred_seek         (char a_pos)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_LIST *x_list      = NULL;
+   tDLST_SEQ  *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   DEBUG_YDLST  yLOG_spoint  (x_list);
+   --rce;  if (x_list  == NULL) {
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   DEBUG_YDLST  yLOG_snote   (x_list->title);
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_spoint  (x_list->p_head);
+   DEBUG_YDLST  yLOG_sint    (x_list->p_count);
+   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   DEBUG_YDLST  yLOG_spoint  (x_list->p_tail);
+   /*---(switch)-------------------------*/
+   switch (a_pos) {
+   case YDLST_HEAD :
+      s_curr = x_list->p_head;
+      break;
+   case YDLST_PREV :
+      if (s_curr != NULL)   s_curr = s_curr->p_prev;
+      else                  rc = -1;
+      break;
+   case YDLST_NEXT :
+      if (s_curr != NULL)   s_curr = s_curr->p_next;
+      else                  rc = -2;
+      break;
+   case YDLST_TAIL :
+      s_curr = x_list->p_tail;
+      break;
+   }
+   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   /*---(check)--------------------------*/
+   if (rc < 0) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rc);
+      return NULL;
+   }
+   --rce;  if (s_curr == NULL) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   --rce;  if (s_curr->pred == NULL) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   return s_curr->pred->data;
+}
+
+int
+yDLST_succ_count     (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_LIST *x_list      = NULL;
+   /*---(begin)--------------------------*/
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   --rce;  if (x_list  == NULL) {
+      DEBUG_YDLST   yLOG_snote   ("no list is selected");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   DEBUG_YDLST  yLOG_snote   (x_list->title);
+   DEBUG_YDLST  yLOG_sint    (x_list->s_count);
+   /*---(return)-------------------------*/
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   return x_list->s_count;
+}
+
+void*      /*--> find a list using its title ---------------------------------*/
+yDLST_succ_seek         (char a_pos)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tDLST_LIST *x_list      = NULL;
+   tDLST_SEQ  *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   DEBUG_YDLST  yLOG_spoint  (x_list);
+   --rce;  if (x_list  == NULL) {
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   DEBUG_YDLST  yLOG_snote   (x_list->title);
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_spoint  (x_list->s_head);
+   DEBUG_YDLST  yLOG_sint    (x_list->s_count);
+   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   DEBUG_YDLST  yLOG_spoint  (x_list->s_tail);
+   /*---(switch)-------------------------*/
+   switch (a_pos) {
+   case YDLST_HEAD :
+      s_curr = x_list->s_head;
+      break;
+   case YDLST_PREV :
+      if (s_curr != NULL)   s_curr = s_curr->s_prev;
+      else                  rc = -1;
+      break;
+   case YDLST_NEXT :
+      if (s_curr != NULL)   s_curr = s_curr->s_next;
+      else                  rc = -2;
+      break;
+   case YDLST_TAIL :
+      s_curr = x_list->s_tail;
+      break;
+   }
+   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   /*---(check)--------------------------*/
+   if (rc < 0) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rc);
+      return NULL;
+   }
+   --rce;  if (s_curr == NULL) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   --rce;  if (s_curr->succ == NULL) {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return NULL;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   return s_curr->succ->data;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        program level                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___PROGRAM_________o () { return; }
 
 char
 ydlst_seq_init          (void)
@@ -269,6 +716,10 @@ ydlst_seq_init          (void)
    s_head    = NULL;
    s_tail    = NULL;
    s_count   =    0;
+   s_alpha   = ydlst_list_new (YDLST_FLOATER);
+   s_alpha->title = strdup ("SEQ_ALPHA");
+   s_omega   = ydlst_list_new (YDLST_FLOATER);
+   s_omega->title = strdup ("SEQ_OMEGA");
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -283,6 +734,10 @@ ydlst_seq_wrap          (void)
    s_head    = NULL;
    s_tail    = NULL;
    s_count   =    0;
+   free (s_alpha->title);
+   ydlst_list_del (s_alpha, YDLST_FLOATER);
+   free (s_omega->title);
+   ydlst_list_del (s_omega, YDLST_FLOATER);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -290,439 +745,50 @@ ydlst_seq_wrap          (void)
 
 
 
-
-
-
-
 /*====================------------------------------------====================*/
-/*===----                            ties list                         ----===*/
+/*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
-static void  o___TIES____________o () { return; }
+static void  o___UNITTEST________o () { return; }
 
-/*> char       /+----: tie to links together (directionally) --------------------+/                                          <* 
- *> yDLST_tie          (int a_up, int a_down, void *a_data)                                                                  <* 
- *> {                                                                                                                        <* 
- *>    /+---(locals)-------------------------+/                                                                              <* 
- *>    tLINK    *xup       = NULL;                                                                                           <* 
- *>    tLINK    *xdown     = NULL;                                                                                           <* 
- *>    tTIES    *xtie      = NULL;                                                                                           <* 
- *>    tTIES    *curr      = NULL;                                                                                           <* 
- *>    tTIES    *next      = NULL;                                                                                           <* 
- *>    int       i         = 0;                                                                                              <* 
- *>    /+---(defence : circular)-------------+/                                                                              <* 
- *>    DEBUG_TIES ( printf ("begin TIE (%4d) to (%4d)\n", a_up, a_down); )                                                   <* 
- *>       if (a_up  == a_down)                          return -1;                                                           <* 
- *>    /+---(sort out upstream)--------------+/                                                                              <* 
- *>    if (a_up   == -1) {                                                                                                   <* 
- *>       xup   = h_tree;                                                                                                    <* 
- *>    } else {                                                                                                              <* 
- *>       if (p_links == NULL || a_up   != c_links) {                                                                        <* 
- *>          xup   = yDLST__link_find (a_up  , 'n');                                                                         <* 
- *>          if (xup   == NULL)                      return -2;                                                              <* 
- *>       } else  xup   = p_links;                                                                                           <* 
- *>    }                                                                                                                     <* 
- *>    DEBUG_TIES ( printf ("   1) found up link   (%4d) %9p\n", a_up, xup); )                                               <* 
- *>       /+---(sort out downstream)------------+/                                                                           <* 
- *>       if (a_down == -1) {                                                                                                <* 
- *>          xdown = t_tree;                                                                                                 <* 
- *>       } else {                                                                                                           <* 
- *>          if (p_links == NULL || a_down != c_links) {                                                                     <* 
- *>             xdown = yDLST__link_find (a_down, 'n');                                                                      <* 
- *>             if (xdown == NULL)                      return -3;                                                           <* 
- *>          } else  xdown = p_links;                                                                                        <* 
- *>       }                                                                                                                  <* 
- *>    DEBUG_TIES ( printf ("   2) found down link (%4d) %9p\n", a_down, xdown); )                                           <* 
- *>       /+---(check for endpoint links)-------+/                                                                           <* 
- *>       if (xup == h_tree || xdown == t_tree) {                                                                            <* 
- *>          if (xup   == h_tree && xdown->n_ups > 0) {                                                                      <* 
- *>             DEBUG_TIES ( printf ("   3) unnecessary h_tree link request, stop\n"); )                                     <* 
- *>                return -4;                                                                                                <* 
- *>          } else if (xdown == t_tree && xup->n_downs > 0) {                                                               <* 
- *>             DEBUG_TIES ( printf ("   3) unnecessary t_tree link request, stop\n"); )                                     <* 
- *>                return -5;                                                                                                <* 
- *>          }                                                                                                               <* 
- *>          DEBUG_TIES ( printf ("   3) h_tree/t_tree fine, continue\n"); )                                                 <* 
- *>       } else {                                                                                                           <* 
- *>          DEBUG_TIES ( printf ("   3) not a h_tree or t_tree link request\n"); )                                          <* 
- *>       }                                                                                                                  <* 
- *>    /+---(look for existing link)---------+/                                                                              <* 
- *>    DEBUG_TIES ( printf ("   4) look for existing link :: "); )                                                           <* 
- *>       next = xup->h_downs;                                                                                               <* 
- *>    while (next != NULL) {                                                                                                <* 
- *>       if (next->down == xdown) {                                                                                         <* 
- *>          DEBUG_TIES ( printf ("exists, stop\n"); )                                                                       <* 
- *>             return  1;                                                                                                   <* 
- *>       }                                                                                                                  <* 
- *>       next = next->f_downs;                                                                                              <* 
- *>    }                                                                                                                     <* 
- *>    DEBUG_TIES ( printf ("not found, continue\n"); )                                                                      <* 
- *>       /+---(create link)--------------------+/                                                                           <* 
- *>       DEBUG_TIES ( printf ("   5) malloc the tie\n"); )                                                                  <* 
- *>       for (i = 0; i < 3; ++i) {                                                                                          <* 
- *>          xtie  = (tTIES *) malloc(sizeof(tTIES));                                                                        <* 
- *>          if (xtie  != NULL) break;                                                                                       <* 
- *>       }                                                                                                                  <* 
- *>    if (xtie  == NULL)                            return -6;                                                              <* 
- *>    /+---(into list of all links)---------+/                                                                              <* 
- *>    DEBUG_TIES ( printf ("   6) attach tie into dll\n"); )                                                                <* 
- *>       xtie->f_ties   = NULL;                                                                                             <* 
- *>    xtie->b_ties   = NULL;                                                                                                <* 
- *>    if (t_ties == NULL) {    /+ first link +/                                                                             <* 
- *>       h_ties            = xtie;                                                                                          <* 
- *>       t_ties            = xtie;                                                                                          <* 
- *>    } else {                /+ link 2-n   +/                                                                              <* 
- *>       xtie->b_ties      = t_ties;                                                                                        <* 
- *>       t_ties->f_ties    = xtie;                                                                                          <* 
- *>       t_ties            = xtie;                                                                                          <* 
- *>    }                                                                                                                     <* 
- *>    ++n_ties;                                                                                                             <* 
- *>    /+---(tie upstream)-------------------+/                                                                              <* 
- *>    DEBUG_TIES ( printf ("   7) tie to up link down sll\n"); )                                                            <* 
- *>       xtie->up        = xup;                                                                                             <* 
- *>    xtie->f_downs   = NULL;                                                                                               <* 
- *>    if (xup->h_downs == NULL) xup->h_downs = xtie;                                                                        <* 
- *>    else {                                                                                                                <* 
- *>       next = xup->h_downs;                                                                                               <* 
- *>       while (next != NULL) {                                                                                             <* 
- *>          curr = next;                                                                                                    <* 
- *>          next = next->f_downs;                                                                                           <* 
- *>       }                                                                                                                  <* 
- *>       curr->f_downs = xtie;                                                                                              <* 
- *>    }                                                                                                                     <* 
- *>    ++xup->n_downs;                                                                                                       <* 
- *>    /+---(tie downstream)-----------------+/                                                                              <* 
- *>    DEBUG_TIES ( printf ("   8) tie to down links up sll\n"); )                                                           <* 
- *>       xtie->down      = xdown;                                                                                           <* 
- *>    xtie->f_ups     = NULL;                                                                                               <* 
- *>    if (xdown->h_ups == NULL) xdown->h_ups = xtie;                                                                        <* 
- *>    else {                                                                                                                <* 
- *>       next = xdown->h_ups;                                                                                               <* 
- *>       while (next != NULL) {                                                                                             <* 
- *>          curr = next;                                                                                                    <* 
- *>          next = next->f_ups;                                                                                             <* 
- *>       }                                                                                                                  <* 
- *>       curr->f_ups = xtie;                                                                                                <* 
- *>    }                                                                                                                     <* 
- *>    ++xdown->n_ups;                                                                                                       <* 
- *>    /+---(attach data)--------------------+/                                                                              <* 
- *>    DEBUG_TIES ( printf ("   9) attach data\n"); )                                                                        <* 
- *>       if (a_data != NULL)  xtie->data    = a_data;                                                                       <* 
- *>       else                 xtie->data    = nada;                                                                         <* 
- *>    DEBUG_TIES ( printf ("   A) DONE\n"); )                                                                               <* 
- *>       /+---(fix other attachments)----------+/                                                                           <* 
- *>       if (a_up   != -1 && a_down != -1) {                                                                                <* 
- *>          /+---(fix up downstream)--------------+/                                                                        <* 
- *>          if (a_down != -1) {                                                                                             <* 
- *>             DEBUG_TIES ( printf ("--------------------\n"); )                                                            <* 
- *>                DEBUG_TIES ( printf ("I)   check so see if down (%4d) is attached to h_tree (with untie)\n", a_down); )   <* 
- *>                yDLST_untie ( -1, a_down);                                                                                <* 
- *>             DEBUG_TIES ( printf ("--------------------\n"); )                                                            <* 
- *>                DEBUG_TIES ( printf ("II)  check to see if down (%4d) needs a t_tree link\n", a_down); )                  <* 
- *>                yDLST_tie (a_down,   -1  , "to_tail");                                                                    <* 
- *>          }                                                                                                               <* 
- *>          /+---(fix up upstream)----------------+/                                                                        <* 
- *>          if (a_up   != -1) {                                                                                             <* 
- *>             DEBUG_TIES ( printf ("--------------------\n"); )                                                            <* 
- *>                DEBUG_TIES ( printf ("III) check to see if up   (%4d) is attached to t_tree (with untie)\n", a_up); )     <* 
- *>                yDLST_untie (a_up, -1);                                                                                   <* 
- *>             DEBUG_TIES ( printf ("--------------------\n"); )                                                            <* 
- *>                DEBUG_TIES ( printf ("IV)  check to see if up   (%4d) needs a h_tree link\n", a_up); )                    <* 
- *>                yDLST_tie (  -1  , a_up  , "from_head");                                                                  <* 
- *>          }                                                                                                               <* 
- *>       }                                                                                                                  <* 
- *>    /+---(complete)-----------------------+/                                                                              <* 
- *>    return 0;                                                                                                             <* 
- *> }                                                                                                                        <*/
+char*        /*-> tbd --------------------------------[ light  [us.JC0.271.X1]*/ /*-[01.0000.00#.!]-*/ /*-[--.---.---.--]-*/
+ydlst_seq__unit         (char *a_question, int a_num)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         x_fore      =    0;
+   int         x_back      =    0;
+   tDLST_SEQ  *u           = NULL;
+   int         c           =    0;
+   char        s           [LEN_RECD]  = "[]";
+   char        t           [LEN_RECD]  = "[]";
+   /*---(defense)------------------------*/
+   snprintf (unit_answer, LEN_RECD, "SEQ unit         : question unknown");
+   /*---(simple)-------------------------*/
+   if  (strcmp (a_question, "count"     )     == 0) {
+      u = s_head; while (u != NULL) { ++x_fore; u = u->next; }
+      u = s_tail; while (u != NULL) { ++x_back; u = u->prev; }
+      snprintf (unit_answer, LEN_RECD, "SEQ count        : %3dc  %3df  %3db", s_count, x_fore, x_back);
+      return unit_answer;
+   }
+   /*---(complex)------------------------*/
+   u = s_head;
+   while (u != NULL) {
+      if (c >= a_num)  break;
+      ++c;
+      u = u->next;
+   }
+   if (strcmp (a_question, "entry"     )     == 0) {
+      if (u != NULL) {
+         sprintf  (s, "[%.20s]", u->pred->title);
+         sprintf  (t, "[%s]"   , u->succ->title);
+         snprintf (unit_answer, LEN_RECD, "SEQ entry   (%2d) : %-22.22s -> %s", a_num, s, t);
+      } else {
+         snprintf (unit_answer, LEN_RECD, "SEQ entry   (%2d) : []                     -> []", a_num);
+      }
+   }
+   /*---(complete)-----------------------*/
+   return unit_answer;
+}
 
-/*> char       /+----: tie to links together (directionally) --------------------+/                        <* 
- *> yDLST_untie        (int a_up, int a_down)                                                              <* 
- *> {                                                                                                      <* 
- *>    /+---(locals)-------------------------+/                                                            <* 
- *>    tLINK    *xup       = NULL;                                                                         <* 
- *>    tLINK    *xdown     = NULL;                                                                         <* 
- *>    tTIES    *xtie      = NULL;                                                                         <* 
- *>    tTIES    *curr      = NULL;                                                                         <* 
- *>    tTIES    *next      = NULL;                                                                         <* 
- *>    /+---(defence : circular)-------------+/                                                            <* 
- *>    DEBUG_TIES ( printf ("begin UNTIE (%4d) to (%4d)\n", a_up, a_down); )                               <* 
- *>       if (a_up  == a_down)                          return -1;                                         <* 
- *>    /+---(sort out upstream)--------------+/                                                            <* 
- *>    DEBUG_TIES ( printf ("   a) sort upstream...\n"); )                                                 <* 
- *>       if (a_up   == -1) {                                                                              <* 
- *>          xup   = h_tree;                                                                               <* 
- *>       } else {                                                                                         <* 
- *>          if (p_links == NULL || a_up   != c_links) {                                                   <* 
- *>             xup   = yDLST__link_find (a_up  , 'n');                                                    <* 
- *>             if (xup   == NULL)                      return -2;                                         <* 
- *>          } else  xup   = p_links;                                                                      <* 
- *>       }                                                                                                <* 
- *>    /+---(sort out downstream)------------+/                                                            <* 
- *>    DEBUG_TIES ( printf ("   b) sort downstream...\n"); )                                               <* 
- *>       if (a_down == -1) {                                                                              <* 
- *>          xdown = t_tree;                                                                               <* 
- *>       } else {                                                                                         <* 
- *>          if (p_links == NULL || a_down != c_links) {                                                   <* 
- *>             xdown = yDLST__link_find (a_down, 'n');                                                    <* 
- *>             if (xdown == NULL)                      return -3;                                         <* 
- *>          } else  xdown = p_links;                                                                      <* 
- *>       }                                                                                                <* 
- *>    /+---(find tie)-----------------------+/                                                            <* 
- *>    DEBUG_TIES ( printf ("   c) xup  = (%4d) %9p, xdown= (%4d) %9p :: ", a_up, xup, a_down, xdown); )   <* 
- *>       xtie = yDLST__tie_find (xup, xdown);                                                             <* 
- *>    if (xtie == NULL) {                                                                                 <* 
- *>       DEBUG_TIES ( printf ("not found, stop\n"); )                                                     <* 
- *>          return -4;                                                                                    <* 
- *>    }                                                                                                   <* 
- *>    DEBUG_TIES ( printf ("found, continue\n"); )                                                        <* 
- *>       /+---(remove from dll)----------------+/                                                         <* 
- *>       DEBUG_TIES ( printf ("   d) remove from dll...\n"); )                                            <* 
- *>       if (xtie->f_ties != NULL)  xtie->f_ties->b_ties  = xtie->b_ties;                                 <* 
- *>       else                       t_ties                = xtie->b_ties;                                 <* 
- *>    if (xtie->b_ties != NULL)  xtie->b_ties->f_ties  = xtie->f_ties;                                    <* 
- *>    else                       h_ties                = xtie->f_ties;                                    <* 
- *>    --n_ties;                                                                                           <* 
- *>    /+---(untie upstream)-----------------+/                                                            <* 
- *>    DEBUG_TIES ( printf ("   e) untie upstream link...\n"); )                                           <* 
- *>       curr   = xup->h_downs;                                                                           <* 
- *>    if      (curr == NULL)  ;                                                                           <* 
- *>    else if (curr->down == xdown)  xup->h_downs = curr->f_downs;                                        <* 
- *>    else {                                                                                              <* 
- *>       next = curr->f_downs;                                                                            <* 
- *>       while (next != NULL) {                                                                           <* 
- *>          if (next->down == xdown) {                                                                    <* 
- *>             curr->f_downs = next->f_downs;                                                             <* 
- *>             break;                                                                                     <* 
- *>          }                                                                                             <* 
- *>          curr = next;                                                                                  <* 
- *>          next = curr->f_downs;                                                                         <* 
- *>       }                                                                                                <* 
- *>    }                                                                                                   <* 
- *>    --xup->n_downs;                                                                                     <* 
- *>    /+---(untie downstream)---------------+/                                                            <* 
- *>    DEBUG_TIES  ( printf ("   f) untie downstream link...\n"); )                                        <* 
- *>       curr   = xdown->h_ups;                                                                           <* 
- *>    if      (curr == NULL)  ;                                                                           <* 
- *>    else if (curr->up   == xup) xdown->h_ups = curr->f_ups;                                             <* 
- *>    else {                                                                                              <* 
- *>       next = curr->f_ups;                                                                              <* 
- *>       while (next != NULL) {                                                                           <* 
- *>          DEBUG_TIES ( printf ("      up=%9p, dn=%9p\n", next->up, next->down); )                       <* 
- *>             if (next->up == xup) {                                                                     <* 
- *>                curr->f_ups = next->f_ups;                                                              <* 
- *>                break;                                                                                  <* 
- *>             }                                                                                          <* 
- *>          curr = next;                                                                                  <* 
- *>          next = curr->f_downs;                                                                         <* 
- *>       }                                                                                                <* 
- *>    }                                                                                                   <* 
- *>    --xdown->n_ups;                                                                                     <* 
- *>    /+---(free tie)-----------------------+/                                                            <* 
- *>    DEBUG_TIES ( printf ("   h) DONE...\n"); )                                                          <* 
- *>       /+---(fix other attachments)----------+/                                                         <* 
- *>       char   up_ups   = 'y';                                                                           <* 
- *>    char   up_downs = 'y';                                                                              <* 
- *>    char   dn_ups   = 'y';                                                                              <* 
- *>    char   dn_downs = 'y';                                                                              <* 
- *>    if (a_up   != -1 && a_down != -1) {                                                                 <* 
- *>       /+---(test linkage)-------------------+/                                                         <* 
- *>       if (xup->h_ups     == NULL || xup->h_ups->up       == h_tree) up_ups   = '-';                    <* 
- *>       if (xdown->h_ups   == NULL || xdown->h_ups->up     == h_tree) dn_ups   = '-';                    <* 
- *>       if (xup->h_downs   == NULL || xup->h_downs->down   == t_tree) up_downs = '-';                    <* 
- *>       if (xdown->h_downs == NULL || xdown->h_downs->down == t_tree) dn_downs = '-';                    <* 
- *>       /+---(floating links)-----------------+/                                                         <* 
- *>       if (up_ups == '-' && up_downs == '-') {                                                          <* 
- *>          yDLST_untie (  -1   , a_up   );                                                               <* 
- *>          yDLST_untie ( a_up  ,  -1    );                                                               <* 
- *>       }                                                                                                <* 
- *>       if (dn_ups == '-' && dn_downs == '-') {                                                          <* 
- *>          yDLST_untie (  -1   , a_down );                                                               <* 
- *>          yDLST_untie ( a_down, -1    );                                                                <* 
- *>       }                                                                                                <* 
- *>       /+---(check half ties)----------------+/                                                         <* 
- *>       if        (up_ups == '-' && up_downs == 'y') {                                                   <* 
- *>          yDLST_tie   (  -1   , a_up   , "from_head");                                                  <* 
- *>       } else if (up_ups == 'y' && up_downs == '-') {                                                   <* 
- *>          yDLST_tie   ( a_up  ,  -1    , "to_tail");                                                    <* 
- *>       }                                                                                                <* 
- *>       if        (dn_ups == '-' && dn_downs == 'y') {                                                   <* 
- *>          yDLST_tie   (  -1   , a_down , "from_head");                                                  <* 
- *>       } else if (dn_ups == 'y' && dn_downs == '-') {                                                   <* 
- *>          yDLST_tie   ( a_down,  -1    , "to_tail");                                                    <* 
- *>       }                                                                                                <* 
- *>    }                                                                                                   <* 
- *>    /+---(complete)-----------------------+/                                                            <* 
- *>    return 0;                                                                                           <* 
- *> }                                                                                                      <*/
 
-/*> void*      /+----: get a tie from the ties list ------------------------------+/   <* 
- *> yDLST_ties         (int a_index)                                                   <* 
- *> {                                                                                  <* 
- *>    /+---(locals)-------*-----------------+/                                        <* 
- *>    int       i         = 0;                                                        <* 
- *>    /+---(for head link)------------------+/                                        <* 
- *>    if      (a_index == HEAD)  {                                                    <* 
- *>       if (h_ties == NULL)        return NULL;                                      <* 
- *>       p_ties = h_ties;                                                             <* 
- *>    }                                                                               <* 
- *>    /+---(for next link)------------------+/                                        <* 
- *>    else if (a_index == NEXT) {                                                     <* 
- *>       while (p_ties != NULL) {                                                     <* 
- *>          p_ties = p_ties->f_ties;                                                  <* 
- *>          if (p_ties == NULL)        return NULL;                                   <* 
- *>          if (p_ties->up   == h_tree) continue;                                     <* 
- *>          if (p_ties->down == t_tree) continue;                                     <* 
- *>          break;                                                                    <* 
- *>       }                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(for curr link)------------------+/                                        <* 
- *>    else if (a_index == CURR) {                                                     <* 
- *>       ;                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(for specific link)--------------+/                                        <* 
- *>    else {                                                                          <* 
- *>       p_ties  = h_ties;                                                            <* 
- *>       if (p_ties == NULL)     return NULL;                                         <* 
- *>       while (i < a_index) {                                                        <* 
- *>          p_ties = p_ties->f_ties;                                                  <* 
- *>          if (p_ties == NULL)     return NULL;                                      <* 
- *>          if (p_ties->up   == h_tree) continue;                                     <* 
- *>          if (p_ties->down == t_tree) continue;                                     <* 
- *>          ++i;                                                                      <* 
- *>       }                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(defense for dereference)--------+/                                        <* 
- *>    if (p_ties == NULL) return NULL;                                                <* 
- *>    /+---(complete)-----------------------+/                                        <* 
- *>    return p_ties->data;                                                            <* 
- *> }                                                                                  <*/
 
-/*> void*      /+----: get a downward link ---------------------------------------+/   <* 
- *> yDLST_downs        (int a_link, int a_index)                                       <* 
- *> {                                                                                  <* 
- *>    /+---(locals)-------*-----------------+/                                        <* 
- *>    int       i         = 0;                                                        <* 
- *>    tLINK    *xlink     = NULL;                                                     <* 
- *>    /+---(sort out which link)------------+/                                        <* 
- *>    if (p_links == NULL || a_link != c_links) {                                     <* 
- *>       xlink = yDLST__link_find (a_link, 'y');                                      <* 
- *>       if (xlink == NULL)     return NULL;                                          <* 
- *>    } else  xlink = p_links;                                                        <* 
- *>    /+---(for head link)------------------+/                                        <* 
- *>    if      (a_index == HEAD)  {                                                    <* 
- *>       if (xlink->h_downs == NULL)        return NULL;                              <* 
- *>       p_ties = xlink->h_downs;                                                     <* 
- *>       if (p_ties->down   == t_tree)      return NULL;                              <* 
- *>    }                                                                               <* 
- *>    /+---(for next link)------------------+/                                        <* 
- *>    else if (a_index == NEXT) {                                                     <* 
- *>       while (p_ties != NULL) {                                                     <* 
- *>          p_ties = p_ties->f_downs;                                                 <* 
- *>          if (p_ties == NULL)        return NULL;                                   <* 
- *>          if (p_ties->down == t_tree) continue;                                     <* 
- *>          break;                                                                    <* 
- *>       }                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(for curr link)------------------+/                                        <* 
- *>    else if (a_index == CURR) {                                                     <* 
- *>       ;                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(for specific link)--------------+/                                        <* 
- *>    else {                                                                          <* 
- *>       p_ties  = xlink->h_downs;                                                    <* 
- *>       if (p_ties == NULL)     return NULL;                                         <* 
- *>       if (p_ties->down == t_tree) return NULL;                                     <* 
- *>       while (i < a_index) {                                                        <* 
- *>          p_ties = p_ties->f_downs;                                                 <* 
- *>          if (p_ties == NULL)     return NULL;                                      <* 
- *>          if (p_ties->down == t_tree) continue;                                     <* 
- *>          ++i;                                                                      <* 
- *>       }                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(defense for dereference)--------+/                                        <* 
- *>    if (p_ties == NULL) return NULL;                                                <* 
- *>    /+---(complete)-----------------------+/                                        <* 
- *>    return p_ties->down->data;                                                      <* 
- *> }                                                                                  <*/
 
-/*> void*      /+----: get an upward link ----------------------------------------+/   <* 
- *> yDLST_ups          (int a_link, int a_index)                                       <* 
- *> {                                                                                  <* 
- *>    /+---(locals)-------*-----------------+/                                        <* 
- *>    int       i         = 0;                                                        <* 
- *>    tLINK    *xlink     = NULL;                                                     <* 
- *>    /+---(sort out which link)------------+/                                        <* 
- *>    if (p_links == NULL || a_link != c_links) {                                     <* 
- *>       xlink = yDLST__link_find (a_link, 'y');                                      <* 
- *>       if (xlink == NULL)     return NULL;                                          <* 
- *>    } else  xlink = p_links;                                                        <* 
- *>    /+---(for head link)------------------+/                                        <* 
- *>    if      (a_index == HEAD)  {                                                    <* 
- *>       if (xlink->h_ups == NULL)        return NULL;                                <* 
- *>       p_ties = xlink->h_ups;                                                       <* 
- *>       if (p_ties->up   == h_tree)      return NULL;                                <* 
- *>    }                                                                               <* 
- *>    /+---(for next link)------------------+/                                        <* 
- *>    else if (a_index == NEXT) {                                                     <* 
- *>       while (p_ties != NULL) {                                                     <* 
- *>          p_ties = p_ties->f_ups;                                                   <* 
- *>          if (p_ties == NULL)        return NULL;                                   <* 
- *>          if (p_ties->up   == h_tree) continue;                                     <* 
- *>          break;                                                                    <* 
- *>       }                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(for curr link)------------------+/                                        <* 
- *>    else if (a_index == CURR) {                                                     <* 
- *>       ;                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(for specific link)--------------+/                                        <* 
- *>    else {                                                                          <* 
- *>       p_ties  = xlink->h_ups;                                                      <* 
- *>       if (p_ties == NULL)     return NULL;                                         <* 
- *>       if (p_ties->up   == h_tree) return NULL;                                     <* 
- *>       while (i < a_index) {                                                        <* 
- *>          p_ties = p_ties->f_ups;                                                   <* 
- *>          if (p_ties == NULL)     return NULL;                                      <* 
- *>          if (p_ties->up   == h_tree) continue;                                     <* 
- *>          ++i;                                                                      <* 
- *>       }                                                                            <* 
- *>    }                                                                               <* 
- *>    /+---(defense for dereference)--------+/                                        <* 
- *>    if (p_ties == NULL) return NULL;                                                <* 
- *>    /+---(complete)-----------------------+/                                        <* 
- *>    return p_ties->up->data;                                                        <* 
- *> }                                                                                  <*/
-
-/*> tTIES*     /+----: find a tie based on two indexes ---------------------------+/            <* 
- *> yDLST__tie_find    (tLINK* a_up, tLINK *a_down)                                             <* 
- *> {                                                                                           <* 
- *>    /+---(locals)-------------------------+/                                                 <* 
- *>    tTIES    *next     = NULL;                                                               <* 
- *>    /+---(defenses)-----------------------+/                                                 <* 
- *>    if (a_up   == NULL)            return NULL;                                              <* 
- *>    if (a_down == NULL)            return NULL;                                              <* 
- *>    /+---(see if we're the hash head)-----+/                                                 <* 
- *>    /+> printf ("         so into the find (past defenses)\n");                        <+/   <* 
- *>    next = a_up->h_downs;                                                                    <* 
- *>    /+> printf ("         looking for    %9p\n", a_down);                              <+/   <* 
- *>    /+> printf ("         downs header = %9p\n", next);                                <+/   <* 
- *>    if (next       == NULL  )      return NULL;                                              <* 
- *>    if (next->down == NULL  )      return NULL;                                              <* 
- *>    /+> printf ("         header points  %9p\n", next->down);                          <+/   <* 
- *>    if (next->down == a_down) {                                                              <* 
- *>       /+> printf ("         FOUND\n");                                                <+/   <* 
- *>       return next;                                                                          <* 
- *>    }                                                                                        <* 
- *>    /+> printf ("         through simple checks\n");                                   <+/   <* 
- *>    next = next->f_downs;                                                                    <* 
- *>    while (next != NULL) {                                                                   <* 
- *>       /+> printf ("         next points at %9p\n", next->down);                       <+/   <* 
- *>       if (next->down == a_down) {                                                           <* 
- *>          /+> printf ("         FOUND\n");                                             <+/   <* 
- *>          return next;                                                                       <* 
- *>       }                                                                                     <* 
- *>       next = next->f_downs;                                                                 <* 
- *>    }                                                                                        <* 
- *>    /+> printf ("         no more\n");                                                 <+/   <* 
- *>    /+---(complete)-----------------------+/                                                 <* 
- *>    return NULL;                                                                             <* 
- *> }                                                                                           <*/
