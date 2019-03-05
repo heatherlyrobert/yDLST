@@ -5,6 +5,39 @@
 #define YDLST_priv_hguard loaded
 
 
+
+/*===[[ BEG_HEADER ]]=========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
+
+/*===[[ ONE_LINERS ]]=========================================================*/
+
+#define     P_FOCUS     "PS (programming support)"
+#define     P_NICHE     "ds (data structures)"
+#define     P_PURPOSE   "clean, resiliant, reusable quad/doubly linked list w/deps"
+
+#define     P_NAMESAKE  "kratos-daimon (strength)"
+#define     P_HERITAGE  "kratos personified strength and sibling to force, zeal, and victory"
+#define     P_IMAGERY   "angel-like winged being wearing a battle helm and sheild"
+
+#define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
+#define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
+
+#define     P_AUTHOR    "heatherlyrobert"
+#define     P_CREATED   "2011-05"
+#define     P_DEPENDS   "none"
+
+#define     P_VERNUM    "0.3f"
+#define     P_VERTXT    "updated due to changes iny yLOG"
+
+#define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
+#define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
+#define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
+
+/*===[[ END_HEADER ]]=========================================================*/
+
+
+
 /*===[[ PUBLIC HEADERS ]]=====================================================*/
 #define   _GNU_SOURCE           /* to allow asprintf()                        */
 /*---(big standards)------------*/
@@ -14,12 +47,9 @@
 #include  <malloc.h>            /* malloc(), free()                           */
 
 #include  <yURG.h>
+#include  <ySTR.h>
 #include  <yLOG.h>
 
-
-/* rapidly evolving version number to aid with visual change confirmation     */
-#define YDLST_VER_NUM   "0.3e"
-#define YDLST_VER_TXT   "added sequencing with pred and succ functions"
 
 
 typedef struct cDLST_LIST  tDLST_LIST;
@@ -34,8 +64,6 @@ typedef const  char      cchar;
 
 
 
-#define   LEN_RECD      2000
-#define   MAX_FIELD      100
 
 #define   PRIV           static
 

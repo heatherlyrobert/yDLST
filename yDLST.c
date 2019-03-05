@@ -35,7 +35,7 @@ yDLST_version      (void)
 #else
    strncpy (t, "[unknown    ]", 15);
 #endif
-   snprintf (yDLST_ver, 100, "%s   %s : %s", t, YDLST_VER_NUM, YDLST_VER_TXT);
+   snprintf (yDLST_ver, 100, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
    return yDLST_ver;
 }
 
@@ -93,7 +93,7 @@ yDLST_wrap         (void)
 char       /*----: set up program urgents/debugging --------------------------*/
 ydlst__test_quiet    (void)
 {
-   yLOG_begin ("yDLST" , yLOG_SYSTEM, yLOG_QUIET);
+   yLOGS_begin ("yDLST" , YLOG_SYS, YLOG_QUIET);
    yDLST_init ();
    return 0;
 }
@@ -101,7 +101,7 @@ ydlst__test_quiet    (void)
 char       /*----: set up program urgents/debugging --------------------------*/
 ydlst__test_loud  (void)
 {
-   yLOG_begin ("yDLST" , yLOG_SYSTEM, yLOG_NOISE);
+   yLOGS_begin ("yDLST" , YLOG_SYS, YLOG_NOISE);
    yURG_name  ("kitchen"      , YURG_ON);
    yURG_name  ("ydlst"        , YURG_ON);
    DEBUG_YDLST  yLOG_info     ("yDLST"   , yDLST_version   ());
@@ -113,7 +113,7 @@ char       /*----: stop logging ----------------------------------------------*/
 ydlst__test_end    (void)
 {
    yDLST_wrap   ();
-   yLOG_end     ();
+   yLOGS_end     ();
    return 0;
 }
 

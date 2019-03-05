@@ -199,6 +199,42 @@ yDLST_focus_check       (char *a_title, void **a_list)
    return 0;
 }
 
+char         /*--> focus all lines on curr list --------------------------------*/
+yDLST_focus_list        (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   void       *x_data      = NULL;
+   tDLST_LIST *x_list      = NULL;
+   tDLST_LINE *x_line      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(get list)-----------------------*/
+   x_list = ydlst_list_getcurr  ();
+   DEBUG_YDLST  yLOG_point   ("x_list"    , x_list);
+   --rce;  if (x_list  == NULL) {
+      DEBUG_YDLST   yLOG_snote   ("no list is selected");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YDLST  yLOG_info    ("->title"   , x_list->title);
+   /*---(hook all)-----------------------*/
+   for (x_line = x_list->head; x_line != NULL; x_line = x_line->p_next) {
+      DEBUG_YDLST  yLOG_point   ("x_line"    , x_line);
+      DEBUG_YDLST  yLOG_info    ("x_line"    , x_line->title);
+      rc = ydlst_focus__hook  (x_line);
+      DEBUG_YDLST  yLOG_value   ("unhook"    , rc);
+      --rce;  if (rc < 0) {
+         DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/

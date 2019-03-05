@@ -1,23 +1,5 @@
 /*============================----beg-of-source---============================*/
 
-/*===[[ HEADER ]]=============================================================*
-
- *   focus         : (PS) programming support
- *   niche         : (ds) data structures
- *   application   : yDLST
- *   purpose       : clean, resiliant, reusable quad/doubly linked list w/deps
- *
- *   base_system   : gnu/linux  (powerful, ubiquitous, technical, and hackable)
- *   lang_name     : gnu/ansi-c (right, just, best, universal, and everlasting)
- *   dependencies  : none
- *   size goal     : small      (approximately 1,000 slocL)
- *
- *   author        : the_heatherlys
- *   created       : 2011-05
- *   priorities    : direct, simple, brief, vigorous, and lucid (h.w. fowler)
- *   end goal      : loosely coupled, strict interface, maintainable, portable
- * 
- */
 /*===[[ SUMMARY ]]============================================================*
 
  *   yDLST is a specialty data structure that combines a quad/doubly linked
@@ -138,6 +120,7 @@ char        yDLST_focus_on          (void);
 char        yDLST_focus_off         (void);
 char        yDLST_focus_check       (char *a_title, void **a_list);
 char        yDLST_focus_clearall    (void);
+char        yDLST_focus_list        (void);
 int         yDLST_focus_count       (void);
 void*       yDLST_focus_seek        (char a_pos);
 char        ydlst_focus_init        (void);
