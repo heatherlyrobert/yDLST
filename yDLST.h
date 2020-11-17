@@ -91,24 +91,21 @@ char        yDLST_purge             (void);
 char        yDLST_wrap              (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-void*       yDLST_list_seek         (char a_pos);
-void*       yDLST_list_find         (char *a_title);
-void*       yDLST_list_entry        (int a_pos, int *a_count);
 int         yDLST_list_count        (void);
 char        yDLST_list_create       (char *a_title, void *a_data);
 char        yDLST_list_destroy      (char *a_title);
+char        yDLST_list_by_index     (int n, void **a_curr, void **a_data);
 char        ydlst_list_purge        (void);
 char        ydlst_list_init         (void);
 char        ydlst_list_wrap         (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-void*       yDLST_line_seek         (char a_pos);
-void*       yDLST_line_fullseek     (char a_pos);
-void*       yDLST_line_find         (char *a_title);
-void*       yDLST_line_entry        (int a_pos, void **a_file);
+int         yDLST_line_count        (char a_scope);
+char        yDLST_line_by_index     (char a_scope, int n, void **a_curr, void **a_data);
+char        yDLST_line_by_cursor    (char a_scope, char a_move, void **a_curr, void **a_data);
+char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_curr, void **a_data);
+
 void*       yDLST_line_list         (void);
-int         yDLST_line_allcount     (void);
-int         yDLST_line_count        (void);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
 char        yDLST_line_clearlist    (void);
@@ -118,10 +115,11 @@ char        ydlst_line_wrap         (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yDLST_focus_on          (void);
 char        yDLST_focus_off         (void);
-char        yDLST_focus_check       (char *a_title, void **a_list);
+int         yDLST_focus_count       (void);
+char        yDLST_focus_check       (char *a_title);
+char        yDLST_focus_by_cursor   (char a_move, void **a_curr, void **a_data);
 char        yDLST_focus_clearall    (void);
 char        yDLST_focus_list        (void);
-int         yDLST_focus_count       (void);
 void*       yDLST_focus_seek        (char a_pos);
 char        ydlst_focus_init        (void);
 char        ydlst_focus_wrap        (void);
@@ -129,11 +127,11 @@ char        ydlst_focus_wrap        (void);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yDLST_active_on         (void);
 char        yDLST_active_off        (void);
-char        yDLST_active_check      (char *a_title, void **a_list);
-char        yDLST_active_clearall   (void);
 int         yDLST_active_count      (void);
-void*       yDLST_active_seek       (char a_pos);
+char        yDLST_active_check      (char *a_title);
+char        yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data);
 char        ydlst_active_init       (void);
+char        yDLST_active_clearall   (void);
 char        ydlst_active_wrap       (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/

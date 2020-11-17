@@ -13,22 +13,33 @@
 
 #define     P_FOCUS     "PS (programming support)"
 #define     P_NICHE     "ds (data structures)"
+#define     P_SUBJECT   "double-double linked list"
 #define     P_PURPOSE   "clean, resiliant, reusable quad/doubly linked list w/deps"
 
 #define     P_NAMESAKE  "kratos-daimon (strength)"
 #define     P_HERITAGE  "kratos personified strength and sibling to force, zeal, and victory"
 #define     P_IMAGERY   "angel-like winged being wearing a battle helm and sheild"
+#define     P_REASON    ""
+
+#define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
+
+#define     P_BASENAME  ""
+#define     P_FULLPATH  ""
+#define     P_SUFFIX    ""
+#define     P_CONTENT   ""
 
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
+#define     P_DEPENDS   "none"
 
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   "2011-05"
-#define     P_DEPENDS   "none"
 
-#define     P_VERNUM    "0.3f"
-#define     P_VERTXT    "updated due to changes iny yLOG"
+#define     P_VERMAJOR  "0.--, pre-production"
+#define     P_VERMINOR  "0.8-, working out final issues"
+#define     P_VERNUM    "0.8a"
+#define     P_VERTXT    "updated all but sequencing to improved standards and unit testing"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -52,9 +63,9 @@
 
 
 
-typedef struct cDLST_LIST  tDLST_LIST;
-typedef struct cDLST_LINE  tDLST_LINE;
-typedef struct cDLST_SEQ   tDLST_SEQ;
+typedef struct cLIST       tLIST;
+typedef struct cLINE       tLINE;
+typedef struct cSEQ        tSEQ;
 
 
 typedef long   long      llong;
@@ -76,62 +87,64 @@ extern char      unit_answer [LEN_RECD];
 #define   YDLST_FLOATER   '-'
 
 
-struct  cDLST_LIST {
+struct  cLIST {
    /*---(master)---------------*/
-   char       *title;               /* name of list                             */
-   void       *data;                /* pointer to data payload                  */
+   char       *title;                       /* name of list                   */
+   void       *data;                        /* data payload                   */
    /*---(lists)----------------*/
-   tDLST_LIST *prev;
-   tDLST_LIST *next;
+   char        linked;                      /* tied to master list            */
+   tLIST      *m_prev;                      /* master list prev               */
+   tLIST      *m_next;                      /* master list next               */
    /*---(lines)----------------*/
-   tDLST_LINE *head;                /* head of lists links                      */
-   tDLST_LINE *tail;                /* tail of lists links                      */
-   int         count;               /* number of lists links                    */
-   /*---(sequencing)-----------*/
-   tDLST_SEQ  *p_head;
-   tDLST_SEQ  *p_tail;
-   int         p_count;
-   tDLST_SEQ  *s_head;
-   tDLST_SEQ  *s_tail;
-   int         s_count;
+   tLINE      *c_head;                      /* child head                     */
+   tLINE      *c_tail;                      /* child tail                     */
+   int         c_count;                     /* child count                    */
+   /*---(comes before)---------*/
+   tSEQ       *p_head;                      /* pred head                      */
+   tSEQ       *p_tail;                      /* pred tail                      */
+   int         p_count;                     /* pred count                     */
+   /*---(comes after)----------*/
+   tSEQ       *s_head;                      /* succ head                      */
+   tSEQ       *s_tail;                      /* succ tail                      */
+   int         s_count;                     /* succ count                     */
    /*---(done)-----------------*/
 };
 
-struct  cDLST_LINE {
+struct  cLINE {
    /*---(ref name)-------------*/
    char       *title;               /* name of list                             */
    void       *data;                /* pointer to data payload                  */
    /*---(lines)----------------*/
-   tDLST_LIST *prev;
-   tDLST_LIST *next;
+   tLINE      *m_prev;
+   tLINE      *m_next;
    /*---(lists)----------------*/
-   tDLST_LIST *parent;              /* pointer to the owning list               */
-   tDLST_LINE *p_next;              /* forward  link in lists links             */
-   tDLST_LINE *p_prev;              /* backward link in lists links             */
+   tLIST      *parent;              /* pointer to the owning list               */
+   tLINE      *p_next;              /* forward  link in lists links             */
+   tLINE      *p_prev;              /* backward link in lists links             */
    /*---(focus)----------------*/
    char        focus;               /* flag to indicate focused 'y' or not '-'  */
-   tDLST_LINE *f_prev;              /* backward link in list of focus links     */
-   tDLST_LINE *f_next;              /* forward  link in list of focus links     */
+   tLINE      *f_prev;              /* backward link in list of focus links     */
+   tLINE      *f_next;              /* forward  link in list of focus links     */
    /*---(active)---------------*/
    char        active;              /* flag to indicate active  'y' or not '-'  */
-   tDLST_LINE *a_prev;              /* backward link in list of active links    */
-   tDLST_LINE *a_next;              /* forward  link in list of active links    */
+   tLINE      *a_prev;              /* backward link in list of active links    */
+   tLINE      *a_next;              /* forward  link in list of active links    */
    /*---(done)-----------------*/
 };
 
 
-struct   cDLST_SEQ {
+struct   cSEQ {
    /*---(seq)------------------*/
-   tDLST_SEQ  *prev;
-   tDLST_SEQ  *next;
+   tSEQ       *prev;
+   tSEQ       *next;
    /*---(predecessor)----------*/
-   tDLST_LIST *pred;
-   tDLST_SEQ  *p_prev;
-   tDLST_SEQ  *p_next;
+   tLIST      *pred;
+   tSEQ       *p_prev;
+   tSEQ       *p_next;
    /*---(successor)------------*/
-   tDLST_LIST *succ;
-   tDLST_SEQ  *s_prev;
-   tDLST_SEQ  *s_next;
+   tLIST      *succ;
+   tSEQ       *s_prev;
+   tSEQ       *s_next;
    /*---(done)-----------------*/
 };
 
@@ -139,15 +152,47 @@ struct   cDLST_SEQ {
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-tDLST_LIST *ydlst_list_new          (char a_link);
-char        ydlst_list_del          (tDLST_LIST *a_old, char a_link);
-tDLST_LIST *ydlst_list_getcurr      (void);
+/*---(cleanse)--------------*/
+char        ydlst_list__wipe        (tLIST *a_list);
+char*       ydlst_list__memory      (tLIST *a_list);
+/*---(memory)---------------*/
+char        ydlst_list_new          (tLIST **a_new);
+char        ydlst_list_float        (tLIST **a_new);
+char        ydlst_list_free         (tLIST **a_old);
+/*---(search)---------------*/
+char        yDLST_list_by_cursor    (char a_move, void **a_curr, void **a_data);
+char        yDLST_list_by_name      (char *a_title, void **a_curr, void **a_data);
+char        yDLST_list_by_ptr       (tLIST *a_curr);
+tLIST*      ydlst_list_current      (void);
+char        ydlst_list_force        (tLIST *a_list);
+/*---(unittest)-------------*/
 char*       ydlst_list__unit        (char *a_question, int a_num);
+/*---(done)-----------------*/
 
-tDLST_LINE *ydlst_line_getcurr      (void);
-char        ydlst_line_setcurr      (tDLST_LINE *a_curr);
-char        ydlst_line__purgelist   (tDLST_LIST *a_list);
+
+
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(cleanse)--------------*/
+char        ydlst_line__wipe        (tLINE *a_line);
+char*       ydlst_line__memory      (tLINE *a_line);
+/*---(memory)---------------*/
+char        ydlst_line__new         (tLINE **a_new);
+char        ydlst_line__free        (tLINE **a_new);
+/*---(hooking)--------------*/
+char        ydlst_line__hook        (tLIST *a_list, tLINE *a_line);
+char        ydlst_line__unhook      (tLINE *a_line);
+/*---(search)---------------*/
+char        ydlst_line_by_ptr       (tLINE *a_curr);
+tLINE*      ydlst_line_current      (void);
+char        ydlst_line_force        (tLINE *x_line);
+/*---(program)--------------*/
+char        ydlst_line_purge        (tLIST *a_list);
+/*---(unittest)-------------*/
 char*       ydlst_line__unit        (char *a_question, int a_num);
+/*---(done)-----------------*/
+
+
+char        ydlst_line__purgelist   (tLIST *a_list);
 
 char        ydlst__test_quiet    (void);
 char        ydlst__test_loud     (void);

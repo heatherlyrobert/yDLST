@@ -5,13 +5,13 @@
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-static      tDLST_SEQ  *s_head      = NULL;
-static      tDLST_SEQ  *s_tail      = NULL;
-static      tDLST_SEQ  *s_curr      = NULL;
+static      tSEQ       *s_head      = NULL;
+static      tSEQ       *s_tail      = NULL;
+static      tSEQ       *s_curr      = NULL;
 static      int         s_count     =    0;
 
-static      tDLST_LIST *s_alpha     = NULL;
-static      tDLST_LIST *s_omega     = NULL;
+static      tLIST      *s_alpha     = NULL;
+static      tLIST      *s_omega     = NULL;
 
 /*====================------------------------------------====================*/
 /*===----                      fundamental actions                     ----===*/
@@ -19,7 +19,7 @@ static      tDLST_LIST *s_omega     = NULL;
 static void  o___PRIMATIVE_______o () { return; }
 
 char
-ydlst_seq__wipe          (tDLST_SEQ *a_dst)
+ydlst_seq__wipe          (tSEQ *a_dst)
 {
    /*---(defense)--------------*/
    if (a_dst == NULL)  return -1;
@@ -37,19 +37,19 @@ ydlst_seq__wipe          (tDLST_SEQ *a_dst)
    return 0;
 }
 
-tDLST_SEQ*
+tSEQ*
 ydlst_seq__new          (void)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
    int         rc          =    0;
    int         x_tries     =    0;
-   tDLST_SEQ  *x_new       = NULL;
+   tSEQ       *x_new       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(create)-------------------------*/
    while (++x_tries < 10) {
-      x_new = (tDLST_SEQ *) malloc (sizeof (tDLST_SEQ));
+      x_new = (tSEQ *) malloc (sizeof (tSEQ));
       if (x_new != NULL)     break;
    }
    DEBUG_YDLST  yLOG_sint    (x_tries);
@@ -81,7 +81,7 @@ ydlst_seq__new          (void)
 }
 
 char
-ydlst_seq__del          (tDLST_SEQ *a_old)
+ydlst_seq__del          (tSEQ *a_old)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
@@ -119,7 +119,7 @@ ydlst_seq__del          (tDLST_SEQ *a_old)
 static void  o___ATTACH__________o () { return; }
 
 char
-ydlst_seq__hook         (tDLST_LIST *a_pred, tDLST_LIST *a_succ, tDLST_SEQ *a_seq)
+ydlst_seq__hook         (tLIST *a_pred, tLIST *a_succ, tSEQ *a_seq)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
@@ -181,12 +181,12 @@ ydlst_seq__hook         (tDLST_LIST *a_pred, tDLST_LIST *a_succ, tDLST_SEQ *a_se
 }
 
 char
-ydlst_seq__unhook       (tDLST_SEQ *a_seq)
+ydlst_seq__unhook       (tSEQ *a_seq)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
-   tDLST_LIST *x_pred      = NULL;
-   tDLST_LIST *x_succ      = NULL;
+   tLIST      *x_pred      = NULL;
+   tLIST      *x_succ      = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defenses)-----------------------*/
@@ -233,12 +233,12 @@ ydlst_seq__unhook       (tDLST_SEQ *a_seq)
 }
 
 char
-ydlst_seq__alpha  (tDLST_LIST *a_list)
+ydlst_seq__alpha  (tLIST *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_SEQ  *u           = NULL;
+   tSEQ       *u           = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -268,12 +268,12 @@ ydlst_seq__alpha  (tDLST_LIST *a_list)
 }
 
 char
-ydlst_seq__omega  (tDLST_LIST *a_list)
+ydlst_seq__omega  (tLIST *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_SEQ  *u           = NULL;
+   tSEQ       *u           = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -303,12 +303,12 @@ ydlst_seq__omega  (tDLST_LIST *a_list)
 }
 
 char
-ydlst_seq__cycle  (int a_lvl, tDLST_LIST *a_curr, tDLST_LIST *a_look)
+ydlst_seq__cycle  (int a_lvl, tLIST *a_curr, tLIST *a_look)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_SEQ  *u           = NULL;
+   tSEQ       *u           = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    DEBUG_YDLST  yLOG_value   ("a_lvl"     , a_lvl);
@@ -358,9 +358,9 @@ yDLST_seq_after         (char *a_before)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_SEQ  *x_new       = NULL;
-   tDLST_LIST *x_list      = NULL;
-   tDLST_LIST *x_before    = NULL;
+   tSEQ       *x_new       = NULL;
+   tLIST      *x_list      = NULL;
+   tLIST      *x_before    = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -370,7 +370,7 @@ yDLST_seq_after         (char *a_before)
       return rce;
    }
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_getcurr  ();
+   x_list = ydlst_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_note    ("no list is selected");
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
@@ -380,11 +380,10 @@ yDLST_seq_after         (char *a_before)
    /*---(find list)----------------------*/
    if (strcmp (a_before, "SEQ_ALPHA") == 0)   x_before = s_alpha;
    else {
-      yDLST_list_find  (a_before);
-      x_before = ydlst_list_getcurr  ();
+      yDLST_list_by_name (a_before, &x_before, NULL);
       DEBUG_YDLST  yLOG_point   ("x_before"  , x_before);
       --rce;  if (x_before == NULL) {
-         ydlst_list_setcurr  (x_list);
+         yDLST_list_by_ptr  (x_list);
          DEBUG_YDLST   yLOG_note    ("could not find before list");
          DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -392,7 +391,7 @@ yDLST_seq_after         (char *a_before)
       rc = ydlst_seq__cycle  (0, x_list, x_before);
       DEBUG_YDLST  yLOG_value   ("cycle"     , rc);
       --rce;  if (rc > 0) {
-         ydlst_list_setcurr  (x_list);
+         yDLST_list_by_ptr  (x_list);
          DEBUG_YDLST   yLOG_note    ("found a cycle");
          DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -426,7 +425,7 @@ yDLST_seq_after         (char *a_before)
       rc = ydlst_seq__omega  (x_before);
    }
    /*---(make current)-------------------*/
-   ydlst_list_setcurr  (x_list);
+   yDLST_list_by_ptr  (x_list);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -438,9 +437,9 @@ ydlst_seq_before        (char *a_after)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_SEQ  *x_new       = NULL;
-   tDLST_LIST *x_list      = NULL;
-   tDLST_LIST *x_after     = NULL;
+   tSEQ       *x_new       = NULL;
+   tLIST      *x_list      = NULL;
+   tLIST      *x_after     = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -450,7 +449,7 @@ ydlst_seq_before        (char *a_after)
       return rce;
    }
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_getcurr  ();
+   x_list = ydlst_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_note    ("no list is selected");
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
@@ -460,11 +459,10 @@ ydlst_seq_before        (char *a_after)
    /*---(find list)----------------------*/
    if (strcmp (a_after , "SEQ_OMEGA") == 0)   x_after  = s_omega;
    else {
-      yDLST_list_find  (a_after);
-      x_after = ydlst_list_getcurr  ();
+      yDLST_list_by_name (a_after, &x_after, NULL);
       DEBUG_YDLST  yLOG_point   ("x_after"   , x_after);
       --rce;  if (x_after == NULL) {
-         ydlst_list_setcurr  (x_list);
+         yDLST_list_by_ptr  (x_list);
          DEBUG_YDLST   yLOG_note    ("could not find before list");
          DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -490,7 +488,7 @@ ydlst_seq_before        (char *a_after)
    /*---(alpha and omega)----------------*/
    if (strcmp (a_after , "SEQ_OMEGA") != 0)  rc = ydlst_seq__omega  (x_list);
    /*---(make current)-------------------*/
-   ydlst_list_setcurr  (x_list);
+   yDLST_list_by_ptr  (x_list);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -503,7 +501,7 @@ yDLST_seq_entry         (int a_pos, void **a_after)
    char        rce         =  -10;
    char        rc          =    0;
    int         c           =    0;
-   tDLST_SEQ  *x_seq       = NULL;
+   tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    DEBUG_YDLST  yLOG_sint    (a_pos);
@@ -542,11 +540,11 @@ yDLST_pred_count     (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_LIST *x_list      = NULL;
+   tLIST      *x_list      = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_getcurr  ();
+   x_list = ydlst_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_snote   ("no list is selected");
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -565,12 +563,12 @@ yDLST_pred_seek         (char a_pos)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_LIST *x_list      = NULL;
-   tDLST_SEQ  *x_seq       = NULL;
+   tLIST      *x_list      = NULL;
+   tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_getcurr  ();
+   x_list = ydlst_list_current ();
    DEBUG_YDLST  yLOG_spoint  (x_list);
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -624,11 +622,11 @@ yDLST_succ_count     (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_LIST *x_list      = NULL;
+   tLIST      *x_list      = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_getcurr  ();
+   x_list = ydlst_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_snote   ("no list is selected");
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -647,12 +645,12 @@ yDLST_succ_seek         (char a_pos)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tDLST_LIST *x_list      = NULL;
-   tDLST_SEQ  *x_seq       = NULL;
+   tLIST      *x_list      = NULL;
+   tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_getcurr  ();
+   x_list = ydlst_list_current ();
    DEBUG_YDLST  yLOG_spoint  (x_list);
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -716,9 +714,9 @@ ydlst_seq_init          (void)
    s_head    = NULL;
    s_tail    = NULL;
    s_count   =    0;
-   s_alpha   = ydlst_list_new (YDLST_FLOATER);
+   ydlst_list_float (&s_alpha);
    s_alpha->title = strdup ("SEQ_ALPHA");
-   s_omega   = ydlst_list_new (YDLST_FLOATER);
+   ydlst_list_float (&s_omega);
    s_omega->title = strdup ("SEQ_OMEGA");
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
@@ -734,10 +732,8 @@ ydlst_seq_wrap          (void)
    s_head    = NULL;
    s_tail    = NULL;
    s_count   =    0;
-   free (s_alpha->title);
-   ydlst_list_del (s_alpha, YDLST_FLOATER);
-   free (s_omega->title);
-   ydlst_list_del (s_omega, YDLST_FLOATER);
+   ydlst_list_free (&s_alpha);
+   ydlst_list_free (&s_omega);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -756,7 +752,7 @@ ydlst_seq__unit         (char *a_question, int a_num)
    /*---(locals)-----------+-----+-----+-*/
    int         x_fore      =    0;
    int         x_back      =    0;
-   tDLST_SEQ  *u           = NULL;
+   tSEQ       *u           = NULL;
    int         c           =    0;
    char        s           [LEN_RECD]  = "[]";
    char        t           [LEN_RECD]  = "[]";
