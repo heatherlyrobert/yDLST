@@ -138,7 +138,6 @@ ydlst_line__free        (tLINE **a_old)
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
    int         rc          =    0;
-   int         x_tries     =    0;
    tLINE      *x_old       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);

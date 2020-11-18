@@ -150,7 +150,6 @@ ydlst_list_free         (tLIST **a_old)
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
    int         rc          =    0;
-   int         x_tries     =    0;
    tLIST      *x_old       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
@@ -400,7 +399,7 @@ yDLST_list_by_name      (char *a_title, void **a_curr, void **a_data)
 }
 
 char
-yDLST_list_by_ptr       (tLIST *a_curr)
+yDLST_list_by_ptr       (void *a_curr)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rce         =  -10;
@@ -431,7 +430,7 @@ yDLST_list_by_ptr       (tLIST *a_curr)
       return rce;
    }
    /*---(save)---------------------------*/
-   s_curr = a_curr;
+   s_curr = (tLIST *) a_curr;
    /*---(update line)--------------------*/
    ydlst_list__line ();
    /*---(complete)-----------------------*/
@@ -496,7 +495,7 @@ yDLST_list_create       (char *a_title, void *a_data)
    DEBUG_YDLST  yLOG_point   ("s_curr"    , s_curr);
    /*---(sequence)-----------------------*/
    yDLST_seq_after  ("SEQ_ALPHA");
-   ydlst_seq_before ("SEQ_OMEGA");
+   yDLST_seq_before ("SEQ_OMEGA");
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;

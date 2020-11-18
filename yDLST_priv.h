@@ -38,8 +38,8 @@
 
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8a"
-#define     P_VERTXT    "updated all but sequencing to improved standards and unit testing"
+#define     P_VERNUM    "0.8b"
+#define     P_VERTXT    "finished sequencing update and unit testing.  looks nice."
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -135,8 +135,8 @@ struct  cLINE {
 
 struct   cSEQ {
    /*---(seq)------------------*/
-   tSEQ       *prev;
-   tSEQ       *next;
+   tSEQ       *m_prev;
+   tSEQ       *m_next;
    /*---(predecessor)----------*/
    tLIST      *pred;
    tSEQ       *p_prev;
@@ -160,9 +160,6 @@ char        ydlst_list_new          (tLIST **a_new);
 char        ydlst_list_float        (tLIST **a_new);
 char        ydlst_list_free         (tLIST **a_old);
 /*---(search)---------------*/
-char        yDLST_list_by_cursor    (char a_move, void **a_curr, void **a_data);
-char        yDLST_list_by_name      (char *a_title, void **a_curr, void **a_data);
-char        yDLST_list_by_ptr       (tLIST *a_curr);
 tLIST*      ydlst_list_current      (void);
 char        ydlst_list_force        (tLIST *a_list);
 /*---(unittest)-------------*/
@@ -201,7 +198,27 @@ char        ydlst__test_end      (void);
 char*       ydlst_focus__unit       (char *a_question, int a_num);
 char*       ydlst_active__unit      (char *a_question, int a_num);
 
-char        yDLST_seq_before        (char *a_after);
+
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(cleanse)--------------*/
+char        ydlst_seq__wipe         (tSEQ *a_seq);
+char*       ydlst_seq__memory       (tSEQ *a_seq);
+/*---(memory)---------------*/
+char        ydlst_seq__new          (tSEQ **a_new);
+char        ydlst_seq__free         (tSEQ **a_new);
+/*---(hooking)--------------*/
+char        ydlst_seq__confirm      (tLIST *a_pred, tLIST *a_succ, tSEQ **a_seq);
+char        ydlst_seq__hook         (tLIST *a_pred, tLIST *a_succ, tSEQ *a_seq);
+char        ydlst_seq__unhook       (tSEQ *a_seq);
+char        ydlst_seq__unhook_ends  (tLIST *a_pred, tLIST *a_succ);
+/*---(hooking)--------------*/
+char        ydlst_seq__alpha        (tLIST *a_list);
+char        ydlst_seq__omega        (tLIST *a_list);
+char        ydlst_seq__cycle        (int a_lvl, tLIST *a_curr, tLIST *a_look);
+/*---(hooking)--------------*/
+char        ydlst_seq__create       (tLIST *a_pred, tLIST *a_succ);
+
+char        ydlst_seq__purge        (void);
 char*       ydlst_seq__unit         (char *a_question, int a_num);
 
 char        ydlst_seq_init          (void);

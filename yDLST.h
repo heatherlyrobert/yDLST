@@ -92,9 +92,12 @@ char        yDLST_wrap              (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         yDLST_list_count        (void);
+char        yDLST_list_by_index     (int n, void **a_curr, void **a_data);
+char        yDLST_list_by_cursor    (char a_move, void **a_curr, void **a_data);
+char        yDLST_list_by_name      (char *a_title, void **a_curr, void **a_data);
+char        yDLST_list_by_ptr       (void *a_curr);
 char        yDLST_list_create       (char *a_title, void *a_data);
 char        yDLST_list_destroy      (char *a_title);
-char        yDLST_list_by_index     (int n, void **a_curr, void **a_data);
 char        ydlst_list_purge        (void);
 char        ydlst_list_init         (void);
 char        ydlst_list_wrap         (void);
@@ -104,7 +107,6 @@ int         yDLST_line_count        (char a_scope);
 char        yDLST_line_by_index     (char a_scope, int n, void **a_curr, void **a_data);
 char        yDLST_line_by_cursor    (char a_scope, char a_move, void **a_curr, void **a_data);
 char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_curr, void **a_data);
-
 void*       yDLST_line_list         (void);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
@@ -120,7 +122,6 @@ char        yDLST_focus_check       (char *a_title);
 char        yDLST_focus_by_cursor   (char a_move, void **a_curr, void **a_data);
 char        yDLST_focus_clearall    (void);
 char        yDLST_focus_list        (void);
-void*       yDLST_focus_seek        (char a_pos);
 char        ydlst_focus_init        (void);
 char        ydlst_focus_wrap        (void);
 
@@ -135,12 +136,11 @@ char        yDLST_active_clearall   (void);
 char        ydlst_active_wrap       (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+int         yDLST_seq_count         (char a_scope);
 char        yDLST_seq_after         (char *a_before);
-void*       yDLST_seq_entry         (int a_pos, void **a_after);
-void*       yDLST_pred_seek         (char a_pos);
-int         yDLST_pred_count        (void);
-void*       yDLST_succ_seek         (char a_pos);
-int         yDLST_succ_count        (void);
+char        yDLST_seq_before        (char *a_after);
+char        yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void **a_data);
+char        yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_seq, void **a_list, void **a_data);
 
 /*---(show current structure)-------------------*/
 /*> char        yDLST_showlist     (char  a_header, void *a_file);                    <*/
