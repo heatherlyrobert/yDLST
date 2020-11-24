@@ -513,7 +513,7 @@ yDLST_seq_count      (char a_scope)
       return s_count;
    }
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_current ();
+   x_list = yDLST_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_snote   ("no list is selected");
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -580,7 +580,7 @@ yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void 
    else if (strchr (">"  , a_scope) != NULL)  x_scope = '>';
    /*---(get list)-----------------------*/
    if (x_scope != '*') {
-      x_list = ydlst_list_current ();
+      x_list = yDLST_list_current ();
       DEBUG_YDLST  yLOG_spoint  (x_list);
       --rce;  if (x_list  == NULL) {
          DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -664,7 +664,7 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_seq, void **a_list,
    else if (strchr (">"  , a_scope) != NULL)  x_scope = '>';
    /*---(get list)-----------------------*/
    if (x_scope != '*') {
-      x_list = ydlst_list_current ();
+      x_list = yDLST_list_current ();
       DEBUG_YDLST  yLOG_spoint  (x_list);
       --rce;  if (x_list  == NULL) {
          DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
@@ -895,7 +895,7 @@ yDLST_seq_after         (char *a_before)
       return rce;
    }
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_current ();
+   x_list = yDLST_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_note    ("no list is selected");
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
@@ -967,7 +967,7 @@ yDLST_seq_before        (char *a_after)
       return rce;
    }
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_current ();
+   x_list = yDLST_list_current ();
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_note    ("no list is selected");
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
@@ -1089,6 +1089,16 @@ ydlst_seq_wrap          (void)
 
 
 /*====================------------------------------------====================*/
+/*===----                      pushing and popping                     ----===*/
+/*====================------------------------------------====================*/
+static void  o___PUSHPOP_________o () { return; }
+
+tSEQ*  ydlst_seq_current    (void)          { return s_curr; }
+char   ydlst_seq_restore    (tSEQ  *x_seq)  { s_curr = x_seq;   return 0; }
+
+
+
+/*====================------------------------------------====================*/
 /*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNITTEST________o () { return; }
@@ -1110,6 +1120,19 @@ ydlst_seq__unit         (char *a_question, int a_num)
       o = s_head; while (o != NULL) { ++x_fore; o = o->m_next; }
       o = s_tail; while (o != NULL) { ++x_back; o = o->m_prev; }
       snprintf (unit_answer, LEN_RECD, "SEQ count        : %3dc  %3df  %3db", s_count, x_fore, x_back);
+      return unit_answer;
+   }
+   else if (strcmp (a_question, "current")     == 0) {
+      o = s_curr;
+      if (o != NULL) {
+         if (o->pred != NULL)  sprintf  (s, "[%.20s]", o->pred->title);
+         else                  sprintf  (s, "[?]");
+         if (o->succ != NULL)  sprintf  (t, "[%s]"   , o->succ->title);
+         else                  sprintf  (t, "[?]");
+         snprintf (unit_answer, LEN_RECD, "SEQ current      : %-22.22s -> %s", s, t);
+      } else {
+         snprintf (unit_answer, LEN_RECD, "SEQ current      : []                     -> []");
+      }
       return unit_answer;
    }
    /*---(complex)------------------------*/

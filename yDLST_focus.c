@@ -117,7 +117,7 @@ yDLST_focus_on          (void)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(get current line)---------------*/
-   x_line = ydlst_line_current ();
+   x_line = yDLST_line_current ();
    DEBUG_YDLST  yLOG_point   ("x_line"    , x_line);
    --rce;  if (x_line  == NULL) {
       DEBUG_YDLST   yLOG_note    ("no line is selected");
@@ -146,7 +146,7 @@ yDLST_focus_off         (void)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(get current line)---------------*/
-   x_line = ydlst_line_current ();
+   x_line = yDLST_line_current ();
    DEBUG_YDLST  yLOG_point   ("x_line"    , x_line);
    --rce;  if (x_line  == NULL) {
       DEBUG_YDLST   yLOG_note    ("no line is selected");
@@ -264,6 +264,9 @@ yDLST_focus_by_cursor   (char a_move, void **a_curr, void **a_data)
    if (a_curr != NULL)  *a_curr = s_curr;
    if (a_data != NULL)  *a_data = s_curr->data;
    DEBUG_YDLST  yLOG_snote   (s_curr->title);
+   /*---(update list/line)---------------*/
+   yDLST_list_restore (s_curr->parent);
+   yDLST_line_restore (s_curr);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    /*---(update list)--------------------*/
@@ -282,7 +285,7 @@ yDLST_focus_list        (void)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(get list)-----------------------*/
-   x_list = ydlst_list_current ();
+   x_list = yDLST_list_current ();
    DEBUG_YDLST  yLOG_point   ("x_list"    , x_list);
    --rce;  if (x_list  == NULL) {
       DEBUG_YDLST   yLOG_snote   ("no list is selected");
@@ -363,6 +366,16 @@ ydlst_focus_wrap        (void)
 
 
 /*====================------------------------------------====================*/
+/*===----                      pushing and popping                     ----===*/
+/*====================------------------------------------====================*/
+static void  o___PUSHPOP_________o () { return; }
+
+tLINE* ydlst_focus_current  (void)          { return s_curr; }
+char   ydlst_focus_restore  (tLINE *x_line) { s_curr = x_line;  return 0; }
+
+
+
+/*====================------------------------------------====================*/
 /*===----                         unit testing                         ----===*/
 /*====================------------------------------------====================*/
 static void  o___UNITTEST________o () { return; }
@@ -384,6 +397,17 @@ ydlst_focus__unit       (char *a_question, int a_num)
       o = s_head; while (o != NULL) { ++x_fore; o = o->f_next; }
       o = s_tail; while (o != NULL) { ++x_back; o = o->f_prev; }
       snprintf (unit_answer, LEN_RECD, "FOCUS count      : %3dc  %3df  %3db", s_count, x_fore, x_back);
+      return unit_answer;
+   }
+   else if (strcmp (a_question, "current")     == 0) {
+      o = s_curr;
+      if (o != NULL) {
+         x_len = strlen (o->title);
+         sprintf  (t, "[%.20s]", o->title);
+         snprintf (unit_answer, LEN_RECD, "FOCUS current    : %2d%-22.22s   %c  %c  %c", x_len, t, (o->parent == NULL) ? '-' : 'y', o->focus, o->active);
+      } else {
+         snprintf (unit_answer, LEN_RECD, "FOCUS current    :  0[]                       -  -  -");
+      }
       return unit_answer;
    }
    o = s_head;

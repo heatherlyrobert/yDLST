@@ -13,13 +13,13 @@
 
 #define     P_FOCUS     "PS (programming support)"
 #define     P_NICHE     "ds (data structures)"
-#define     P_SUBJECT   "double-double linked list"
+#define     P_SUBJECT   "sequenced double-double list"
 #define     P_PURPOSE   "clean, resiliant, reusable quad/doubly linked list w/deps"
 
 #define     P_NAMESAKE  "kratos-daimon (strength)"
 #define     P_HERITAGE  "kratos personified strength and sibling to force, zeal, and victory"
 #define     P_IMAGERY   "angel-like winged being wearing a battle helm and sheild"
-#define     P_REASON    ""
+#define     P_REASON    "strength represents the rock-solid requirements for process launching"
 
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
 
@@ -38,8 +38,8 @@
 
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8b"
-#define     P_VERTXT    "finished sequencing update and unit testing.  looks nice."
+#define     P_VERNUM    "0.8c"
+#define     P_VERTXT    "changes to support push/pop of current values, and eos support"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -159,9 +159,9 @@ char*       ydlst_list__memory      (tLIST *a_list);
 char        ydlst_list_new          (tLIST **a_new);
 char        ydlst_list_float        (tLIST **a_new);
 char        ydlst_list_free         (tLIST **a_old);
-/*---(search)---------------*/
-tLIST*      ydlst_list_current      (void);
-char        ydlst_list_force        (tLIST *a_list);
+/*---(pushpop)--------------*/
+tLIST*      yDLST_list_current      (void);
+char        yDLST_list_restore      (tLIST *a_list);
 /*---(unittest)-------------*/
 char*       ydlst_list__unit        (char *a_question, int a_num);
 /*---(done)-----------------*/
@@ -180,10 +180,11 @@ char        ydlst_line__hook        (tLIST *a_list, tLINE *a_line);
 char        ydlst_line__unhook      (tLINE *a_line);
 /*---(search)---------------*/
 char        ydlst_line_by_ptr       (tLINE *a_curr);
-tLINE*      ydlst_line_current      (void);
-char        ydlst_line_force        (tLINE *x_line);
 /*---(program)--------------*/
 char        ydlst_line_purge        (tLIST *a_list);
+/*---(pushpop)--------------*/
+tLINE*      yDLST_line_current      (void);
+char        yDLST_line_restore      (tLINE *a_line);
 /*---(unittest)-------------*/
 char*       ydlst_line__unit        (char *a_question, int a_num);
 /*---(done)-----------------*/
@@ -217,13 +218,25 @@ char        ydlst_seq__omega        (tLIST *a_list);
 char        ydlst_seq__cycle        (int a_lvl, tLIST *a_curr, tLIST *a_look);
 /*---(hooking)--------------*/
 char        ydlst_seq__create       (tLIST *a_pred, tLIST *a_succ);
-
 char        ydlst_seq__purge        (void);
+/*---(pushpop)--------------*/
+tSEQ*       ydlst_seq_current       (void);
+char        ydlst_seq_restore       (tSEQ *a_seq);
+/*---(unittest)-------------*/
 char*       ydlst_seq__unit         (char *a_question, int a_num);
 
 char        ydlst_seq_init          (void);
 char        ydlst_seq_wrap          (void);
 
+
+/*---(pushpop)--------------*/
+tLINE*      ydlst_active_current    (void);
+char        ydlst_active_restore    (tLINE *a_line);
+
+
+/*---(pushpop)--------------*/
+tLINE*      ydlst_focus_current     (void);
+char        ydlst_focus_restore     (tLINE *a_line);
 
 
 #endif

@@ -41,9 +41,9 @@ yDLST_version      (void)
 
 
 /*====================------------------------------------====================*/
-/*===----                   dlst setup and teardown                    ----===*/
+/*===----                     program level                            ----===*/
 /*====================------------------------------------====================*/
-PRIV void  o___DLST____________o () { return; }
+PRIV void  o___PROGRAM_________o () { return; }
 
 char       /*----: prepare the list library for use --------------------------*/
 yDLST_init         (void)
@@ -66,7 +66,9 @@ yDLST_init         (void)
 char         /*----: make sure all memory is freed at the end ----------------*/
 yDLST_purge        (void)
 {
-   ydlst_list_purge ();
+   ydlst_seq__purge ();
+   ydlst_list_wrap  ();
+   ydlst_line_wrap  ();
    return 0;
 }
 
@@ -88,6 +90,48 @@ yDLST_wrap         (void)
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+static tLIST*   s_list   = NULL;
+static tLINE*   s_line   = NULL;
+static tLINE*   s_active = NULL;
+static tLINE*   s_focus  = NULL;
+static tSEQ*    s_seq    = NULL;
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      pushing and popping                     ----===*/
+/*====================------------------------------------====================*/
+static void  o___PUSHPOP_________o () { return; }
+
+char
+yDLST_backup            (void)
+{
+   s_list   = yDLST_list_current ();
+   s_line   = yDLST_line_current ();
+   s_active = ydlst_active_current ();
+   s_focus  = ydlst_focus_current ();
+   s_seq    = ydlst_seq_current ();
+   return 0;
+}
+
+char
+yDLST_restore           (void)
+{
+   yDLST_list_restore   (s_list);
+   yDLST_line_restore   (s_line);
+   ydlst_active_restore (s_active);
+   ydlst_focus_restore  (s_focus);
+   ydlst_seq_restore    (s_seq);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___UNITTEST________o () { return; }
 
 
 char       /*----: set up program urgents/debugging --------------------------*/
