@@ -73,12 +73,8 @@
 #ifndef YDLST_hguard
 #define YDLST_hguard loaded
 
-#define     YDLST_HEAD   '['
-#define     YDLST_PREV   '<'
-#define     YDLST_CURR   '-'
-#define     YDLST_NEXT   '>'
-#define     YDLST_TAIL   ']'
 
+#include   "yDLST_solo.h"
 
 
 

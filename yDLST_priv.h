@@ -38,8 +38,8 @@
 
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8c"
-#define     P_VERTXT    "changes to support push/pop of current values, and eos support"
+#define     P_VERNUM    "0.8d"
+#define     P_VERTXT    "convert all cursoring to handle bounce and non-bounce, unit tested"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -85,6 +85,9 @@ extern char      unit_answer [LEN_RECD];
 
 #define   YDLST_LINKED    'y'
 #define   YDLST_FLOATER   '-'
+
+#define   YDLST_ON        'y'
+#define   YDLST_OFF       '-'
 
 
 struct  cLIST {

@@ -634,126 +634,145 @@ yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void 
 }
 
 char
-yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_seq, void **a_list, void **a_data)
+yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_curr, void **a_list, void **a_data)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
    char        x_scope     =  '-';
    tLIST      *x_list      = NULL;
+   tSEQ       *x_curr      = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defaults)-----------------------*/
-   if (a_seq  != NULL)  *a_seq  = NULL;
+   if (a_curr != NULL)  *a_curr = NULL;
    if (a_list != NULL)  *a_list = NULL;
    if (a_data != NULL)  *a_data = NULL;
-   /*---(defense)------------------------*/
-   DEBUG_YDLST  yLOG_spoint  (s_head);
-   --rce;  if (s_head == NULL) {
-      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
+   x_curr = s_curr;
    /*---(check scope)--------------------*/
    DEBUG_YDLST  yLOG_schar   (a_scope);
    --rce;  if (a_scope == 0) {
       DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   if      (strchr ("*[]", a_scope) != NULL)  x_scope = '*';
-   else if (strchr ("<"  , a_scope) != NULL)  x_scope = '<';
-   else if (strchr (">"  , a_scope) != NULL)  x_scope = '>';
+   --rce; if (strchr (YDLST_GLOBALS, a_scope) != NULL)  x_scope = YDLST_GLOBAL;
+   else if   (a_scope == YDLST_LPRED)                   x_scope = YDLST_LPRED;
+   else if   (a_scope == YDLST_LSUCC)                   x_scope = YDLST_LSUCC;
+   else {
+      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(get list)-----------------------*/
-   if (x_scope != '*') {
+   --rce;  if (x_scope != YDLST_GLOBAL) {
       x_list = yDLST_list_current ();
       DEBUG_YDLST  yLOG_spoint  (x_list);
-      --rce;  if (x_list  == NULL) {
+      if (x_list  == NULL) {
          DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
-         return NULL;
+         return rce;
       }
       DEBUG_YDLST  yLOG_snote   (x_list->title);
    }
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_spoint  (x_curr);
+   --rce;  if (x_curr == NULL) {
+      /*---(non-bounce)------------------*/
+      if (strchr (YDLST_DREL, a_move) != NULL) {
+         s_curr = x_curr;
+         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(bounce types)----------------*/
+      switch (x_scope) {
+      case YDLST_GLOBAL :  x_curr = s_head;            break;
+      case YDLST_LPRED  :  x_curr = x_list->p_head;    break;
+      case YDLST_LSUCC  :  x_curr = x_list->s_head;    break;
+      }
+      DEBUG_DATA   yLOG_spoint  (x_curr);
+      if (x_curr == NULL) {
+         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         return rce;
+      }
+   }
    /*---(switch)-------------------------*/
-   DEBUG_YDLST  yLOG_schar   (a_move);
-   DEBUG_YDLST  yLOG_spoint  (s_curr);
    --rce;  switch (a_move) {
-   case '[' :
-      DEBUG_YDLST  yLOG_snote   ("head");
+   case YDLST_HEAD : case YDLST_DEAD :
       switch (x_scope) {
-      case '*' :  s_curr = s_head;            break;
-      case '<' :  s_curr = x_list->p_head;    break;
-      case '>' :  s_curr = x_list->s_head;    break;
+      case YDLST_GLOBAL :  x_curr = s_head;            break;
+      case YDLST_LPRED  :  x_curr = x_list->p_head;    break;
+      case YDLST_LSUCC  :  x_curr = x_list->s_head;    break;
       }
       break;
-   case '<' :
-      DEBUG_YDLST  yLOG_snote   ("prev");
-      if (s_curr != NULL) {
-         switch (x_scope) {
-         case '*' :  s_curr = s_curr->m_prev;    break;
-         case '<' :  s_curr = s_curr->p_prev;    break;
-         case '>' :  s_curr = s_curr->s_prev;    break;
-         }
-      }
-      break;
-   case '-' :
-      DEBUG_YDLST  yLOG_snote   ("curr");
-      break;
-   case '>' :
-      DEBUG_YDLST  yLOG_snote   ("next");
-      if (s_curr != NULL) {
-         switch (x_scope) {
-         case '*' :  s_curr = s_curr->m_next;    break;
-         case '<' :  s_curr = s_curr->p_next;    break;
-         case '>' :  s_curr = s_curr->s_next;    break;
-         }
-      }
-      break;
-   case ']' :
-      DEBUG_YDLST  yLOG_snote   ("tail");
+   case YDLST_PREV : case YDLST_DREV :
       switch (x_scope) {
-      case '*' :  s_curr = s_tail;            break;
-      case '<' :  s_curr = x_list->p_tail;    break;
-      case '>' :  s_curr = x_list->s_tail;    break;
+      case YDLST_GLOBAL :  x_curr = x_curr->m_prev;    break;
+      case YDLST_LPRED  :  x_curr = x_curr->p_prev;    break;
+      case YDLST_LSUCC  :  x_curr = x_curr->s_prev;    break;
+      }
+      break;
+   case YDLST_CURR : case YDLST_DURR :
+      x_curr = x_curr;
+      break;
+   case YDLST_NEXT : case YDLST_DEXT :
+      switch (x_scope) {
+      case YDLST_GLOBAL :  x_curr = x_curr->m_next;    break;
+      case YDLST_LPRED  :  x_curr = x_curr->p_next;    break;
+      case YDLST_LSUCC  :  x_curr = x_curr->s_next;    break;
+      }
+      break;
+   case YDLST_TAIL : case YDLST_DAIL :
+      switch (x_scope) {
+      case YDLST_GLOBAL :  x_curr = s_tail;            break;
+      case YDLST_LPRED  :  x_curr = x_list->p_tail;    break;
+      case YDLST_LSUCC  :  x_curr = x_list->s_tail;    break;
       }
       break;
    default         :
       DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YDLST  yLOG_spoint  (s_curr);
-   /*---(bounce off ends)----------------*/
-   --rce;  if (s_curr == NULL) {
-      if (a_move == '<') {
+   DEBUG_YDLST  yLOG_spoint  (x_curr);
+   /*---(check end)----------------------*/
+   --rce;  if (x_curr == NULL) {
+      /*---(bounce off ends)-------------*/
+      if (a_move == YDLST_PREV) {
          switch (x_scope) {
-         case '*' :  s_curr = s_head;            break;
-         case '<' :  s_curr = x_list->p_head;    break;
-         case '>' :  s_curr = x_list->s_head;    break;
+         case YDLST_GLOBAL :  x_curr = s_head;            break;
+         case YDLST_LPRED  :  x_curr = x_list->p_head;    break;
+         case YDLST_LSUCC  :  x_curr = x_list->s_head;    break;
          }
       }
-      else {
+      if (a_move == YDLST_NEXT) {
          switch (x_scope) {
-         case '*' :  s_curr = s_tail;            break;
-         case '<' :  s_curr = x_list->p_tail;    break;
-         case '>' :  s_curr = x_list->s_tail;    break;
+         case YDLST_GLOBAL :  x_curr = s_tail;            break;
+         case YDLST_LPRED  :  x_curr = x_list->p_tail;    break;
+         case YDLST_LSUCC  :  x_curr = x_list->s_tail;    break;
          }
       }
-      DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
+      /*---(no bounce)-------------------*/
+      if (x_curr == NULL) {
+         s_curr = x_curr;
+         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(mark trouble)----------------*/
+      DEBUG_DATA   yLOG_snote   ("BOUNCE");
+      rc = rce;
+      /*---(done)------------------------*/
    }
-   /*---(save)---------------------------*/
-   if (a_seq  != NULL)  *a_seq  = s_curr;
-   switch (a_scope) {
-   case '[' : case '<' : case '*' :
+   /*---(normal result)------------------*/
+   s_curr = x_curr;
+   /*---(save back)----------------------*/
+   if (a_curr  != NULL)  *a_curr  = s_curr;
+   if (strchr (YDLST_PREDS, a_scope) != NULL) {
       if (a_list != NULL)  *a_list = s_curr->pred;
       if (a_data != NULL)  *a_data = s_curr->pred->data;
-      break;
-   case ']' : case '>' :
+   } else {
       if (a_list != NULL)  *a_list = s_curr->succ;
       if (a_data != NULL)  *a_data = s_curr->succ->data;
-      break;
    }
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
-   return 0;
+   return rc;
 }
 
 
