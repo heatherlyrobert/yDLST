@@ -246,19 +246,19 @@ yDLST_focus_by_cursor   (char a_move, void **a_curr, void **a_data)
    }
    /*---(switch)-------------------------*/
    --rce;  switch (a_move) {
-   case YDLST_HEAD : case YDLST_DEAD :
+   case YDLST_HEAD : case YDLST_DHEAD :
       x_curr = s_head;
       break;
-   case YDLST_PREV : case YDLST_DREV :
+   case YDLST_PREV : case YDLST_DPREV :
       x_curr = x_curr->f_prev;
       break;
-   case YDLST_CURR : case YDLST_DURR :
+   case YDLST_CURR : case YDLST_DCURR :
       x_curr = x_curr;
       break;
-   case YDLST_NEXT : case YDLST_DEXT :
+   case YDLST_NEXT : case YDLST_DNEXT :
       x_curr = x_curr->f_next;
       break;
-   case YDLST_TAIL : case YDLST_DAIL :
+   case YDLST_TAIL : case YDLST_DTAIL :
       x_curr = s_tail;
       break;
    default         :

@@ -75,15 +75,15 @@ ydlst_seq__new          (tSEQ **a_new)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(check return)-------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_new);
+   DEBUG_YDLST   yLOG_spoint  (a_new);
    --rce;  if (a_new == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_INPT   yLOG_spoint  (*a_new);
+   DEBUG_YDLST   yLOG_spoint  (*a_new);
    --rce;  if (*a_new != NULL) {
-      DEBUG_INPT   yLOG_snote   ("already set");
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("already set");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(default)------------------------*/
@@ -94,10 +94,10 @@ ydlst_seq__new          (tSEQ **a_new)
       x_new = (tSEQ *) malloc (sizeof (tSEQ));
       if (x_tries > 3)   break;
    }
-   DEBUG_INPT   yLOG_sint    (x_tries);
-   DEBUG_INPT   yLOG_spoint  (x_new);
+   DEBUG_YDLST   yLOG_sint    (x_tries);
+   DEBUG_YDLST   yLOG_spoint  (x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(wipe)---------------------------*/
@@ -133,15 +133,15 @@ ydlst_seq__free         (tSEQ **a_old)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(check return)-------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_old);
+   DEBUG_YDLST   yLOG_spoint  (a_old);
    --rce;  if (a_old == NULL) {
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_INPT   yLOG_spoint  (*a_old);
+   DEBUG_YDLST   yLOG_spoint  (*a_old);
    --rce;  if (*a_old == NULL) {
-      DEBUG_INPT   yLOG_snote   ("never set");
-      DEBUG_INPT   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("never set");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(simplify)-----------------------*/
@@ -695,31 +695,31 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_curr, void **a_list
    }
    /*---(switch)-------------------------*/
    --rce;  switch (a_move) {
-   case YDLST_HEAD : case YDLST_DEAD :
+   case YDLST_HEAD : case YDLST_DHEAD :
       switch (x_scope) {
       case YDLST_GLOBAL :  x_curr = s_head;            break;
       case YDLST_LPRED  :  x_curr = x_list->p_head;    break;
       case YDLST_LSUCC  :  x_curr = x_list->s_head;    break;
       }
       break;
-   case YDLST_PREV : case YDLST_DREV :
+   case YDLST_PREV : case YDLST_DPREV :
       switch (x_scope) {
       case YDLST_GLOBAL :  x_curr = x_curr->m_prev;    break;
       case YDLST_LPRED  :  x_curr = x_curr->p_prev;    break;
       case YDLST_LSUCC  :  x_curr = x_curr->s_prev;    break;
       }
       break;
-   case YDLST_CURR : case YDLST_DURR :
+   case YDLST_CURR : case YDLST_DCURR :
       x_curr = x_curr;
       break;
-   case YDLST_NEXT : case YDLST_DEXT :
+   case YDLST_NEXT : case YDLST_DNEXT :
       switch (x_scope) {
       case YDLST_GLOBAL :  x_curr = x_curr->m_next;    break;
       case YDLST_LPRED  :  x_curr = x_curr->p_next;    break;
       case YDLST_LSUCC  :  x_curr = x_curr->s_next;    break;
       }
       break;
-   case YDLST_TAIL : case YDLST_DAIL :
+   case YDLST_TAIL : case YDLST_DTAIL :
       switch (x_scope) {
       case YDLST_GLOBAL :  x_curr = s_tail;            break;
       case YDLST_LPRED  :  x_curr = x_list->p_tail;    break;

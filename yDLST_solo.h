@@ -57,11 +57,15 @@
  */
 
 #define     YDLST_HEAD     '['
+#define     YDLST_TOPP     '('
 #define     YDLST_PREV     '<'
-#define     YDLST_CURR     '-'
+#define     YDLST_CURR     '.'
 #define     YDLST_NEXT     '>'
+#define     YDLST_BOTT     ')'
 #define     YDLST_TAIL     ']'
-#define     YDLST_BOUNCES  "[<->]"
+#define     YDLST_LUSED    ','
+#define     YDLST_REL      "<.,>"
+#define     YDLST_BOUNCES  "[(<.,>)]"
 
 
 
@@ -79,12 +83,15 @@
  * 
  */
 
-#define     YDLST_DEAD     'º'
-#define     YDLST_DREV     'Ö'
-#define     YDLST_DURR     '´'
-#define     YDLST_DEXT     'Õ'
-#define     YDLST_DAIL     '»'
-#define     YDLST_DREL     "Ö´Õ"
-#define     YDLST_DANGERS  "ºÖ´Õ»"
+#define     YDLST_DHEAD    'º'
+#define     YDLST_DTOPP    '¸'
+#define     YDLST_DPREV    '×'
+#define     YDLST_DCURR    '´'
+#define     YDLST_DNEXT    'Ö'
+#define     YDLST_DBOTT    '¹'
+#define     YDLST_DTAIL    '»'
+#define     YDLST_DLUSED   ';'
+#define     YDLST_DREL     "×´;Ö"
+#define     YDLST_DANGERS  "º¸×´;Ö¹»"
 
 

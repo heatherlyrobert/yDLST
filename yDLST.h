@@ -108,6 +108,7 @@ char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line,
 char        yDLST_line_list         (void **a_list, void **a_data);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
+char        yDLST_line_remove       (char *a_title);
 char        yDLST_line_clearlist    (void);
 char        ydlst_line_init         (void);
 char        ydlst_line_wrap         (void);

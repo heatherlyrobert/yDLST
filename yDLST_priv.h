@@ -7,9 +7,9 @@
 
 
 /*===[[ BEG_HEADER ]]=========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
 
 /*===[[ ONE_LINERS ]]=========================================================*/
+/*-------   --12345678  "123456789-123456789-123456789-123456789-123456789-123456789-123456789-"  */
 
 #define     P_FOCUS     "PS (programming support)"
 #define     P_NICHE     "ds (data structures)"
@@ -17,7 +17,9 @@
 #define     P_PURPOSE   "clean, resiliant, reusable quad/doubly linked list w/deps"
 
 #define     P_NAMESAKE  "kratos-daimon (strength)"
+#define     P_PRONOUNCE "krah·tohs day·muhn"
 #define     P_HERITAGE  "kratos personified strength and sibling to force, zeal, and victory"
+#define     P_BRIEFLY   "durable strength and backbone"
 #define     P_IMAGERY   "angel-like winged being wearing a battle helm and sheild"
 #define     P_REASON    "strength represents the rock-solid requirements for process launching"
 
@@ -30,6 +32,7 @@
 
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_COMPILER  "gcc 5.3.0"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
 #define     P_DEPENDS   "none"
 
@@ -38,8 +41,8 @@
 
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8d"
-#define     P_VERTXT    "convert all cursoring to handle bounce and non-bounce, unit tested"
+#define     P_VERNUM    "0.8f"
+#define     P_VERTXT    "crazy reacton to gcc upgrade into 8x, some fixes, not all"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -177,7 +180,7 @@ char        ydlst_line__wipe        (tLINE *a_line);
 char*       ydlst_line__memory      (tLINE *a_line);
 /*---(memory)---------------*/
 char        ydlst_line__new         (tLINE **a_new);
-char        ydlst_line__free        (tLINE **a_new);
+char        ydlst_line__free        (tLINE **a_new, char a_freedata);
 /*---(hooking)--------------*/
 char        ydlst_line__hook        (tLIST *a_list, tLINE *a_line);
 char        ydlst_line__unhook      (tLINE *a_line);
