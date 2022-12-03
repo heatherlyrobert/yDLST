@@ -223,7 +223,6 @@ ydlst_list__line        (void)
       DEBUG_YDLST  yLOG_snote   (x_line->title);
    }
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

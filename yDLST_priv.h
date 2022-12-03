@@ -41,8 +41,8 @@
 
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8f"
-#define     P_VERTXT    "crazy reacton to gcc upgrade into 8x, some fixes, not all"
+#define     P_VERNUM    "0.8g"
+#define     P_VERTXT    "supporting eos units: one debugging change to help flow"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
