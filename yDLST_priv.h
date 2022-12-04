@@ -9,45 +9,46 @@
 /*===[[ BEG_HEADER ]]=========================================================*/
 
 /*===[[ ONE_LINERS ]]=========================================================*/
-/*-------   --12345678  "123456789-123456789-123456789-123456789-123456789-123456789-123456789-"  */
-
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*········· ··········· ´·····························´········································*/
 #define     P_FOCUS     "PS (programming support)"
 #define     P_NICHE     "ds (data structures)"
 #define     P_SUBJECT   "sequenced double-double list"
 #define     P_PURPOSE   "clean, resiliant, reusable quad/doubly linked list w/deps"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_NAMESAKE  "kratos-daimon (strength)"
 #define     P_PRONOUNCE "krah·tohs day·muhn"
 #define     P_HERITAGE  "kratos personified strength and sibling to force, zeal, and victory"
 #define     P_BRIEFLY   "durable strength and backbone"
 #define     P_IMAGERY   "angel-like winged being wearing a battle helm and sheild"
 #define     P_REASON    "strength represents the rock-solid requirements for process launching"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
-
-#define     P_BASENAME  ""
-#define     P_FULLPATH  ""
+/*········· ··········· ´·····························´········································*/
+#define     P_HOMEDIR   "/home/system/yDLST.doubly_linked_with_dependencies"
+#define     P_BASENAME  "libyDLST.so"
+#define     P_FULLPATH  "/usr/local/lib64/libyDLST.so"
 #define     P_SUFFIX    ""
 #define     P_CONTENT   ""
-
+/*········· ··········· ´·····························´········································*/
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
 #define     P_COMPILER  "gcc 5.3.0"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
 #define     P_DEPENDS   "none"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   "2011-05"
-
+/*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8g"
-#define     P_VERTXT    "supporting eos units: one debugging change to help flow"
-
+#define     P_VERNUM    "0.8h"
+#define     P_VERTXT    "added accessors for alpha/omega for eos reporting"
+/*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
 #define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
-
+/*········· ··········· ´·····························´········································*/
 /*===[[ END_HEADER ]]=========================================================*/
 
 

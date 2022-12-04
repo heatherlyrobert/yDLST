@@ -140,6 +140,8 @@ char        yDLST_seq_after         (char *a_before);
 char        yDLST_seq_before        (char *a_after);
 char        yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void **a_data);
 char        yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_seq, void **a_list, void **a_data);
+int         yDLST_alpha_count       (void);
+int         yDLST_omega_count       (void);
 
 /*---(show current structure)-------------------*/
 /*> char        yDLST_showlist     (char  a_header, void *a_file);                    <*/
