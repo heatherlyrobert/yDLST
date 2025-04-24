@@ -58,15 +58,18 @@
 
 #define     YDLST_HEAD     '['
 #define     YDLST_TOPP     '('
+#define     YDLST_BPREV    '{'
 #define     YDLST_PREV     '<'
 #define     YDLST_CURR     '.'
 #define     YDLST_NEXT     '>'
+#define     YDLST_BNEXT    '}'
 #define     YDLST_BOTT     ')'
 #define     YDLST_TAIL     ']'
 #define     YDLST_LUSED    ','
 #define     YDLST_REL      "<.,>"
 #define     YDLST_BOUNCES  "[(<.,>)]"
 
+#define     YDLST_RESET    '-'
 
 
 /*---(non-bounce types)--------*/
@@ -93,5 +96,11 @@
 #define     YDLST_DLUSED   ';'
 #define     YDLST_DREL     "×´;Ö"
 #define     YDLST_DANGERS  "º¸×´;Ö¹»"
+
+#define     YDLST_DRESET   '-'
+
+
+#define     YDLST_DEC      -67
+#define     YDLST_INC      -66
 
 

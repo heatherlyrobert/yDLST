@@ -1,0 +1,126 @@
+.TH yDLST_solo· 3 2011-May "linux" "heatherly custom tools manual"
+
+.SH NAME
+yDLST_solo \- clean, resiliant, reusable quad/doubly linked list w/deps
+
+.SH PATRON (see HERITAGE at bottom for more)
+kratos-daimon (strength) personification of durable strength and backbone
+
+.SH IMAGERY
+angel-like winged being wearing a battle helm and sheild
+
+.SH SUMMARY (see yLOG (7) for more information)
+yDLST is a specialty data structure that combines a quad/doubly linked
+list (full, list, focus, and active) with a dependency/requirement linking
+system to enable our more complex programs, e.g., khronos, eos, etc.
+
+.SH SERIOUS FOREWARNING
+i am a crazy, selfish, dog-fooding c-programmer.  my code tends to be
+experimental and constantly evolving.  my point is NOT to be the best, it is
+to challenge myself, build from scratch, and allow fast problem solving.
+
+.SH DOCUMENTATION
+.nf
+yDLST (3)          interfacing with yDLST in general
+yDLST_solo (3)´´´´´using standard cursoring constants
+yDLST (7)          decision rationale, scope, and objectives
+
+.SH TABLE OF CONTENTS
+.nf  
+a) overview        quick summary
+b) normal          normal double link lists
+c) normal-main     normal, but limited to main body of list
+d) normal-plus     extra, for special occasions
+e) bounce          double link lists that can never be null
+f) scoping         search scoping
+
+.SH A) OVERVIEW
+yDLST_solo is simply a standard set of data cursoring constants to be used in
+all my applications so all the programs can benefit with standard expectations.
+
+.SH B) NORMAL
+in traditional, doubly-linked lists, you can cursor off-the-edge at the
+beginngin and ending.  i call this type no-bounce lists.  going past the
+end results in a null pointer.  its easy enough to catch and handles like
+programmers expect.
+
+.SS YDLST_HEAD
+returns the very first item in list
+
+.SS YDLST_NEXT
+returns the next item in list
+
+.SS YDLST_CURR
+returns the current item in list
+
+.SS YDLST_PREV
+returns the previous item in list
+
+.SS YDLST_TAIL
+returns the the very last item in list
+
+.SH C) NORMAL-MAIN
+some applications, especially graphical ones, have a main body of the list,
+plus some prefixed and suffixed items.  this is often the case in programs
+that use layers like GIS (geographic information systems).
+
+.SS YDLST_TOPP
+returns the first item in main list-only
+
+.SS YDLST_BNEXT
+returns the next item in main list-only
+
+.SS YDLST_BPREV
+returns the previous item in main list-only
+
+.SS YDLST_BOTT
+returns the last item in main list-only
+
+.SH D) NORMAL-PLUS
+unit-testing and keyboard-centric applications have a few common special needs
+that are flagged here.
+
+.SS YDLST_LAST
+returns the last items accessed (before current)
+
+.SS YDLST_RESET
+resets the list so the next yDLST_NEXT, gives the very first item
+
+.SH E) BOUNCE
+in interdependenti, doubly-linked lists, i found i needed to be very careful the
+top level lists ALWAYS had a valid pointer as many other functions dereferenced
+the current location.  i called these bounce lists where going past the end
+"bounced" and stayed at the end.
+
+all are the same as with normal, but the constant names are preceeded by a
+'D', therefore, YDLST_HEAD becomes YDLST_DHEAD.
+
+.SH F) SCOPING
+since scoping list searches is common, i have also defined some constants for
+that.  this is useful for data graphs and networks.
+
+.SS YDLST_GLOBAL
+sets scoping to all items
+
+.SS YDLST_GSUCC
+sets scoping to all successors
+
+.SS YDLST_GPRED
+sets scoping to all predessors
+
+.SS YDLST_LOCAL
+sets scoping to current list
+
+.SS YDLST_LSUCC
+sets scoping to local list successors
+
+.SS YDLST_LPRED
+sets scoping to local list predessors
+
+.SH BUGS
+yDLST is incredibly stable for me, but if anyone else used it it might explode
+and take the universe with it.
+
+.SH COLOPHON
+this page is part of a documentation package meant to make the use of the
+heatherly tools easier and faster

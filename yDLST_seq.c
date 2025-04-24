@@ -541,8 +541,8 @@ yDLST_seq_count      (char a_scope)
    return rce;
 }
 
-int yDLST_alpha_count    (void) { return s_alpha->s_count - 1; }
-int yDLST_omega_count    (void) { return s_omega->p_count - 1; }
+int yDLST_alpha_count    (void) { return s_alpha->s_count; }
+int yDLST_omega_count    (void) { return s_omega->p_count; }
 
 char       /*--> find a list using sequential pos ----------------------------*/
 yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void **a_data)

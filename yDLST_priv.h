@@ -40,10 +40,10 @@
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   "2011-05"
 /*········· ··········· ´·····························´········································*/
-#define     P_VERMAJOR  "0.--, pre-production"
-#define     P_VERMINOR  "0.8-, working out final issues"
-#define     P_VERNUM    "0.8i"
-#define     P_VERTXT    "fixed yURG_name to yURG_by_name update"
+#define     P_VERMAJOR  "1.--, production"
+#define     P_VERMINOR  "1.0-, normal upkeep and maintenance"
+#define     P_VERNUM    "1.0a"
+#define     P_VERTXT    "added yDLIST_solo documentation"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
