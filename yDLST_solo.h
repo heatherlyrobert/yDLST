@@ -35,6 +35,16 @@
 
 
 
+
+/*---(general)-----------------*/
+#define     YDLST_RESET    '-'
+#define     YDLST_COUNT    '#'
+
+#define     YDLST_DEC      -67
+#define     YDLST_INC      -66
+
+
+
 /*---(bounce types)------------*/
 /*
  *  if a list has at least one item, bounce cursoring will always return
@@ -54,6 +64,23 @@
  *  in interdependent situations (multiple levels of lists), this is the best
  *  to use on the master list.
  *
+ *
+ *  absolutes---------------------------------
+ *    HEAD     absolute first
+ *    TOPP     top of main section (assuming pre and suf elements)
+ *    BOTT     bottom of main section (assuming pre and suf elements)
+ *    TAIL     absolute last
+ *
+ *  items-------------------------------------
+ *    NEXT     can be implemented to skip spaceers or not
+ *    CURR     returns current position
+ *    PREV     can be implemented to skip spaceers or not
+ *    LUSED    returns last found (before current)
+ *
+ *  items-------------------------------------
+ *    BNEXT    custom, can be "sections", 5x NEXT, skip spaces, etc
+ *    BPREV    custom, can be "sections", 5x PREV, skip spaces, etc
+ *
  */
 
 #define     YDLST_HEAD     '['
@@ -68,8 +95,6 @@
 #define     YDLST_LUSED    ','
 #define     YDLST_REL      "<.,>"
 #define     YDLST_BOUNCES  "[(<.,>)]"
-
-#define     YDLST_RESET    '-'
 
 
 /*---(non-bounce types)--------*/
@@ -97,10 +122,5 @@
 #define     YDLST_DREL     "×´;Ö"
 #define     YDLST_DANGERS  "º¸×´;Ö¹»"
 
-#define     YDLST_DRESET   '-'
-
-
-#define     YDLST_DEC      -67
-#define     YDLST_INC      -66
 
 
