@@ -31,15 +31,15 @@ ydlst_focus__hook       (tLINE *a_line)
       return rce;
    }
    /*---(check for already on)-----------*/
-   DEBUG_YDLST  yLOG_schar   (a_line->focus);
-   --rce;  if (a_line->focus == YDLST_ON) {
+   DEBUG_YDLST  yLOG_schar   (a_line->n_focus);
+   --rce;  if (a_line->n_focus == YDLST_ON) {
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare links)------------------*/
    DEBUG_YDLST  yLOG_snote   ("clear");
-   a_line->f_next    = NULL;
-   a_line->f_prev    = NULL;
+   a_line->n_fprev    = NULL;
+   a_line->n_fnext    = NULL;
    /*---(hook it up)---------------------*/
    DEBUG_YDLST  yLOG_snote   ("hook it up");
    if (s_head == NULL) {
@@ -48,16 +48,16 @@ ydlst_focus__hook       (tLINE *a_line)
       s_tail         = a_line;
    } else {
       DEBUG_YDLST  yLOG_snote   ("appende");
-      a_line->f_prev = s_tail;
-      s_tail->f_next = a_line;
+      a_line->n_fprev = s_tail;
+      s_tail->n_fnext = a_line;
       s_tail         = a_line;
    }
    /*---(update count)-------------------*/
    ++s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(mark focused)-------------------*/
-   a_line->focus = YDLST_ON;
-   DEBUG_YDLST  yLOG_schar   (a_line->focus);
+   a_line->n_focus = YDLST_ON;
+   DEBUG_YDLST  yLOG_schar   (a_line->n_focus);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
@@ -77,23 +77,23 @@ ydlst_focus__unhook     (tLINE *a_line)
       return rce;
    }
    /*---(check for already off)----------*/
-   DEBUG_YDLST  yLOG_schar   (a_line->focus);
-   --rce;  if (a_line->focus == YDLST_OFF) {
+   DEBUG_YDLST  yLOG_schar   (a_line->n_focus);
+   --rce;  if (a_line->n_focus == YDLST_OFF) {
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(unhook)-------------------------*/
    DEBUG_YDLST  yLOG_snote   ("unhook");
-   if (a_line->f_next != NULL)  a_line->f_next->f_prev = a_line->f_prev;
-   else                         s_tail                 = a_line->f_prev;
-   if (a_line->f_prev != NULL)  a_line->f_prev->f_next = a_line->f_next;
-   else                         s_head                 = a_line->f_next;
+   if (a_line->n_fnext != NULL)  a_line->n_fnext->n_fprev = a_line->n_fprev;
+   else                         s_tail                 = a_line->n_fprev;
+   if (a_line->n_fprev != NULL)  a_line->n_fprev->n_fnext = a_line->n_fnext;
+   else                         s_head                 = a_line->n_fnext;
    /*---(update count)-------------------*/
    --s_count;
    DEBUG_YDLST  yLOG_sint    (s_count);
    /*---(mark unfocused)-----------------*/
-   a_line->focus = YDLST_OFF;
-   DEBUG_YDLST  yLOG_schar   (a_line->focus);
+   a_line->n_focus = YDLST_OFF;
+   DEBUG_YDLST  yLOG_schar   (a_line->n_focus);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
@@ -197,10 +197,10 @@ yDLST_focus_check       (char *a_title)
    /*---(move)---------------------------*/
    x_line = s_head;
    while (x_line != NULL) {
-      if (x_line->title != NULL) {
-         if (strcmp (x_line->title, a_title) == 0) break;
+      if (x_line->n_title != NULL) {
+         if (strcmp (x_line->n_title, a_title) == 0) break;
       }
-      x_line = x_line->f_next;
+      x_line = x_line->n_fnext;
    }
    /*---(trouble)------------------------*/
    DEBUG_YDLST  yLOG_spoint  (s_curr);
@@ -250,13 +250,13 @@ yDLST_focus_by_cursor   (char a_move, void **a_curr, void **a_data)
       x_curr = s_head;
       break;
    case YDLST_PREV : case YDLST_DPREV :
-      x_curr = x_curr->f_prev;
+      x_curr = x_curr->n_fprev;
       break;
    case YDLST_CURR : case YDLST_DCURR :
       x_curr = x_curr;
       break;
    case YDLST_NEXT : case YDLST_DNEXT :
-      x_curr = x_curr->f_next;
+      x_curr = x_curr->n_fnext;
       break;
    case YDLST_TAIL : case YDLST_DTAIL :
       x_curr = s_tail;
@@ -285,10 +285,10 @@ yDLST_focus_by_cursor   (char a_move, void **a_curr, void **a_data)
    /*---(normal result)------------------*/
    s_curr = x_curr;
    if (a_curr != NULL)  *a_curr = s_curr;
-   if (a_data != NULL)  *a_data = s_curr->data;
-   DEBUG_YDLST  yLOG_snote   (s_curr->title);
+   if (a_data != NULL)  *a_data = s_curr->n_data;
+   DEBUG_YDLST  yLOG_snote   (s_curr->n_title);
    /*---(update list/line)---------------*/
-   yDLST_list_restore (s_curr->parent);
+   yDLST_list_restore (s_curr->n_parent);
    yDLST_line_restore (s_curr);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
@@ -314,19 +314,19 @@ yDLST_focus_list        (void)
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YDLST  yLOG_info    ("->title"   , x_list->title);
+   DEBUG_YDLST  yLOG_info    ("->l_title"   , x_list->l_title);
    /*---(hook all)-----------------------*/
-   x_line = x_list->c_head;
+   x_line = x_list->l_nhead;
    while (x_line != NULL) {
       DEBUG_YDLST  yLOG_point   ("x_line"    , x_line);
-      DEBUG_YDLST  yLOG_info    ("x_line"    , x_line->title);
+      DEBUG_YDLST  yLOG_info    ("x_line"    , x_line->n_title);
       rc = ydlst_focus__hook  (x_line);
       DEBUG_YDLST  yLOG_value   ("unhook"    , rc);
       --rce;  if (rc < 0) {
          DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      x_line = x_line->p_next;
+      x_line = x_line->n_lnext;
    }
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
@@ -416,17 +416,17 @@ ydlst_focus__unit       (char *a_question, int a_num)
    snprintf (unit_answer, LEN_RECD, "FOCUS unit       : question unknown");
    /*---(simple)-------------------------*/
    if  (strcmp (a_question, "count"     )     == 0) {
-      o = s_head; while (o != NULL) { ++x_fore; o = o->f_next; }
-      o = s_tail; while (o != NULL) { ++x_back; o = o->f_prev; }
+      o = s_head; while (o != NULL) { ++x_fore; o = o->n_fnext; }
+      o = s_tail; while (o != NULL) { ++x_back; o = o->n_fprev; }
       snprintf (unit_answer, LEN_RECD, "FOCUS count      : %3dc  %3df  %3db", s_count, x_fore, x_back);
       return unit_answer;
    }
    else if (strcmp (a_question, "current")     == 0) {
       o = s_curr;
       if (o != NULL) {
-         x_len = strlen (o->title);
-         sprintf  (t, "[%.20s]", o->title);
-         snprintf (unit_answer, LEN_RECD, "FOCUS current    : %2d%-22.22s   %c  %c  %c", x_len, t, (o->parent == NULL) ? YDLST_OFF : YDLST_ON, o->focus, o->active);
+         x_len = strlen (o->n_title);
+         sprintf  (t, "[%.20s]", o->n_title);
+         snprintf (unit_answer, LEN_RECD, "FOCUS current    : %2d%-22.22s   %c  %c  %c", x_len, t, (o->n_parent == NULL) ? YDLST_OFF : YDLST_ON, o->n_focus, o->n_active);
       } else {
          snprintf (unit_answer, LEN_RECD, "FOCUS current    :  0[]                       -  -  -");
       }
@@ -436,13 +436,13 @@ ydlst_focus__unit       (char *a_question, int a_num)
    while (o != NULL) {
       if (c >= a_num)  break;
       ++c;
-      o = o->f_next;
+      o = o->n_fnext;
    }
    if (strcmp (a_question, "entry"     )     == 0) {
       if (o != NULL) {
-         x_len = strlen (o->title);
-         sprintf  (t, "[%.20s]", o->title);
-         snprintf (unit_answer, LEN_RECD, "FOCUS entry (%2d) : %2d%-22.22s   %c  %c  %c", a_num, x_len, t, (o->parent == NULL) ? YDLST_OFF : YDLST_ON, o->focus, o->active);
+         x_len = strlen (o->n_title);
+         sprintf  (t, "[%.20s]", o->n_title);
+         snprintf (unit_answer, LEN_RECD, "FOCUS entry (%2d) : %2d%-22.22s   %c  %c  %c", a_num, x_len, t, (o->n_parent == NULL) ? YDLST_OFF : YDLST_ON, o->n_focus, o->n_active);
       } else {
          snprintf (unit_answer, LEN_RECD, "FOCUS entry (%2d) :  0[]                       -  -  -", a_num);
       }

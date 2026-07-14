@@ -75,6 +75,7 @@
 
 
 #include   "yDLST_solo.h"
+#include   <ySTR_solo.h>
 
 
 
@@ -88,17 +89,24 @@ char        yDLST_wrap              (void);
 char        yDLST_backup            (void);
 char        yDLST_restore           (void);
 
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         yDLST_list_count        (void);
-char        yDLST_list_by_index     (int n, void **a_list, void **a_data);
-char        yDLST_list_by_cursor    (char a_move, void **a_list, void **a_data);
-char        yDLST_list_by_name      (char *a_title, void **a_list, void **a_data);
-char        yDLST_list_by_ptr       (void *a_list);
+
+
+/*===[[ yDLST_list.c ]]=======================================================*/
+/*········´ ´···········existance·´ ´·········································*/
 char        yDLST_list_create       (char *a_title, void *a_data);
 char        yDLST_list_destroy      (char *a_title);
-char        ydlst_list_purge        (void);
-char        ydlst_list_init         (void);
-char        ydlst_list_wrap         (void);
+/*········´ ´··············search·´ ´·········································*/
+int         yDLST_list_count        (void);
+char        yDLST_list_by_index     (int  n       , void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_cursor    (char a_move  , void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_name      (char *a_title, void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_ptr       (void *a_list , char d_entry [LEN_RECD]);
+/*········´ ´··············saving·´ ´·········································*/
+void*       yDLST_list_current      (void);
+char        yDLST_list_restore      (void *a_list);
+/*········´ ´················DONE·´ ´·········································*/
+
+
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         yDLST_line_count        (char a_scope);
@@ -140,6 +148,7 @@ char        yDLST_seq_after         (char *a_before);
 char        yDLST_seq_before        (char *a_after);
 char        yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void **a_data);
 char        yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_seq, void **a_list, void **a_data);
+char        yDLST_seq_for_list      (void *a_list, short *r_npred, char r_preds [LEN_FULL], char *r_nsucc, char r_succs [LEN_FULL]);
 int         yDLST_alpha_count       (void);
 int         yDLST_omega_count       (void);
 

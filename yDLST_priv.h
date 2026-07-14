@@ -41,9 +41,9 @@
 #define     P_CREATED   "2011-05"
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
-#define     P_VERMINOR  "1.0-, normal upkeep and maintenance"
-#define     P_VERNUM    "1.0b"
-#define     P_VERTXT    "few notes on cursor use in yDLST_solo.h"
+#define     P_VERMINOR  "1.1-, modernize code practices"
+#define     P_VERNUM    "1.1a"
+#define     P_VERTXT    "updated yDLST_list and unit test"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -64,6 +64,7 @@
 #include  <yURG.h>
 #include  <ySTR.h>
 #include  <yLOG.h>
+#include  <yENV.h>
 
 
 
@@ -94,84 +95,108 @@ extern char      unit_answer [LEN_RECD];
 #define   YDLST_OFF       '-'
 
 
-struct  cLIST {
+struct  cLIST {   /*   all list members begin with "l_"   */
    /*---(master)---------------*/
-   char       *title;                       /* name of list                   */
-   void       *data;                        /* data payload                   */
+   char       *l_title;                /* name of list                   */
+   void       *l_data;                 /* data payload                   */
    /*---(lists)----------------*/
-   char        linked;                      /* tied to master list            */
-   tLIST      *m_prev;                      /* master list prev               */
-   tLIST      *m_next;                      /* master list next               */
+   char        l_linked;               /* tied to master list            */
+   tLIST      *l_mprev;                /* master list prev               */
+   tLIST      *l_mnext;                /* master list next               */
    /*---(lines)----------------*/
-   tLINE      *c_head;                      /* child head                     */
-   tLINE      *c_tail;                      /* child tail                     */
-   int         c_count;                     /* child count                    */
+   tLINE      *l_nhead;                /* child line head                */
+   tLINE      *l_ntail;                /* child line tail                */
+   int         l_ncount;               /* child line count               */
    /*---(comes before)---------*/
-   tSEQ       *p_head;                      /* pred head                      */
-   tSEQ       *p_tail;                      /* pred tail                      */
-   int         p_count;                     /* pred count                     */
+   tSEQ       *l_phead;                /* pred head                      */
+   tSEQ       *l_ptail;                /* pred tail                      */
+   int         l_pcount;               /* pred count                     */
    /*---(comes after)----------*/
-   tSEQ       *s_head;                      /* succ head                      */
-   tSEQ       *s_tail;                      /* succ tail                      */
-   int         s_count;                     /* succ count                     */
+   tSEQ       *l_shead;                /* succ head                      */
+   tSEQ       *l_stail;                /* succ tail                      */
+   int         l_scount;               /* succ count                     */
    /*---(done)-----------------*/
 };
 
-struct  cLINE {
+struct  cLINE {   /*   all line members begin with "n_"   */
    /*---(ref name)-------------*/
-   char       *title;               /* name of list                             */
-   void       *data;                /* pointer to data payload                  */
+   char       *n_title;                /* name of list                             */
+   void       *n_data;                 /* pointer to data payload                  */
    /*---(lines)----------------*/
-   tLINE      *m_prev;
-   tLINE      *m_next;
+   tLINE      *n_mprev;                /* line master prev                         */
+   tLINE      *n_mnext;                /* line master next                         */
    /*---(lists)----------------*/
-   tLIST      *parent;              /* pointer to the owning list               */
-   tLINE      *p_next;              /* forward  link in lists links             */
-   tLINE      *p_prev;              /* backward link in lists links             */
+   tLIST      *n_parent;               /* pointer to the owning list               */
+   tLINE      *n_lprev;                /* backward link in lists links             */
+   tLINE      *n_lnext;                /* forward  link in lists links             */
    /*---(focus)----------------*/
-   char        focus;               /* flag to indicate focused 'y' or not '-'  */
-   tLINE      *f_prev;              /* backward link in list of focus links     */
-   tLINE      *f_next;              /* forward  link in list of focus links     */
+   char        n_focus;                /* flag to indicate focused 'y' or not '-'  */
+   tLINE      *n_fprev;                /* backward link in list of focus links     */
+   tLINE      *n_fnext;                /* forward  link in list of focus links     */
    /*---(active)---------------*/
-   char        active;              /* flag to indicate active  'y' or not '-'  */
-   tLINE      *a_prev;              /* backward link in list of active links    */
-   tLINE      *a_next;              /* forward  link in list of active links    */
+   char        n_active;               /* flag to indicate active  'y' or not '-'  */
+   tLINE      *n_aprev;                /* backward link in list of active links    */
+   tLINE      *n_anext;                /* forward  link in list of active links    */
    /*---(done)-----------------*/
 };
 
 
-struct   cSEQ {
+struct   cSEQ {   /*   all sequence members begin with "q_"   */
    /*---(seq)------------------*/
-   tSEQ       *m_prev;
-   tSEQ       *m_next;
+   tSEQ       *q_mprev;
+   tSEQ       *q_mnext;
    /*---(predecessor)----------*/
-   tLIST      *pred;
-   tSEQ       *p_prev;
-   tSEQ       *p_next;
+   tLIST      *q_pred;
+   tSEQ       *q_pprev;
+   tSEQ       *q_pnext;
    /*---(successor)------------*/
-   tLIST      *succ;
-   tSEQ       *s_prev;
-   tSEQ       *s_next;
+   tLIST      *q_succ;
+   tSEQ       *q_sprev;
+   tSEQ       *q_snext;
    /*---(done)-----------------*/
 };
 
 
 
-
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-/*---(cleanse)--------------*/
+/*===[[ yDLST_list.c ]]=======================================================*/
+/*········´ ´·············cleanse·´ ´·········································*/
 char        ydlst_list__wipe        (tLIST *a_list);
 char*       ydlst_list__memory      (tLIST *a_list);
-/*---(memory)---------------*/
-char        ydlst_list_new          (tLIST **a_new);
-char        ydlst_list_float        (tLIST **a_new);
-char        ydlst_list_free         (tLIST **a_old);
-/*---(pushpop)--------------*/
-tLIST*      yDLST_list_current      (void);
-char        yDLST_list_restore      (tLIST *a_list);
-/*---(unittest)-------------*/
+char        ydlst_list__rando       (tLIST *a_list);
+/*········´ ´··············memory·´ ´·········································*/
+char        ydlst_list__new         (tLIST **r_new);
+char        ydlst_list__force       (tLIST **r_new);
+char        ydlst_list__free        (tLIST **b_old);
+/*········´ ´·············hooking·´ ´·········································*/
+char        ydlst_list__hook        (tLIST *a_list);
+char        ydlst_list__unhook      (tLIST *a_list);
+/*········´ ´···········existance·´ ´·········································*/
+char        ydlst_list_create       (char *a_title, void *a_data, tLIST **b_list);
+char        yDLST_list_create       (char *a_title, void *a_data);
+char        ydlst_list_destroy      (char *a_title, tLIST **b_list);
+char        yDLST_list_destroy      (char *a_title);
+/*········´ ´··············search·´ ´·········································*/
+int         yDLST_list_count        (void);
+char        ydlst_list_by_default   (void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_index     (int  n       , void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_cursor    (char a_move  , void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_name      (char *a_title, void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_list_by_ptr       (void *a_list , char d_entry [LEN_RECD]);
+char        ydlst_list_save_back    (void *a_list, void *a_data, void **r_list, void **r_data, char d_entry [LEN_RECD]);
+/*········´ ´·············program·´ ´·········································*/
+char        ydlst_list_purge        (void);
+char        ydlst_list_init         (void);
+char        ydlst_list_wrap         (void);
+/*········´ ´··············saving·´ ´·········································*/
+void*       yDLST_list_current      (void);
+char        yDLST_list_restore      (void *a_list);
+/*········´ ´··············report·´ ´·········································*/
+char*       ydlst_list__entry       (tLIST *a_list);
+char*       ydlst_list_entry        (char a_dir);
+char*       ydlst_list_audit        (void);
+/*········´ ´···········unit-test·´ ´·········································*/
 char*       ydlst_list__unit        (char *a_question, int a_num);
-/*---(done)-----------------*/
+/*········´ ´················DONE·´ ´·········································*/
 
 
 
@@ -198,10 +223,6 @@ char*       ydlst_line__unit        (char *a_question, int a_num);
 
 
 char        ydlst_line__purgelist   (tLIST *a_list);
-
-char        ydlst__test_quiet    (void);
-char        ydlst__test_loud     (void);
-char        ydlst__test_end      (void);
 
 char*       ydlst_focus__unit       (char *a_question, int a_num);
 char*       ydlst_active__unit      (char *a_question, int a_num);

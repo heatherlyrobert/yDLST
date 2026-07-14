@@ -93,8 +93,9 @@
 #define     YDLST_BOTT     ')'
 #define     YDLST_TAIL     ']'
 #define     YDLST_LUSED    ','
+#define     YDLST_LADD     '+'
 #define     YDLST_REL      "<.,>"
-#define     YDLST_BOUNCES  "[(<.,>)]"
+#define     YDLST_BOUNCES  "[(<.,>)]+"
 
 
 /*---(non-bounce types)--------*/
