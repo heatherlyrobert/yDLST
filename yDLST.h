@@ -79,15 +79,18 @@
 
 
 
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char*       yDLST_version           (void);
 
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        yDLST_init              (void);
+/*===[[ yDLST_base.c ]]=======================================================*/
+/*········´ ´············identity·´ ´·········································*/
+char*       yDLST_version           (void);
+/*········´ ´·············program·´ ´·········································*/
+char        yDLST_init              (char *f_listwipe (void *), char f_linewipe (void *));
+char        yDLST_config            (char *f_listwipe (void *), char f_linewipe (void *));
 char        yDLST_purge             (void);
 char        yDLST_wrap              (void);
 char        yDLST_backup            (void);
 char        yDLST_restore           (void);
+/*········´ ´················DONE·´ ´·········································*/
 
 
 
@@ -108,6 +111,8 @@ char        yDLST_list_restore      (void *a_list);
 
 
 
+
+
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         yDLST_line_count        (char a_scope);
 char        yDLST_line_by_index     (char a_scope, int n, void **a_line, void **a_data);
@@ -116,9 +121,8 @@ char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line,
 char        yDLST_line_list         (void **a_list, void **a_data);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
-char        yDLST_line_remove       (char *a_title);
 char        yDLST_line_clearlist    (void);
-char        ydlst_line_init         (void);
+char        ydlst_line_init         (char f_linewipe (void *));
 char        ydlst_line_wrap         (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/

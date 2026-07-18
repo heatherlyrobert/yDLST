@@ -15,6 +15,9 @@
 
 static char      yDLST_ver [200] = "";
 
+char    (*G_listwipe)      (void *a_data)  = NULL;
+char    (*G_linewipe)      (void *a_data)  = NULL;
+
 
 
 /*====================------------------------------------====================*/
@@ -46,15 +49,15 @@ yDLST_version      (void)
 PRIV void  o___PROGRAM_________o () { return; }
 
 char       /*----: prepare the list library for use --------------------------*/
-yDLST_init         (void)
+yDLST_init              (char *f_listwipe (void *), char f_linewipe (void *))
 {
    /*---(locals)-------*-----------------*/
    int       rc        = 0;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
-   rc = ydlst_list_init   ();
-   rc = ydlst_line_init   ();
+   rc = ydlst_list_init   (f_listwipe);
+   rc = ydlst_line_init   (f_linewipe);
    rc = ydlst_focus_init  ();
    rc = ydlst_active_init ();
    rc = ydlst_seq_init    ();
@@ -63,8 +66,15 @@ yDLST_init         (void)
    return 0;
 }
 
+char       /*----: prepare the list library for use --------------------------*/
+yDLST_config            (char *f_listwipe (void *), char f_linewipe (void *))
+{
+   ydlst_list_config (f_listwipe);
+   ydlst_line_config (f_linewipe);
+}
+
 char         /*----: make sure all memory is freed at the end ----------------*/
-yDLST_purge        (void)
+yDLST_purge             (void)
 {
    ydlst_seq__purge ();
    ydlst_list_wrap  ();
@@ -73,7 +83,7 @@ yDLST_purge        (void)
 }
 
 char         /*----: make sure all memory is freed at the end ----------------*/
-yDLST_wrap         (void)
+yDLST_wrap              (void)
 {
    /*---(locals)-------*-----------------*/
    int       rc        = 0;

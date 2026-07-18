@@ -16,7 +16,7 @@ char       /*----: set up program urgents/debugging --------------------------*/
 ydlst__test_quiet    (void)
 {
    yLOGS_begin ("yDLST" , YLOG_SYS, YLOG_QUIET);
-   yDLST_init ();
+   yDLST_init (NULL, NULL);
    return 0;
 }
 
@@ -27,7 +27,7 @@ ydlst__test_loud  (void)
    yURG_by_name  ("kitchen"      , YURG_ON);
    yURG_by_name  ("ydlst"        , YURG_ON);
    DEBUG_YDLST  yLOG_info     ("yDLST"   , yDLST_version   ());
-   yDLST_init ();
+   yDLST_init (NULL, NULL);
    return 0;
 }
 

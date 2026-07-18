@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1a"
-#define     P_VERTXT    "updated yDLST_list and unit test"
+#define     P_VERNUM    "1.1c"
+#define     P_VERTXT    "updated yDLST_line hook and unhook unit tested well"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -85,6 +85,9 @@ typedef const  char      cchar;
 
 
 extern char      unit_answer [LEN_RECD];
+
+extern char    (*G_listwipe)      (void *a_data);
+extern char    (*G_linewipe)      (void *a_data);
 
 
 
@@ -158,6 +161,19 @@ struct   cSEQ {   /*   all sequence members begin with "q_"   */
 
 
 
+/*===[[ yDLST_base.c ]]=======================================================*/
+/*········´ ´············identity·´ ´·········································*/
+char*       yDLST_version           (void);
+/*········´ ´·············program·´ ´·········································*/
+char        yDLST_init              (char *f_listwipe (void *), char f_linewipe (void *));
+char        yDLST_purge             (void);
+char        yDLST_wrap              (void);
+char        yDLST_backup            (void);
+char        yDLST_restore           (void);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
 /*===[[ yDLST_list.c ]]=======================================================*/
 /*········´ ´·············cleanse·´ ´·········································*/
 char        ydlst_list__wipe        (tLIST *a_list);
@@ -185,7 +201,8 @@ char        yDLST_list_by_ptr       (void *a_list , char d_entry [LEN_RECD]);
 char        ydlst_list_save_back    (void *a_list, void *a_data, void **r_list, void **r_data, char d_entry [LEN_RECD]);
 /*········´ ´·············program·´ ´·········································*/
 char        ydlst_list_purge        (void);
-char        ydlst_list_init         (void);
+char        ydlst_list_config       (char f_listwipe (void *));
+char        ydlst_list_init         (char f_listwipe (void *));
 char        ydlst_list_wrap         (void);
 /*········´ ´··············saving·´ ´·········································*/
 void*       yDLST_list_current      (void);
@@ -200,29 +217,48 @@ char*       ydlst_list__unit        (char *a_question, int a_num);
 
 
 
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-/*---(cleanse)--------------*/
+/*===[[ yDLST_Line.c ]]=======================================================*/
+/*········´ ´·············cleanse·´ ´·········································*/
 char        ydlst_line__wipe        (tLINE *a_line);
 char*       ydlst_line__memory      (tLINE *a_line);
-/*---(memory)---------------*/
-char        ydlst_line__new         (tLINE **a_new);
-char        ydlst_line__free        (tLINE **a_new, char a_freedata);
-/*---(hooking)--------------*/
+char        ydlst_line__rando       (tLINE *a_line);
+/*········´ ´··············memory·´ ´·········································*/
+char        ydlst_line__new         (tLINE **r_new);
+char        ydlst_line__force       (tLINE **r_new);
+char        ydlst_line__free        (tLINE **b_old);
+/*········´ ´·············hooking·´ ´·········································*/
 char        ydlst_line__hook        (tLIST *a_list, tLINE *a_line);
 char        ydlst_line__unhook      (tLINE *a_line);
-/*---(search)---------------*/
-char        ydlst_line_by_ptr       (tLINE *a_curr);
-/*---(program)--------------*/
+/*········´ ´··············search·´ ´·········································*/
+int         yDLST_line_count        (char a_scope);
+char        ydlst_line__scope       (char a_scope, char *a_local, tLIST **a_list);
+char        ydlst_line__parent      (char a_local);
+char        yDLST_line_by_index     (char a_scope, int n, void **a_line, void **a_data);
+char        yDLST_line_by_cursor    (char a_scope, char a_move, void **a_curr, void **a_data);
+char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data);
+char        ydlst_line_by_ptr       (tLINE *a_line);
+char        yDLST_line_list         (void **a_list, void **a_data);
+/*········´ ´···········existance·´ ´·········································*/
+char        yDLST_line_create       (char *a_title, void *a_data);
+char        yDLST_line_destroy      (char *a_title);
+/*········´ ´·············program·´ ´·········································*/
 char        ydlst_line_purge        (tLIST *a_list);
-/*---(pushpop)--------------*/
+char        ydlst_line_purge_all    (void);
+char        yDLST_line_clearlist    (void);
+char        ydlst_line_config       (char f_linewipe (void *));
+char        ydlst_line_init         (char f_linewipe (void *));
+char        ydlst_line_wrap         (void);
+/*········´ ´·············pushpop·´ ´·········································*/
 tLINE*      yDLST_line_current      (void);
 char        yDLST_line_restore      (tLINE *a_line);
-/*---(unittest)-------------*/
+/*········´ ´··············report·´ ´·········································*/
+char*       ydlst_line__entry       (tLINE *a_line);
+char*       ydlst_line_entry        (char a_dir);
+char*       ydlst_line_audit        (void);
+/*········´ ´···········unit-test·´ ´·········································*/
 char*       ydlst_line__unit        (char *a_question, int a_num);
-/*---(done)-----------------*/
+/*········´ ´················DONE·´ ´·········································*/
 
-
-char        ydlst_line__purgelist   (tLIST *a_list);
 
 char*       ydlst_focus__unit       (char *a_question, int a_num);
 char*       ydlst_active__unit      (char *a_question, int a_num);
