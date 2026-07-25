@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1c"
-#define     P_VERTXT    "updated yDLST_line hook and unhook unit tested well"
+#define     P_VERNUM    "1.1d"
+#define     P_VERTXT    "yDLST_list and yDLST_line updated and tested well"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -217,7 +217,7 @@ char*       ydlst_list__unit        (char *a_question, int a_num);
 
 
 
-/*===[[ yDLST_Line.c ]]=======================================================*/
+/*===[[ yDLST_line.c ]]=======================================================*/
 /*········´ ´·············cleanse·´ ´·········································*/
 char        ydlst_line__wipe        (tLINE *a_line);
 char*       ydlst_line__memory      (tLINE *a_line);
@@ -231,12 +231,15 @@ char        ydlst_line__hook        (tLIST *a_list, tLINE *a_line);
 char        ydlst_line__unhook      (tLINE *a_line);
 /*········´ ´··············search·´ ´·········································*/
 int         yDLST_line_count        (char a_scope);
+char        ydlst_list__line        (void);
 char        ydlst_line__scope       (char a_scope, char *a_local, tLIST **a_list);
 char        ydlst_line__parent      (char a_local);
-char        yDLST_line_by_index     (char a_scope, int n, void **a_line, void **a_data);
-char        yDLST_line_by_cursor    (char a_scope, char a_move, void **a_curr, void **a_data);
-char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data);
-char        ydlst_line_by_ptr       (tLINE *a_line);
+char        ydlst_line__default     (void **r_line, void ** r_data, char d_entry [LEN_RECD]);
+char        ydlst_line__save_back   (void *a_line , void *a_data, void **r_line, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_index     (char a_scope, int n        , void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_cursor    (char a_scope, char a_move  , void **a_curr, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        ydlst_line_by_ptr       (tLINE *a_line, char d_entry [LEN_RECD]);
 char        yDLST_line_list         (void **a_list, void **a_data);
 /*········´ ´···········existance·´ ´·········································*/
 char        yDLST_line_create       (char *a_title, void *a_data);

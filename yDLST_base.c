@@ -55,12 +55,22 @@ yDLST_init              (char *f_listwipe (void *), char f_linewipe (void *))
    int       rc        = 0;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(purge, just-inr-case)-----------*/
+   rc = ydlst_line_purge_all ();
+   DEBUG_YDLST  yLOG_value   ("line_purge", rc);
+   rc = ydlst_list_purge     ();
+   DEBUG_YDLST  yLOG_value   ("list_purge", rc);
    /*---(initialize)---------------------*/
    rc = ydlst_list_init   (f_listwipe);
+   DEBUG_YDLST  yLOG_value   ("list_init" , rc);
    rc = ydlst_line_init   (f_linewipe);
+   DEBUG_YDLST  yLOG_value   ("line_init" , rc);
    rc = ydlst_focus_init  ();
+   DEBUG_YDLST  yLOG_value   ("focus_init", rc);
    rc = ydlst_active_init ();
+   DEBUG_YDLST  yLOG_value   ("actv_init" , rc);
    rc = ydlst_seq_init    ();
+   DEBUG_YDLST  yLOG_value   ("seq_init"  , rc);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -76,9 +86,18 @@ yDLST_config            (char *f_listwipe (void *), char f_linewipe (void *))
 char         /*----: make sure all memory is freed at the end ----------------*/
 yDLST_purge             (void)
 {
-   ydlst_seq__purge ();
-   ydlst_list_wrap  ();
-   ydlst_line_wrap  ();
+   /*---(locals)-------*-----------------*/
+   int       rc        = 0;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   rc = ydlst_seq__purge ();
+   DEBUG_YDLST  yLOG_value   ("seq_wrap"  , rc);
+   rc = ydlst_line_wrap  ();
+   DEBUG_YDLST  yLOG_value   ("line_wrap" , rc);
+   rc = ydlst_list_wrap  ();
+   DEBUG_YDLST  yLOG_value   ("list_wrap" , rc);
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -90,12 +109,9 @@ yDLST_wrap              (void)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
-   rc = yDLST_purge       ();
-   rc = ydlst_list_wrap   ();
-   rc = ydlst_line_wrap   ();
    rc = ydlst_focus_wrap  ();
    rc = ydlst_active_wrap ();
-   rc = ydlst_seq_wrap    ();
+   rc = yDLST_purge       ();
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;

@@ -115,9 +115,9 @@ char        yDLST_list_restore      (void *a_list);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 int         yDLST_line_count        (char a_scope);
-char        yDLST_line_by_index     (char a_scope, int n, void **a_line, void **a_data);
-char        yDLST_line_by_cursor    (char a_scope, char a_move, void **a_line, void **a_data);
-char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data);
+char        yDLST_line_by_index     (char a_scope, int n        , void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_cursor    (char a_scope, char a_move  , void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data, char d_entry [LEN_RECD]);
 char        yDLST_line_list         (void **a_list, void **a_data);
 char        yDLST_line_create       (char *a_title, void *a_data);
 char        yDLST_line_destroy      (char *a_title);
