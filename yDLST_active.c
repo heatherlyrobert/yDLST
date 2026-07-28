@@ -5,10 +5,10 @@
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-static      tLINE      *s_head      = NULL;
-static      tLINE      *s_tail      = NULL;
-static      tLINE      *s_curr      = NULL;
-static      int         s_count     =    0;
+static      tLINE      *S_head      = NULL;
+static      tLINE      *S_tail      = NULL;
+static      tLINE      *S_curr      = NULL;
+static      int         S_count     =    0;
 
 
 
@@ -42,25 +42,25 @@ ydlst_active__hook      (tLINE *a_line)
    a_line->n_anext    = NULL;
    /*---(hook it up)------------------*/
    DEBUG_YDLST  yLOG_snote   ("hook it up");
-   if (s_head == NULL) {
+   if (S_head == NULL) {
       DEBUG_YDLST  yLOG_snote   ("first");
-      s_head         = a_line;
-      s_tail         = a_line;
+      S_head          = a_line;
+      S_tail          = a_line;
    } else {
       DEBUG_YDLST  yLOG_snote   ("append");
-      a_line->n_aprev = s_tail;
-      s_tail->n_anext = a_line;
-      s_tail         = a_line;
+      a_line->n_aprev = S_tail;
+      S_tail->n_anext = a_line;
+      S_tail          = a_line;
    }
    /*---(update count)----------------*/
-   ++s_count;
-   DEBUG_YDLST  yLOG_sint    (s_count);
+   ++S_count;
+   DEBUG_YDLST  yLOG_sint    (S_count);
    /*---(mark active)-----------------*/
    a_line->n_active = YDLST_ON;
    DEBUG_YDLST  yLOG_schar   (a_line->n_active);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
-   return 0;
+   return 1;
 }
 
 char
@@ -85,18 +85,22 @@ ydlst_active__unhook    (tLINE *a_line)
    /*---(unhook)-------------------------*/
    DEBUG_YDLST  yLOG_snote   ("unhook");
    if (a_line->n_anext != NULL)  a_line->n_anext->n_aprev = a_line->n_aprev;
-   else                         s_tail                 = a_line->n_aprev;
+   else                          S_tail                   = a_line->n_aprev;
    if (a_line->n_aprev != NULL)  a_line->n_aprev->n_anext = a_line->n_anext;
-   else                         s_head                 = a_line->n_anext;
+   else                          S_head                   = a_line->n_anext;
+   /*---(ground links)----------------*/
+   DEBUG_YDLST  yLOG_snote   ("clear");
+   a_line->n_aprev    = NULL;
+   a_line->n_anext    = NULL;
    /*---(update count)----------------*/
-   --s_count;
-   DEBUG_YDLST  yLOG_sint    (s_count);
+   --S_count;
+   DEBUG_YDLST  yLOG_sint    (S_count);
    /*---(mark inactive)---------------*/
    a_line->n_active = YDLST_OFF;
    DEBUG_YDLST  yLOG_schar   (a_line->n_active);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
-   return 0;
+   return 1;
 }
 
 
@@ -132,7 +136,7 @@ yDLST_active_on         (void)
    }
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-   return 0;
+   return 1;
 }
 
 char       /*----: remove the link to the active list ------------------------*/
@@ -161,7 +165,7 @@ yDLST_active_off        (void)
    }
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-   return 0;
+   return 1;
 }
 
 
@@ -186,13 +190,13 @@ yDLST_active_check      (char *a_title)
       return rce;
    }
    DEBUG_YDLST  yLOG_snote   (a_title);
-   DEBUG_YDLST  yLOG_spoint  (s_head);
-   --rce;  if (s_head == NULL) {
+   DEBUG_YDLST  yLOG_spoint  (S_head);
+   --rce;  if (S_head == NULL) {
       DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
       return 0;
    }
    /*---(move)---------------------------*/
-   x_line = s_head;
+   x_line = S_head;
    while (x_line != NULL) {
       if (x_line->n_title != NULL) {
          if (strcmp (x_line->n_title, a_title) == 0) break;
@@ -200,7 +204,7 @@ yDLST_active_check      (char *a_title)
       x_line = x_line->n_anext;
    }
    /*---(trouble)------------------------*/
-   DEBUG_YDLST  yLOG_spoint  (s_curr);
+   DEBUG_YDLST  yLOG_spoint  (S_curr);
    --rce;  if (x_line == NULL) {
       DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return 0;
@@ -211,7 +215,7 @@ yDLST_active_check      (char *a_title)
    return 1;
 }
 
-int  yDLST_active_count  (void) { return s_count; }
+int  yDLST_active_count  (void) { return S_count; }
 
 char
 yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
@@ -225,18 +229,18 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
    /*---(defaults)-----------------------*/
    if (a_curr != NULL)  *a_curr = NULL;
    if (a_data != NULL)  *a_data = NULL;
-   x_curr = s_curr;
+   x_curr = S_curr;
    /*---(defense)------------------------*/
    DEBUG_YDLST  yLOG_spoint  (x_curr);
    --rce;  if (x_curr == NULL) {
       /*---(non-bounce)------------------*/
       if (strchr (YDLST_DREL, a_move) != NULL) {
-         s_curr = x_curr;
+         S_curr = x_curr;
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
-      x_curr = s_head;
+      x_curr = S_head;
       DEBUG_DATA   yLOG_spoint  (x_curr);
       if (x_curr == NULL) {
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
@@ -246,7 +250,7 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
    /*---(switch)-------------------------*/
    --rce;  switch (a_move) {
    case YDLST_HEAD : case YDLST_DHEAD :
-      x_curr = s_head;
+      x_curr = S_head;
       break;
    case YDLST_PREV : case YDLST_DPREV :
       x_curr = x_curr->n_aprev;
@@ -258,7 +262,7 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
       x_curr = x_curr->n_anext;
       break;
    case YDLST_TAIL : case YDLST_DTAIL :
-      x_curr = s_tail;
+      x_curr = S_tail;
       break;
    default         :
       DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
@@ -268,11 +272,11 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
    /*---(check end)----------------------*/
    --rce;  if (x_curr == NULL) {
       /*---(bounce off ends)-------------*/
-      if (a_move == YDLST_PREV)   x_curr = s_head;
-      if (a_move == YDLST_NEXT)   x_curr = s_tail;
+      if (a_move == YDLST_PREV)   x_curr = S_head;
+      if (a_move == YDLST_NEXT)   x_curr = S_tail;
       /*---(no bounce)-------------------*/
       if (x_curr == NULL) {
-         s_curr = x_curr;
+         S_curr = x_curr;
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
@@ -282,13 +286,13 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
       /*---(done)------------------------*/
    }
    /*---(normal result)------------------*/
-   s_curr = x_curr;
-   if (a_curr != NULL)  *a_curr = s_curr;
-   if (a_data != NULL)  *a_data = s_curr->n_data;
-   DEBUG_YDLST  yLOG_snote   (s_curr->n_title);
+   S_curr = x_curr;
+   if (a_curr != NULL)  *a_curr = S_curr;
+   if (a_data != NULL)  *a_data = S_curr->n_data;
+   DEBUG_YDLST  yLOG_snote   (S_curr->n_title);
    /*---(update list/line)---------------*/
-   yDLST_list_restore (s_curr->n_parent);
-   yDLST_line_restore (s_curr);
+   yDLST_list_restore (S_curr->n_parent);
+   yDLST_line_restore (S_curr);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return rc;
@@ -308,13 +312,13 @@ yDLST_active_clearall   (void)
    char        rc          =    0;
    tLINE      *x_line      = NULL;
    /*---(walk through attached links)----*/
-   x_line = s_head;
+   x_line = S_head;
    while (x_line != NULL) {
       rc = ydlst_active__unhook  (x_line);
-      x_line  = s_head;
+      x_line  = S_head;
    }
    /*---(complete)-----------------------*/
-   return 0;
+   return 1;
 }
 
 char
@@ -323,9 +327,9 @@ ydlst_active_init       (void)
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
-   s_head    = NULL;
-   s_tail    = NULL;
-   s_count   =    0;
+   S_head    = NULL;
+   S_tail    = NULL;
+   S_count   =    0;
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -338,9 +342,9 @@ ydlst_active_wrap       (void)
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
    yDLST_active_clearall ();
-   s_head    = NULL;
-   s_tail    = NULL;
-   s_count   =    0;
+   S_head    = NULL;
+   S_tail    = NULL;
+   S_count   =    0;
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -353,8 +357,36 @@ ydlst_active_wrap       (void)
 /*====================------------------------------------====================*/
 static void  o___PUSHPOP_________o () { return; }
 
-tLINE* ydlst_active_current (void)          { return s_curr; }
-char   ydlst_active_restore (tLINE *x_line) { s_curr = x_line;  return 0; }
+tLINE* ydlst_active_current (void)          { return S_curr; }
+char   ydlst_active_restore (tLINE *x_line) { S_curr = x_line;  return 0; }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                    reporting and output                      ----===*/
+/*====================------------------------------------====================*/
+static void  o___REPORTING_______o () { return; }
+
+char*
+ydlst_active_audit      (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         x_fore      =    0;
+   int         x_back      =    0;
+   tLINE      *o           = NULL;
+   o = S_head; while (o != NULL) { ++x_fore; o = o->n_anext; }
+   o = S_tail; while (o != NULL) { ++x_back; o = o->n_aprev; }
+   snprintf (unit_answer, LEN_RECD, "actv audit ::  ····  ····  %3dc  %3df  %3db", S_count, x_fore, x_back);
+   o = S_head;
+   ystrlcat (unit_answer, "  å ", LEN_RECD);
+   while (o != NULL) {
+      ystrlcat (unit_answer, o->n_title, LEN_RECD);
+      ystrlcat (unit_answer, " "       , LEN_RECD);
+      o = o->n_anext;
+   }
+   ystrlcat (unit_answer, "æ", LEN_RECD);
+   return unit_answer;
+}
 
 
 
@@ -377,13 +409,13 @@ ydlst_active__unit      (char *a_question, int a_num)
    snprintf (unit_answer, LEN_RECD, "ACTIVE unit      : question unknown");
    /*---(simple)-------------------------*/
    if  (strcmp (a_question, "count"     )     == 0) {
-      o = s_head; while (o != NULL) { ++x_fore; o = o->n_anext; }
-      o = s_tail; while (o != NULL) { ++x_back; o = o->n_aprev; }
-      snprintf (unit_answer, LEN_RECD, "ACTIVE count     : %3dc  %3df  %3db", s_count, x_fore, x_back);
+      o = S_head; while (o != NULL) { ++x_fore; o = o->n_anext; }
+      o = S_tail; while (o != NULL) { ++x_back; o = o->n_aprev; }
+      snprintf (unit_answer, LEN_RECD, "ACTIVE count     : %3dc  %3df  %3db", S_count, x_fore, x_back);
       return unit_answer;
    }
    else if (strcmp (a_question, "current")     == 0) {
-      o = s_curr;
+      o = S_curr;
       if (o != NULL) {
          x_len = strlen (o->n_title);
          sprintf  (t, "[%.20s]", o->n_title);
@@ -393,7 +425,7 @@ ydlst_active__unit      (char *a_question, int a_num)
       }
       return unit_answer;
    }
-   o = s_head;
+   o = S_head;
    while (o != NULL) {
       if (c >= a_num)  break;
       ++c;
