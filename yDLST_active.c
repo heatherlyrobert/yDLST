@@ -218,31 +218,33 @@ yDLST_active_check      (char *a_title)
 int  yDLST_active_count  (void) { return S_count; }
 
 char
-yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
+yDLST_active_by_cursor  (char a_move, void **r_line, void **r_data, char d_entry [LEN_RECD])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tLINE      *x_curr      = NULL;
+   tLINE      *x_line      = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defaults)-----------------------*/
-   if (a_curr != NULL)  *a_curr = NULL;
-   if (a_data != NULL)  *a_data = NULL;
-   x_curr = S_curr;
+   if (r_line  != NULL)  *r_line = NULL;
+   if (r_data  != NULL)  *r_data = NULL;
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_line__entry (NULL), LEN_RECD);
+   /*---(prepare)------------------------*/
+   x_line = S_curr;
+   DEBUG_YDLST  yLOG_spoint  (x_line);
    /*---(defense)------------------------*/
-   DEBUG_YDLST  yLOG_spoint  (x_curr);
-   --rce;  if (x_curr == NULL) {
+   --rce;  if (x_line == NULL) {
       /*---(non-bounce)------------------*/
       if (strchr (YDLST_DREL, a_move) != NULL) {
-         S_curr = x_curr;
+         S_curr = x_line;
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
-      x_curr = S_head;
-      DEBUG_DATA   yLOG_spoint  (x_curr);
-      if (x_curr == NULL) {
+      x_line = S_head;
+      DEBUG_DATA   yLOG_spoint  (x_line);
+      if (x_line == NULL) {
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
@@ -250,33 +252,33 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
    /*---(switch)-------------------------*/
    --rce;  switch (a_move) {
    case YDLST_HEAD : case YDLST_DHEAD :
-      x_curr = S_head;
+      x_line = S_head;
       break;
    case YDLST_PREV : case YDLST_DPREV :
-      x_curr = x_curr->n_aprev;
+      x_line = x_line->n_aprev;
       break;
    case YDLST_CURR : case YDLST_DCURR :
-      x_curr = x_curr;
+      x_line = x_line;
       break;
    case YDLST_NEXT : case YDLST_DNEXT :
-      x_curr = x_curr->n_anext;
+      x_line = x_line->n_anext;
       break;
    case YDLST_TAIL : case YDLST_DTAIL :
-      x_curr = S_tail;
+      x_line = S_tail;
       break;
    default         :
       DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YDLST  yLOG_spoint  (x_curr);
+   DEBUG_YDLST  yLOG_spoint  (x_line);
    /*---(check end)----------------------*/
-   --rce;  if (x_curr == NULL) {
+   --rce;  if (x_line == NULL) {
       /*---(bounce off ends)-------------*/
-      if (a_move == YDLST_PREV)   x_curr = S_head;
-      if (a_move == YDLST_NEXT)   x_curr = S_tail;
+      if (a_move == YDLST_PREV)   x_line = S_head;
+      if (a_move == YDLST_NEXT)   x_line = S_tail;
       /*---(no bounce)-------------------*/
-      if (x_curr == NULL) {
-         S_curr = x_curr;
+      if (x_line == NULL) {
+         S_curr = x_line;
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
@@ -286,9 +288,10 @@ yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data)
       /*---(done)------------------------*/
    }
    /*---(normal result)------------------*/
-   S_curr = x_curr;
-   if (a_curr != NULL)  *a_curr = S_curr;
-   if (a_data != NULL)  *a_data = S_curr->n_data;
+   S_curr = x_line;
+   if (r_line  != NULL)  *r_line = S_curr;
+   if (r_data  != NULL)  *r_data = S_curr->n_data;
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_line__entry (x_line), LEN_RECD);
    DEBUG_YDLST  yLOG_snote   (S_curr->n_title);
    /*---(update list/line)---------------*/
    yDLST_list_restore (S_curr->n_parent);
@@ -329,6 +332,7 @@ ydlst_active_init       (void)
    /*---(initialize)---------------------*/
    S_head    = NULL;
    S_tail    = NULL;
+   S_curr    = NULL;
    S_count   =    0;
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
@@ -344,6 +348,7 @@ ydlst_active_wrap       (void)
    yDLST_active_clearall ();
    S_head    = NULL;
    S_tail    = NULL;
+   S_curr    = NULL;
    S_count   =    0;
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
@@ -357,8 +362,20 @@ ydlst_active_wrap       (void)
 /*====================------------------------------------====================*/
 static void  o___PUSHPOP_________o () { return; }
 
-tLINE* ydlst_active_current (void)          { return S_curr; }
-char   ydlst_active_restore (tLINE *x_line) { S_curr = x_line;  return 0; }
+tLINE*
+ydlst_active_current    (char d_entry [LEN_RECD])
+{
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_line__entry (S_curr), LEN_RECD);
+   return S_curr;
+}
+
+char
+ydlst_active_restore    (tLINE *a_line, char d_entry [LEN_RECD])
+{
+   S_curr = a_line;
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_line__entry (S_curr), LEN_RECD);
+   return 0;
+}
 
 
 

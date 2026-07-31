@@ -135,8 +135,8 @@ yDLST_backup            (void)
 {
    s_list   = yDLST_list_current ();
    s_line   = yDLST_line_current ();
-   s_active = ydlst_active_current ();
-   s_focus  = ydlst_focus_current ();
+   s_active = ydlst_active_current (NULL);
+   s_focus  = ydlst_focus_current (NULL);
    s_seq    = ydlst_seq_current ();
    return 0;
 }
@@ -146,8 +146,8 @@ yDLST_restore           (void)
 {
    yDLST_list_restore   (s_list);
    yDLST_line_restore   (s_line);
-   ydlst_active_restore (s_active);
-   ydlst_focus_restore  (s_focus);
+   ydlst_active_restore (s_active, NULL);
+   ydlst_focus_restore  (s_focus, NULL);
    ydlst_seq_restore    (s_seq);
    return 0;
 }

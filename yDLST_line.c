@@ -536,7 +536,7 @@ yDLST_line_by_index     (char a_scope, int n, void **r_line, void **r_data, char
 }
 
 char
-yDLST_line_by_cursor   (char a_scope, char a_move, void **r_line, void **r_data, char d_entry [LEN_RECD])
+yDLST_line_by_cursor    (char a_scope, char a_move, void **r_line, void **r_data, char d_entry [LEN_RECD])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -1210,7 +1210,7 @@ ydlst_line_audit        (void)
 static void  o___PUSHPOP_________o () { return; }
 
 tLINE* yDLST_line_current   (void)          { return S_curr; }
-char   yDLST_line_restore   (tLINE *x_line) { S_curr = x_line;  return 0; }
+char   yDLST_line_restore   (tLINE *a_line) { S_curr = a_line;  return 0; }
 
 
 

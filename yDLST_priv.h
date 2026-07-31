@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1e"
-#define     P_VERTXT    "yDLST_active cleaned up a bit and unit tested"
+#define     P_VERNUM    "1.1f"
+#define     P_VERTXT    "all but yDLST_seq cleaned up and unit tested"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -274,14 +274,14 @@ char        yDLST_active_off        (void);
 /*········´ ´··············search·´ ´·········································*/
 char        yDLST_active_check      (char *a_title);
 int         yDLST_active_count      (void);
-char        yDLST_active_by_cursor  (char a_move, void **a_curr, void **a_data);
+char        yDLST_active_by_cursor  (char a_move, void **r_line, void **r_data, char d_entry [LEN_RECD]);
 /*········´ ´·············program·´ ´·········································*/
 char        yDLST_active_clearall   (void);
 char        ydlst_active_init       (void);
 char        ydlst_active_wrap       (void);
 /*········´ ´·············pushpop·´ ´·········································*/
-tLINE*      ydlst_active_current    (void);
-char        ydlst_active_restore    (tLINE *x_line);
+tLINE*      ydlst_active_current    (char d_entry [LEN_RECD]);
+char        ydlst_active_restore    (tLINE *a_line, char d_entry [LEN_RECD]);
 /*········´ ´··············report·´ ´·········································*/
 char*       ydlst_active_audit      (void);
 /*········´ ´···········unit-test·´ ´·········································*/
@@ -290,7 +290,32 @@ char*       ydlst_active__unit      (char *a_question, int a_num);
 
 
 
+/*===[[ yDLST_focus.c ]]=====================================================*/
+/*········´ ´·············hooking·´ ´·········································*/
+char        ydlst_focus__hook       (tLINE *a_line);
+char        ydlst_focus__unhook     (tLINE *a_line);
+/*········´ ´·············actions·´ ´·········································*/
+char        yDLST_focus_on          (void);
+char        yDLST_focus_off         (void);
+/*········´ ´··············search·´ ´·········································*/
+char        yDLST_focus_check       (char *a_title);
+int         yDLST_focus_count       (void);
+char        yDLST_focus_by_cursor   (char a_move, void **r_line, void **r_data, char d_entry [LEN_RECD]);
+/*········´ ´·············program·´ ´·········································*/
+char        yDLST_focus_clearall    (void);
+char        ydlst_focus_init        (void);
+char        ydlst_focus_wrap        (void);
+/*········´ ´·············pushpop·´ ´·········································*/
+tLINE*      ydlst_focus_current     (char d_entry [LEN_RECD]);
+char        ydlst_focus_restore     (tLINE *a_line, char d_entry [LEN_RECD]);
+/*········´ ´··············report·´ ´·········································*/
+char*       ydlst_focus_audit       (void);
+/*········´ ´···········unit-test·´ ´·········································*/
 char*       ydlst_focus__unit       (char *a_question, int a_num);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -321,11 +346,6 @@ char*       ydlst_seq__unit         (char *a_question, int a_num);
 char        ydlst_seq_init          (void);
 char        ydlst_seq_wrap          (void);
 
-
-
-/*---(pushpop)--------------*/
-tLINE*      ydlst_focus_current     (void);
-char        ydlst_focus_restore     (tLINE *a_line);
 
 
 #endif
