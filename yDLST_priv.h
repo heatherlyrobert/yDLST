@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1g"
-#define     P_VERTXT    "updated yDLST_seq memory and hooking to standard, ready for testing"
+#define     P_VERNUM    "1.1h"
+#define     P_VERTXT    "yDLST_seq unit tested for basic hooking and unhooking"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -316,7 +316,7 @@ char*       ydlst_focus__unit       (char *a_question, int a_num);
 
 
 
-/*===[[ yDLST_line.c ]]=======================================================*/
+/*===[[ yDLST_seq.c ]]========================================================*/
 /*········´ ´·············cleanse·´ ´·········································*/
 char        ydlst_seq__wipe         (tSEQ *a_seq);
 char*       ydlst_seq__memory       (tSEQ *a_seq);
@@ -330,21 +330,27 @@ char        ydlst_seq__confirm      (tLIST *a_pred, tLIST *a_succ, tSEQ **r_seq)
 char        ydlst_seq__hook         (tLIST *a_pred, tLIST *a_succ, tSEQ *a_seq);
 char        ydlst_seq__unhook       (tSEQ *a_seq);
 char        ydlst_seq__unhook_ends  (tLIST *a_pred, tLIST *a_succ);
-/*---(hooking)--------------*/
+/*········´ ´················ends·´ ´·········································*/
 char        ydlst_seq__alpha        (tLIST *a_list);
 char        ydlst_seq__omega        (tLIST *a_list);
 char        ydlst_seq__cycle        (int a_lvl, tLIST *a_curr, tLIST *a_look);
-/*---(hooking)--------------*/
+/*········´ ´···········existance·´ ´·········································*/
 char        ydlst_seq__create       (tLIST *a_pred, tLIST *a_succ);
 char        ydlst_seq__purge        (void);
-/*---(pushpop)--------------*/
-tSEQ*       ydlst_seq_current       (void);
-char        ydlst_seq_restore       (tSEQ *a_seq);
-/*---(unittest)-------------*/
-char*       ydlst_seq__unit         (char *a_question, int a_num);
-
+/*········´ ´·············program·´ ´·········································*/
 char        ydlst_seq_init          (void);
 char        ydlst_seq_wrap          (void);
+/*········´ ´··············report·´ ´·········································*/
+char*       ydlst_seq__entry        (tSEQ *a_seq);
+char*       ydlst_seq_entry         (char a_dir);
+char*       ydlst_seq_audit         (void);
+/*········´ ´·············pushpop·´ ´·········································*/
+tSEQ*       ydlst_seq_current       (void);
+char        ydlst_seq_restore       (tSEQ *a_seq);
+/*········´ ´···········unit-test·´ ´·········································*/
+char*       ydlst_seq__unit         (char *a_question, int a_num);
+/*········´ ´················DONE·´ ´·········································*/
+
 
 
 
