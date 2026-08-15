@@ -323,13 +323,59 @@ ydlst_seq__unhook       (tSEQ *a_seq)
    return 1;
 }
 
+/*> char                                                                                                                <* 
+ *> ydlst_seq__unhook_ends  (tLIST *a_pred, tLIST *a_succ)                                                              <* 
+ *> {                                                                                                                   <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                         <* 
+ *>    char        rce         =  -10;                                                                                  <* 
+ *>    char        rc          =    0;                                                                                  <* 
+ *>    tSEQ       *x_seq       = NULL;                                                                                  <* 
+ *>    /+---(header)-------------------------+/                                                                         <* 
+ *>    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);                                                                        <* 
+ *>    /+---(defenses)-----------------------+/                                                                         <* 
+ *>    DEBUG_YDLST  yLOG_point   ("a_pred"    , a_pred);                                                                <* 
+ *>    --rce;  if (a_pred  == NULL) {                                                                                   <* 
+ *>       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);                                                               <* 
+ *>       return rce;                                                                                                   <* 
+ *>    }                                                                                                                <* 
+ *>    DEBUG_YDLST  yLOG_info    ("l_title"   , a_pred->l_title);                                                       <* 
+ *>    DEBUG_YDLST  yLOG_point   ("a_succ"    , a_succ);                                                                <* 
+ *>    --rce;  if (a_succ  == NULL) {                                                                                   <* 
+ *>       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);                                                               <* 
+ *>       return rce;                                                                                                   <* 
+ *>    }                                                                                                                <* 
+ *>    DEBUG_YDLST  yLOG_info    ("l_title"   , a_succ->l_title);                                                       <* 
+ *>    /+---(prepare)------------------------+/                                                                         <* 
+ *>    x_seq = a_pred->l_shead;                                                                                         <* 
+ *>    /+---(walk)---------------------------+/                                                                         <* 
+ *>    while (x_seq != NULL) {                                                                                          <* 
+ *>       DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", x_seq, x_seq->q_succ, x_seq->q_succ->l_title);   <* 
+ *>       if (x_seq->q_succ == a_succ) {                                                                                <* 
+ *>          ydlst_seq__unhook (x_seq);                                                                                 <* 
+ *>          DEBUG_YDLST   yLOG_exit    (__FUNCTION__);                                                                 <* 
+ *>          return 0;                                                                                                  <* 
+ *>       }                                                                                                             <* 
+ *>       x_seq = x_seq->q_snext;                                                                                       <* 
+ *>    }                                                                                                                <* 
+ *>    /+---(complete)-----------------------+/                                                                         <* 
+ *>    --rce;                                                                                                           <* 
+ *>    DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);                                                                   <* 
+ *>    return rce;                                                                                                      <* 
+ *> }                                                                                                                   <*/
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      making sequences                        ----===*/
+/*====================------------------------------------====================*/
+static void  o___MAKE____________o () { return; }
+
 char
-ydlst_seq__unhook_ends  (tLIST *a_pred, tLIST *a_succ)
+ydlst_seq__make_check   (tLIST *a_pred, tLIST *a_succ)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
@@ -345,39 +391,107 @@ ydlst_seq__unhook_ends  (tLIST *a_pred, tLIST *a_succ)
       return rce;
    }
    DEBUG_YDLST  yLOG_info    ("l_title"   , a_succ->l_title);
-   /*---(prepare)------------------------*/
-   x_seq = a_pred->l_shead;
-   /*---(walk)---------------------------*/
-   while (x_seq != NULL) {
-      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", x_seq, x_seq->q_succ, x_seq->q_succ->l_title);
-      if (x_seq->q_succ == a_succ) {
-         ydlst_seq__unhook (x_seq);
-         DEBUG_YDLST   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      x_seq = x_seq->q_snext;
+   /*---(check same)---------------------*/
+   --rce;  if (a_pred == a_succ) {
+      DEBUG_YDLST   yLOG_note    ("a_pred and a_succ are the same");
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(complete)-----------------------*/
-   --rce;
-   DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
-   return rce;
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
+char
+ydlst_seq__make         (tLIST *a_pred, tLIST *a_succ)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tSEQ       *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   rc = ydlst_seq__make_check (a_pred, a_succ);
+   DEBUG_YDLST  yLOG_value   ("check"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(create)-------------------------*/
+   rc = ydlst_seq__new (&x_seq);
+   DEBUG_YDLST  yLOG_value   ("new"       , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(hook)---------------------------*/
+   rc = ydlst_seq__hook (a_pred, a_succ, x_seq);
+   DEBUG_YDLST  yLOG_value   ("hook"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
+char
+ydlst_seq__unmake       (tLIST *a_pred, tLIST *a_succ)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tSEQ       *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defenses)-----------------------*/
+   rc = ydlst_seq__make_check (a_pred, a_succ);
+   DEBUG_YDLST  yLOG_value   ("check"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(check for existing)----------*/
+   ydlst_seq__confirm (a_pred, a_succ, &x_seq);
+   DEBUG_YDLST  yLOG_point   ("x_seq"     , x_seq);
+   --rce;  if (x_seq == NULL) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(unhook)-------------------------*/
+   rc = ydlst_seq__unhook (x_seq);
+   DEBUG_YDLST  yLOG_value   ("unhook"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(create)-------------------------*/
+   rc = ydlst_seq__free   (&x_seq);
+   DEBUG_YDLST  yLOG_value   ("free"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 1;
 }
 
 
 
 /*====================------------------------------------====================*/
-/*===----                    alpha and omega lists                     ----===*/
+/*===----                     balancing sequences                      ----===*/
 /*====================------------------------------------====================*/
-static void  o___ENDPOINTS_______o () { return; }
+static void  o___BALANCING_______o () { return; }
 
 char
-ydlst_seq__balance_def  (tLIST *a_list)
+ydlst_seq__balance_chk  (tLIST *a_list)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   char        c           =    0;
-   tSEQ       *o           = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -393,11 +507,7 @@ ydlst_seq__balance_def  (tLIST *a_list)
       DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   /*---(prepare)------------------------*/
-   c = a_list->l_pcount;
-   DEBUG_YDLST  yLOG_value   ("c"         , c);
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_note    ("all good");
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 1;
 }
@@ -413,7 +523,7 @@ ydlst_seq__balance_pred (tLIST *a_list)
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   rc = ydlst_seq__balance_def (a_list);
+   rc = ydlst_seq__balance_chk (a_list);
    DEBUG_YDLST  yLOG_value   ("def"       , rc);
    --rce;  if (rc <  0) {
       DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
@@ -485,7 +595,7 @@ ydlst_seq__balance_succ (tLIST *a_list)
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   rc = ydlst_seq__balance_def (a_list);
+   rc = ydlst_seq__balance_chk (a_list);
    DEBUG_YDLST  yLOG_value   ("def"       , rc);
    --rce;  if (rc <  0) {
       DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
@@ -544,74 +654,122 @@ ydlst_seq__balance_succ (tLIST *a_list)
 }
 
 char
-ydlst_seq__alpha  (tLIST *a_list)
+ydlst_seq__balance_all  (tLIST *a_pred, tLIST *a_succ)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tSEQ       *o           = NULL;
-   /*---(begin)--------------------------*/
-   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);
-   --rce;  if (a_list == NULL) {
+   DEBUG_YDLST  yLOG_point   ("a_pred"    , a_pred);
+   --rce;  if (a_pred == NULL) {
       DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(prepare)------------------------*/
-   DEBUG_YDLST  yLOG_point   ("S_hseq"    , s_alpha->l_shead);
-   o = s_alpha->l_shead;
-   /*---(walk)---------------------------*/
-   while (o != NULL) {
-      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", o, o->q_succ, o->q_succ->l_title);
-      if (o->q_succ == a_list) {
-         DEBUG_YDLST  yLOG_note    ("FOUND IT");
-         ydlst_seq__unhook (o);
-         ydlst_seq__free   (&o);
-         DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-         return 1;
-      }
-      o = o->q_snext;
+   DEBUG_YDLST  yLOG_point   ("a_succ"    , a_succ);
+   --rce;  if (a_succ == NULL) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(predecessor)--------------------*/
+   rc = ydlst_seq__balance_pred (a_pred);
+   DEBUG_YDLST  yLOG_value   ("pred/pred" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = ydlst_seq__balance_succ (a_pred);
+   DEBUG_YDLST  yLOG_value   ("pred/succ" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(successor)----------------------*/
+   rc = ydlst_seq__balance_pred (a_succ);
+   DEBUG_YDLST  yLOG_value   ("pred/succ" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   rc = ydlst_seq__balance_succ (a_succ);
+   DEBUG_YDLST  yLOG_value   ("succ/succ" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-   return 0;
+   return 1;
 }
 
-char
-ydlst_seq__omega  (tLIST *a_list)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   tSEQ       *o           = NULL;
-   /*---(begin)--------------------------*/
-   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);
-   --rce;  if (a_list == NULL) {
-      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   DEBUG_YDLST  yLOG_point   ("l_phead"    , s_omega->l_phead);
-   o = s_omega->l_phead;
-   /*---(walk)---------------------------*/
-   while (o != NULL) {
-      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", o, o->q_pred, o->q_pred->l_title);
-      if (o->q_pred == a_list) {
-         DEBUG_YDLST  yLOG_note    ("FOUND IT");
-         ydlst_seq__unhook (o);
-         ydlst_seq__free   (&o);
-         DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-         return 1;
-      }
-      o = o->q_pnext;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-   return 0;
-}
+/*> char                                                                                                    <* 
+ *> ydlst_seq__alpha  (tLIST *a_list)                                                                       <* 
+ *> {                                                                                                       <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                             <* 
+ *>    char        rce         =  -10;                                                                      <* 
+ *>    char        rc          =    0;                                                                      <* 
+ *>    tSEQ       *o           = NULL;                                                                      <* 
+ *>    /+---(begin)--------------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);                                                            <* 
+ *>    /+---(defense)------------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);                                                    <* 
+ *>    --rce;  if (a_list == NULL) {                                                                        <* 
+ *>       DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);                                                    <* 
+ *>       return rce;                                                                                       <* 
+ *>    }                                                                                                    <* 
+ *>    /+---(prepare)------------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_point   ("S_hseq"    , s_alpha->l_shead);                                          <* 
+ *>    o = s_alpha->l_shead;                                                                                <* 
+ *>    /+---(walk)---------------------------+/                                                             <* 
+ *>    while (o != NULL) {                                                                                  <* 
+ *>       DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", o, o->q_succ, o->q_succ->l_title);   <* 
+ *>       if (o->q_succ == a_list) {                                                                        <* 
+ *>          DEBUG_YDLST  yLOG_note    ("FOUND IT");                                                        <* 
+ *>          ydlst_seq__unhook (o);                                                                         <* 
+ *>          ydlst_seq__free   (&o);                                                                        <* 
+ *>          DEBUG_YDLST  yLOG_exit    (__FUNCTION__);                                                      <* 
+ *>          return 1;                                                                                      <* 
+ *>       }                                                                                                 <* 
+ *>       o = o->q_snext;                                                                                   <* 
+ *>    }                                                                                                    <* 
+ *>    /+---(complete)-----------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);                                                            <* 
+ *>    return 0;                                                                                            <* 
+ *> }                                                                                                       <*/
+
+/*> char                                                                                                    <* 
+ *> ydlst_seq__omega  (tLIST *a_list)                                                                       <* 
+ *> {                                                                                                       <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                             <* 
+ *>    char        rce         =  -10;                                                                      <* 
+ *>    char        rc          =    0;                                                                      <* 
+ *>    tSEQ       *o           = NULL;                                                                      <* 
+ *>    /+---(begin)--------------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);                                                            <* 
+ *>    /+---(defense)------------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);                                                    <* 
+ *>    --rce;  if (a_list == NULL) {                                                                        <* 
+ *>       DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);                                                    <* 
+ *>       return rce;                                                                                       <* 
+ *>    }                                                                                                    <* 
+ *>    /+---(prepare)------------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_point   ("l_phead"    , s_omega->l_phead);                                         <* 
+ *>    o = s_omega->l_phead;                                                                                <* 
+ *>    /+---(walk)---------------------------+/                                                             <* 
+ *>    while (o != NULL) {                                                                                  <* 
+ *>       DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", o, o->q_pred, o->q_pred->l_title);   <* 
+ *>       if (o->q_pred == a_list) {                                                                        <* 
+ *>          DEBUG_YDLST  yLOG_note    ("FOUND IT");                                                        <* 
+ *>          ydlst_seq__unhook (o);                                                                         <* 
+ *>          ydlst_seq__free   (&o);                                                                        <* 
+ *>          DEBUG_YDLST  yLOG_exit    (__FUNCTION__);                                                      <* 
+ *>          return 1;                                                                                      <* 
+ *>       }                                                                                                 <* 
+ *>       o = o->q_pnext;                                                                                   <* 
+ *>    }                                                                                                    <* 
+ *>    /+---(complete)-----------------------+/                                                             <* 
+ *>    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);                                                            <* 
+ *>    return 0;                                                                                            <* 
+ *> }                                                                                                       <*/
 
 char
 ydlst_seq__cycle  (int a_lvl, tLIST *a_curr, tLIST *a_look)
@@ -1018,56 +1176,25 @@ ydlst_seq__create       (tLIST *a_pred, tLIST *a_succ)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   tSEQ       *x_new       = NULL;
    /*---(begin)--------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
-   /*---(defenses)-----------------------*/
-   DEBUG_YDLST  yLOG_point   ("a_pred"    , a_pred);
-   --rce;  if (a_pred  == NULL) {
-      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_YDLST  yLOG_info    ("l_title"   , a_pred->l_title);
-   DEBUG_YDLST  yLOG_point   ("a_succ"    , a_succ);
-   --rce;  if (a_succ  == NULL) {
-      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_YDLST  yLOG_info    ("l_title"   , a_succ->l_title);
-   /*---(check match)--------------------*/
-   --rce;  if (a_pred == a_succ) {
-      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(create)-------------------------*/
-   ydlst_seq__new (&x_new);
-   DEBUG_YDLST  yLOG_point   ("x_new"     , x_new);
-   --rce;  if (x_new == NULL) {
-      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(hook)---------------------------*/
-   rc = ydlst_seq__hook (a_pred, a_succ, x_new);
-   DEBUG_YDLST  yLOG_value   ("hook"      , rc);
+   /*---(make)---------------------------*/
+   rc = ydlst_seq__make (a_pred, a_succ);
+   DEBUG_YDLST  yLOG_value   ("make"      , rc);
    --rce;  if (rc < 0) {
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(alpha and omega)----------------*/
-   /*> if (strcmp (a_pred, "SEQ_ALPHA") != 0) {                                       <* 
-    *>    DEBUG_YDLST  yLOG_note    ("adding new one after a named list");            <* 
-    *>    rc = ydlst_seq__alpha  (a_succ);                                            <* 
-    *>    rc = ydlst_seq__omega  (a_pred);                                            <* 
-    *>    yDLST_list_by_ptr  (a_succ, NULL);                                          <* 
-    *> }                                                                              <*/
-   /*> if (strcmp (a_succ, "SEQ_OMEGA") != 0) {                                       <* 
-    *>    DEBUG_YDLST  yLOG_note    ("adding new one before a named list");           <* 
-    *>    rc = ydlst_seq__omega  (a_pred);                                            <* 
-    *>    yDLST_list_by_ptr  (a_pred, NULL);                                          <* 
-    *> }                                                                              <*/
+   rc = ydlst_seq__balance_all  (a_pred, a_succ);
+   DEBUG_YDLST  yLOG_value   ("balance"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
-   return 0;
+   return 1;
 }
 
 char
@@ -1079,51 +1206,23 @@ ydlst_seq__destroy      (tLIST *a_pred, tLIST *a_succ)
    tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
-   /*---(defenses)-----------------------*/
-   DEBUG_YDLST  yLOG_point   ("a_pred"    , a_pred);
-   --rce;  if (a_pred  == NULL) {
+   /*---(make)---------------------------*/
+   rc = ydlst_seq__unmake (a_pred, a_succ);
+   DEBUG_YDLST  yLOG_value   ("make"      , rc);
+   --rce;  if (rc < 0) {
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YDLST  yLOG_info    ("l_title"   , a_pred->l_title);
-   DEBUG_YDLST  yLOG_point   ("a_succ"    , a_succ);
-   --rce;  if (a_succ  == NULL) {
+   /*---(alpha and omega)----------------*/
+   rc = ydlst_seq__balance_all  (a_pred, a_succ);
+   DEBUG_YDLST  yLOG_value   ("balance"   , rc);
+   --rce;  if (rc < 0) {
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
-   }
-   DEBUG_YDLST  yLOG_info    ("l_title"   , a_succ->l_title);
-   /*---(check match)--------------------*/
-   --rce;  if (a_pred == a_succ) {
-      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(prepare)------------------------*/
-   x_seq = a_pred->l_shead;
-   /*---(walk)---------------------------*/
-   --rce;  while (x_seq != NULL) {
-      DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", x_seq, x_seq->q_succ, x_seq->q_succ->l_title);
-      if (x_seq->q_succ == a_succ) {
-         rc = ydlst_seq__unhook (x_seq);
-         DEBUG_YDLST  yLOG_value   ("hook"      , rc);
-         if (rc < 0) {
-            DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-            return rce;
-         }
-         rc = ydlst_seq__free   (&x_seq);
-         DEBUG_YDLST  yLOG_value   ("free"      , rc);
-         if (rc < 0) {
-            DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
-            return rce;
-         }
-         DEBUG_YDLST   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      x_seq = x_seq->q_snext;
    }
    /*---(complete)-----------------------*/
-   --rce;
-   DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
-   return rce;
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 1;
 }
 
 char       /*----: prepare a new list for use --------------------------------*/
@@ -1188,8 +1287,9 @@ yDLST_seq_after         (char *a_before)
    }
    /*---(alpha and omega)----------------*/
    if (strcmp (a_before, "SEQ_ALPHA") != 0) {
-      rc = ydlst_seq__alpha  (x_list);
-      rc = ydlst_seq__omega  (x_before);
+      rc = ydlst_seq__balance_all (x_before, x_list);
+      /*> rc = ydlst_seq__alpha  (x_list);                                            <*/
+      /*> rc = ydlst_seq__omega  (x_before);                                          <*/
    }
    /*---(make current)-------------------*/
    /*> yDLST_list_by_ptr  (x_list, NULL);                                             <*/
@@ -1260,8 +1360,9 @@ yDLST_seq_before        (char *a_after)
    }
    /*---(alpha and omega)----------------*/
    if (strcmp (a_after, "SEQ_OMEGA") != 0) {
-      rc = ydlst_seq__alpha  (x_after);
-      rc = ydlst_seq__omega  (x_list);
+      rc = ydlst_seq__balance_all (x_list  , x_after);
+      /*> rc = ydlst_seq__alpha  (x_after);                                           <*/
+      /*> rc = ydlst_seq__omega  (x_list);                                            <*/
    }
    /*---(make current)-------------------*/
    /*> yDLST_list_by_ptr  (x_list, NULL);                                             <*/
