@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1j"
-#define     P_VERTXT    "yDLST_seq sequence creation/destruction unit tested"
+#define     P_VERNUM    "1.1k"
+#define     P_VERTXT    "yDLST_seq_after improved and unit tested on real-world data"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -340,8 +340,6 @@ char        ydlst_seq__balance_pred (tLIST *a_list);
 char        ydlst_seq__balance_succ (tLIST *a_list);
 char        ydlst_seq__balance_all  (tLIST *a_pred, tLIST *a_succ);
 /*········´ ´················ends·´ ´·········································*/
-/*> char        ydlst_seq__alpha        (tLIST *a_list);                              <*/
-/*> char        ydlst_seq__omega        (tLIST *a_list);                              <*/
 char        ydlst_seq__cycle        (int a_lvl, tLIST *a_curr, tLIST *a_look);
 /*········´ ´···········existance·´ ´·········································*/
 char        ydlst_seq__create       (tLIST *a_pred, tLIST *a_succ);
