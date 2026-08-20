@@ -235,13 +235,13 @@ ydlst_seq__hook         (tLIST *a_pred, tLIST *a_succ, tSEQ *a_seq)
    /*---(into predecessor)------------*/
    if (a_succ->l_phead == NULL) {
       DEBUG_YDLST  yLOG_note    ("first on predecessor list");
-      a_succ->l_phead         = a_seq;
-      a_succ->l_ptail         = a_seq;
+      a_succ->l_phead          = a_seq;
+      a_succ->l_ptail          = a_seq;
    } else {
       DEBUG_YDLST  yLOG_note    ("append to predecessor list");
-      a_seq->q_pprev          = a_succ->l_ptail;
+      a_seq->q_pprev           = a_succ->l_ptail;
       a_succ->l_ptail->q_pnext = a_seq;
-      a_succ->l_ptail         = a_seq;
+      a_succ->l_ptail          = a_seq;
    }
    /*---(update count)-------------------*/
    ++a_succ->l_pcount;
@@ -757,7 +757,7 @@ ydlst_seq__cycle  (int a_lvl, tLIST *a_curr, tLIST *a_look)
 static void  o___SEARCH__________o () { return; }
 
 int
-yDLST_seq_count      (char a_scope)
+yDLST_seq_count         (char a_scope)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -806,7 +806,7 @@ int yDLST_alpha_count    (void) { return s_alpha->l_scount; }
 int yDLST_omega_count    (void) { return s_omega->l_pcount; }
 
 char       /*--> find a list using sequential pos ----------------------------*/
-yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void **a_data)
+yDLST_seq_by_index      (char a_scope, int n, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -818,9 +818,10 @@ yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void 
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defaults)-----------------------*/
-   if (a_seq  != NULL)  *a_seq  = NULL;
-   if (a_list != NULL)  *a_list = NULL;
-   if (a_data != NULL)  *a_data = NULL;
+   if (r_seq   != NULL)  *r_seq  = NULL;
+   if (r_list  != NULL)  *r_list = NULL;
+   if (r_data  != NULL)  *r_data = NULL;
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_seq__entry (NULL), LEN_RECD);
    /*---(defense)------------------------*/
    DEBUG_YDLST  yLOG_sint    (n);
    DEBUG_YDLST  yLOG_sint    (S_nseq);
@@ -881,38 +882,40 @@ yDLST_seq_by_index      (char a_scope, int n, void **a_seq, void **a_list, void 
    }
    /*---(save)---------------------------*/
    S_cseq  = x_seq;
-   if (a_seq  != NULL)  *a_seq  = x_seq;
+   if (r_seq  != NULL)  *r_seq  = x_seq;
    switch (a_scope) {
    case '[' : case '<' : case '*' :
-      if (a_list != NULL)  *a_list = x_seq->q_pred;
-      if (a_data != NULL)  *a_data = x_seq->q_pred->l_data;
+      if (r_list != NULL)  *r_list = x_seq->q_pred;
+      if (r_data != NULL)  *r_data = x_seq->q_pred->l_data;
       break;
    case ']' : case '>' :
-      if (a_list != NULL)  *a_list = x_seq->q_succ;
-      if (a_data != NULL)  *a_data = x_seq->q_succ->l_data;
+      if (r_list != NULL)  *r_list = x_seq->q_succ;
+      if (r_data != NULL)  *r_data = x_seq->q_succ->l_data;
       break;
    }
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_seq__entry (x_seq), LEN_RECD);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
 char
-yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_curr, void **a_list, void **a_data)
+yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
    char        x_scope     =  '-';
    tLIST      *x_list      = NULL;
-   tSEQ       *x_curr      = NULL;
+   tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
    /*---(defaults)-----------------------*/
-   if (a_curr != NULL)  *a_curr = NULL;
-   if (a_list != NULL)  *a_list = NULL;
-   if (a_data != NULL)  *a_data = NULL;
-   x_curr = S_cseq;
+   if (r_seq   != NULL)  *r_seq  = NULL;
+   if (r_list  != NULL)  *r_list = NULL;
+   if (r_data  != NULL)  *r_data = NULL;
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_seq__entry (NULL), LEN_RECD);
+   x_seq  = S_cseq;
    /*---(check scope)--------------------*/
    DEBUG_YDLST  yLOG_schar   (a_scope);
    --rce;  if (a_scope == 0) {
@@ -937,22 +940,22 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_curr, void **a_list
       DEBUG_YDLST  yLOG_snote   (x_list->l_title);
    }
    /*---(defense)------------------------*/
-   DEBUG_YDLST  yLOG_spoint  (x_curr);
-   --rce;  if (x_curr == NULL) {
+   DEBUG_YDLST  yLOG_spoint  (x_seq);
+   --rce;  if (x_seq == NULL) {
       /*---(non-bounce)------------------*/
       if (strchr (YDLST_DREL, a_move) != NULL) {
-         S_cseq = x_curr;
+         S_cseq = x_seq;
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
       switch (x_scope) {
-      case YDLST_GLOBAL :  x_curr = S_hseq;            break;
-      case YDLST_LPRED  :  x_curr = x_list->l_phead;    break;
-      case YDLST_LSUCC  :  x_curr = x_list->l_shead;    break;
+      case YDLST_GLOBAL :  x_seq = S_hseq;            break;
+      case YDLST_LPRED  :  x_seq = x_list->l_phead;    break;
+      case YDLST_LSUCC  :  x_seq = x_list->l_shead;    break;
       }
-      DEBUG_DATA   yLOG_spoint  (x_curr);
-      if (x_curr == NULL) {
+      DEBUG_DATA   yLOG_spoint  (x_seq);
+      if (x_seq == NULL) {
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
@@ -961,60 +964,60 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_curr, void **a_list
    --rce;  switch (a_move) {
    case YDLST_HEAD : case YDLST_DHEAD :
       switch (x_scope) {
-      case YDLST_GLOBAL :  x_curr = S_hseq;            break;
-      case YDLST_LPRED  :  x_curr = x_list->l_phead;    break;
-      case YDLST_LSUCC  :  x_curr = x_list->l_shead;    break;
+      case YDLST_GLOBAL :  x_seq = S_hseq;            break;
+      case YDLST_LPRED  :  x_seq = x_list->l_phead;    break;
+      case YDLST_LSUCC  :  x_seq = x_list->l_shead;    break;
       }
       break;
    case YDLST_PREV : case YDLST_DPREV :
       switch (x_scope) {
-      case YDLST_GLOBAL :  x_curr = x_curr->q_mprev;    break;
-      case YDLST_LPRED  :  x_curr = x_curr->q_pprev;    break;
-      case YDLST_LSUCC  :  x_curr = x_curr->q_sprev;    break;
+      case YDLST_GLOBAL :  x_seq = x_seq->q_mprev;    break;
+      case YDLST_LPRED  :  x_seq = x_seq->q_pprev;    break;
+      case YDLST_LSUCC  :  x_seq = x_seq->q_sprev;    break;
       }
       break;
    case YDLST_CURR : case YDLST_DCURR :
-      x_curr = x_curr;
+      x_seq = x_seq;
       break;
    case YDLST_NEXT : case YDLST_DNEXT :
       switch (x_scope) {
-      case YDLST_GLOBAL :  x_curr = x_curr->q_mnext;    break;
-      case YDLST_LPRED  :  x_curr = x_curr->q_pnext;    break;
-      case YDLST_LSUCC  :  x_curr = x_curr->q_snext;    break;
+      case YDLST_GLOBAL :  x_seq = x_seq->q_mnext;    break;
+      case YDLST_LPRED  :  x_seq = x_seq->q_pnext;    break;
+      case YDLST_LSUCC  :  x_seq = x_seq->q_snext;    break;
       }
       break;
    case YDLST_TAIL : case YDLST_DTAIL :
       switch (x_scope) {
-      case YDLST_GLOBAL :  x_curr = S_tseq;            break;
-      case YDLST_LPRED  :  x_curr = x_list->l_ptail;    break;
-      case YDLST_LSUCC  :  x_curr = x_list->l_stail;    break;
+      case YDLST_GLOBAL :  x_seq = S_tseq;            break;
+      case YDLST_LPRED  :  x_seq = x_list->l_ptail;    break;
+      case YDLST_LSUCC  :  x_seq = x_list->l_stail;    break;
       }
       break;
    default         :
       DEBUG_YDLST  yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YDLST  yLOG_spoint  (x_curr);
+   DEBUG_YDLST  yLOG_spoint  (x_seq);
    /*---(check end)----------------------*/
-   --rce;  if (x_curr == NULL) {
+   --rce;  if (x_seq == NULL) {
       /*---(bounce off ends)-------------*/
       if (a_move == YDLST_PREV) {
          switch (x_scope) {
-         case YDLST_GLOBAL :  x_curr = S_hseq;            break;
-         case YDLST_LPRED  :  x_curr = x_list->l_phead;    break;
-         case YDLST_LSUCC  :  x_curr = x_list->l_shead;    break;
+         case YDLST_GLOBAL :  x_seq = S_hseq;            break;
+         case YDLST_LPRED  :  x_seq = x_list->l_phead;    break;
+         case YDLST_LSUCC  :  x_seq = x_list->l_shead;    break;
          }
       }
       if (a_move == YDLST_NEXT) {
          switch (x_scope) {
-         case YDLST_GLOBAL :  x_curr = S_tseq;            break;
-         case YDLST_LPRED  :  x_curr = x_list->l_ptail;    break;
-         case YDLST_LSUCC  :  x_curr = x_list->l_stail;    break;
+         case YDLST_GLOBAL :  x_seq = S_tseq;            break;
+         case YDLST_LPRED  :  x_seq = x_list->l_ptail;    break;
+         case YDLST_LSUCC  :  x_seq = x_list->l_stail;    break;
          }
       }
       /*---(no bounce)-------------------*/
-      if (x_curr == NULL) {
-         S_cseq = x_curr;
+      if (x_seq == NULL) {
+         S_cseq = x_seq;
          DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
@@ -1024,16 +1027,17 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **a_curr, void **a_list
       /*---(done)------------------------*/
    }
    /*---(normal result)------------------*/
-   S_cseq = x_curr;
+   S_cseq = x_seq;
    /*---(save back)----------------------*/
-   if (a_curr  != NULL)  *a_curr  = S_cseq;
+   if (r_seq   != NULL)  *r_seq   = S_cseq;
    if (strchr (YDLST_PREDS, a_scope) != NULL) {
-      if (a_list != NULL)  *a_list = S_cseq->q_pred;
-      if (a_data != NULL)  *a_data = S_cseq->q_pred->l_data;
+      if (r_list != NULL)  *r_list = S_cseq->q_pred;
+      if (r_data != NULL)  *r_data = S_cseq->q_pred->l_data;
    } else {
-      if (a_list != NULL)  *a_list = S_cseq->q_succ;
-      if (a_data != NULL)  *a_data = S_cseq->q_succ->l_data;
+      if (r_list != NULL)  *r_list = S_cseq->q_succ;
+      if (r_data != NULL)  *r_data = S_cseq->q_succ->l_data;
    }
+   if (d_entry != NULL)  ystrlcpy (d_entry, ydlst_seq__entry (x_seq), LEN_RECD);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
    return rc;
@@ -1136,7 +1140,7 @@ ydlst_seq__destroy      (tLIST *a_pred, tLIST *a_succ)
    tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
-   /*---(make)---------------------------*/
+   /*---(unmake)-------------------------*/
    rc = ydlst_seq__unmake (a_pred, a_succ);
    DEBUG_YDLST  yLOG_value   ("make"      , rc);
    --rce;  if (rc < 0) {
@@ -1153,6 +1157,63 @@ ydlst_seq__destroy      (tLIST *a_pred, tLIST *a_succ)
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 1;
+}
+
+char
+ydlst_seq__purge_list   (tLIST *a_list)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         c           =    0;
+   tSEQ       *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);
+   --rce;  if (a_list == NULL) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(predecessors)-------------------*/
+   DEBUG_YDLST  yLOG_note    ("PREDECESSORS");
+   x_seq = a_list->l_phead;
+   DEBUG_YDLST  yLOG_point   ("->l_phead" , x_seq);
+   while (x_seq != NULL) {
+      DEBUG_YDLST  yLOG_complex ("handle"    , "%-10p, %-10p, %s", x_seq, x_seq->q_pred, x_seq->q_pred->l_title);
+      if (x_seq->q_pred == s_alpha) {
+         DEBUG_YDLST  yLOG_note    ("skipping");
+         x_seq = x_seq->q_pnext;
+         continue;
+      }
+      rc = ydlst_seq__destroy (x_seq->q_pred, a_list);
+      DEBUG_YDLST  yLOG_value   ("destroy"   , rc);
+      x_seq = a_list->l_phead;
+   }
+   /*---(successors)---------------------*/
+   DEBUG_YDLST  yLOG_note    ("SUCCESSORS");
+   x_seq = a_list->l_shead;
+   DEBUG_YDLST  yLOG_point   ("->l_shead" , x_seq);
+   while (x_seq != NULL) {
+      DEBUG_YDLST  yLOG_complex ("handle"    , "%-10p, %-10p, %s", x_seq, x_seq->q_succ, x_seq->q_succ->l_title);
+      if (x_seq->q_succ == s_omega) {
+         DEBUG_YDLST  yLOG_note    ("skipping");
+         x_seq = x_seq->q_snext;
+         continue;
+      }
+      rc = ydlst_seq__destroy (a_list, x_seq->q_succ);
+      DEBUG_YDLST  yLOG_value   ("destroy"   , rc);
+      x_seq = a_list->l_shead;
+   }
+   /*---(remove SEQ_ALPHA seq)-----------*/
+   rc = ydlst_seq__unmake (s_alpha, a_list);
+   DEBUG_YDLST  yLOG_value   ("s_alpha"   , rc);
+   /*---(remove SEQ_OMEGA seq)-----------*/
+   rc = ydlst_seq__unmake (a_list, s_omega);
+   DEBUG_YDLST  yLOG_value   ("s_omega"   , rc);
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 0;
 }
 
 char       /*----: prepare a new list for use --------------------------------*/
@@ -1317,9 +1378,9 @@ ydlst_seq__purge        (void)
    int         c           =    0;
    tSEQ       *x_seq       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_YDLST  yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(move)---------------------------*/
-   DEBUG_YDLST  yLOG_spoint  (S_hseq);
+   DEBUG_YDLST  yLOG_point   ("S_hseq"    , S_hseq);
    x_seq = S_hseq;
    while (x_seq != NULL) {
       ydlst_seq__unhook (x_seq);
@@ -1330,7 +1391,7 @@ ydlst_seq__purge        (void)
    S_tseq    = NULL;
    S_nseq   =    0;
    /*---(complete)-----------------------*/
-   DEBUG_YDLST  yLOG_sexit   (__FUNCTION__);
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1434,7 +1495,7 @@ ydlst_seq_entry         (char a_dir)
    DEBUG_YDLST  yLOG_point   ("S_rseq"    , S_rseq);
    /*---(cursor)-------------------------*/
    if (a_dir == 'T')  x_curr = 0x01;
-   else  rc = yDLST_seq_by_cursor (YDLST_GLOBAL, a_dir, &x_curr, NULL, NULL);
+   else  rc = yDLST_seq_by_cursor (YDLST_GLOBAL, a_dir, &x_curr, NULL, NULL, NULL);
    if (rc < 0)  x_curr = NULL;
    DEBUG_YDLST  yLOG_point   ("x_curr"    , x_curr);
    /*---(save-back)----------------------*/

@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1k"
-#define     P_VERTXT    "yDLST_seq_after improved and unit tested on real-world data"
+#define     P_VERNUM    "1.1m"
+#define     P_VERTXT    "all unit tests successful"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -339,11 +339,15 @@ char        ydlst_seq__balance_chk  (tLIST *a_list);
 char        ydlst_seq__balance_pred (tLIST *a_list);
 char        ydlst_seq__balance_succ (tLIST *a_list);
 char        ydlst_seq__balance_all  (tLIST *a_pred, tLIST *a_succ);
-/*········´ ´················ends·´ ´·········································*/
+/*········´ ´··············search·´ ´·········································*/
+int         yDLST_seq_count         (char a_scope);
+char        yDLST_seq_by_index      (char a_scope, int n, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD]);
 char        ydlst_seq__cycle        (int a_lvl, tLIST *a_curr, tLIST *a_look);
 /*········´ ´···········existance·´ ´·········································*/
 char        ydlst_seq__create       (tLIST *a_pred, tLIST *a_succ);
 char        ydlst_seq__destroy      (tLIST *a_pred, tLIST *a_succ);
+char        ydlst_seq__purge_list   (tLIST *a_list);
 /*········´ ´·············program·´ ´·········································*/
 char        ydlst_seq__purge        (void);
 char        ydlst_seq_init          (void);

@@ -339,6 +339,13 @@ ydlst_list_destroy      (char *a_title, tLIST **b_list)
       DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(remove all sequences)--------*/
+   rc = ydlst_seq__purge_list   (S_curr);
+   DEBUG_YDLST  yLOG_value   ("purge"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(unhook from master)----------*/
    x_linked = S_curr->l_linked;
    DEBUG_YDLST  yLOG_char    ("x_linked"  , x_linked);
