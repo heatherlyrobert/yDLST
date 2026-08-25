@@ -104,9 +104,53 @@ char        yDLST_list_by_index     (int  n       , void **r_list, void **r_data
 char        yDLST_list_by_cursor    (char a_move  , void **r_list, void **r_data, char d_entry [LEN_RECD]);
 char        yDLST_list_by_name      (char *a_title, void **r_list, void **r_data, char d_entry [LEN_RECD]);
 char        yDLST_list_by_ptr       (void *a_list , char d_entry [LEN_RECD]);
-/*········´ ´··············saving·´ ´·········································*/
+/*········´ ´······string-testing·´ ´·········································*/
+char*       ydlst_list_entry        (char a_dir);
+char*       ydlst_list_audit        (void);
+/*········´ ´·············pushpop·´ ´·········································*/
 void*       yDLST_list_current      (void);
 char        yDLST_list_restore      (void *a_list);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
+/*===[[ yDLST_line.c ]]=======================================================*/
+/*········´ ´···········existance·´ ´·········································*/
+char        yDLST_line_create       (char *a_title, void *a_data);
+char        yDLST_line_destroy      (char *a_title);
+char        yDLST_line_clearlist    (void);
+/*········´ ´··············search·´ ´·········································*/
+int         yDLST_line_count        (char a_scope);
+char        yDLST_line_by_index     (char a_scope, int n        , void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_cursor    (char a_scope, char a_move  , void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data, char d_entry [LEN_RECD]);
+char        yDLST_line_list         (void **a_list, void **a_data);
+/*········´ ´······string-testing·´ ´·········································*/
+char*       ydlst_line_entry        (char a_dir);
+char*       ydlst_line_audit        (void);
+/*········´ ´··············saving·´ ´·········································*/
+char        yDLST_line_clearlist    (void);
+/*········´ ´·············pushpop·´ ´·········································*/
+void*       yDLST_line_current      (void);
+char        yDLST_line_restore      (void *a_line);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
+/*===[[ yDLST_seq.c ]]========================================================*/
+/*········´ ´···········existance·´ ´·········································*/
+char        yDLST_seq_after         (char *a_before);
+char        yDLST_seq_before        (char *a_after);
+/*········´ ´··············search·´ ´·········································*/
+int         yDLST_seq_count         (char a_scope);
+char        yDLST_seq_by_index      (char a_scope, int n, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD]);
+char        yDLST_seq_for_list      (void *a_list, short *r_npred, char r_preds [LEN_FULL], char *r_nsucc, char r_succs [LEN_FULL]);
+int         yDLST_alpha_count       (void);
+int         yDLST_omega_count       (void);
+/*········´ ´······string-testing·´ ´·········································*/
+char*       ydlst_seq_entry         (char a_dir);
+char*       ydlst_seq_audit         (void);
 /*········´ ´················DONE·´ ´·········································*/
 
 
@@ -114,16 +158,6 @@ char        yDLST_list_restore      (void *a_list);
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         yDLST_line_count        (char a_scope);
-char        yDLST_line_by_index     (char a_scope, int n        , void **a_line, void **a_data, char d_entry [LEN_RECD]);
-char        yDLST_line_by_cursor    (char a_scope, char a_move  , void **a_line, void **a_data, char d_entry [LEN_RECD]);
-char        yDLST_line_by_name      (char a_scope, char *a_title, void **a_line, void **a_data, char d_entry [LEN_RECD]);
-char        yDLST_line_list         (void **a_list, void **a_data);
-char        yDLST_line_create       (char *a_title, void *a_data);
-char        yDLST_line_destroy      (char *a_title);
-char        yDLST_line_clearlist    (void);
-char        ydlst_line_init         (char f_linewipe (void *));
-char        ydlst_line_wrap         (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yDLST_focus_on          (void);
@@ -147,14 +181,6 @@ char        yDLST_active_clearall   (void);
 char        ydlst_active_wrap       (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-int         yDLST_seq_count         (char a_scope);
-char        yDLST_seq_after         (char *a_before);
-char        yDLST_seq_before        (char *a_after);
-char        yDLST_seq_by_index      (char a_scope, int n, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD]);
-char        yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD]);
-char        yDLST_seq_for_list      (void *a_list, short *r_npred, char r_preds [LEN_FULL], char *r_nsucc, char r_succs [LEN_FULL]);
-int         yDLST_alpha_count       (void);
-int         yDLST_omega_count       (void);
 
 /*---(show current structure)-------------------*/
 /*> char        yDLST_showlist     (char  a_header, void *a_file);                    <*/

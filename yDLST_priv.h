@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1m"
-#define     P_VERTXT    "all unit tests successful"
+#define     P_VERNUM    "1.1n"
+#define     P_VERTXT    "make string-testing ¶entry¶ functions public"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -252,8 +252,8 @@ char        ydlst_line_config       (char f_linewipe (void *));
 char        ydlst_line_init         (char f_linewipe (void *));
 char        ydlst_line_wrap         (void);
 /*········´ ´·············pushpop·´ ´·········································*/
-tLINE*      yDLST_line_current      (void);
-char        yDLST_line_restore      (tLINE *a_line);
+void*       yDLST_line_current      (void);
+char        yDLST_line_restore      (void  *a_line);
 /*········´ ´··············report·´ ´·········································*/
 char*       ydlst_line__entry       (tLINE *a_line);
 char*       ydlst_line_entry        (char a_dir);

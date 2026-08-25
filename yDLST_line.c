@@ -1209,8 +1209,8 @@ ydlst_line_audit        (void)
 /*====================------------------------------------====================*/
 static void  o___PUSHPOP_________o () { return; }
 
-tLINE* yDLST_line_current   (void)          { return S_curr; }
-char   yDLST_line_restore   (tLINE *a_line) { S_curr = a_line;  return 0; }
+void*  yDLST_line_current   (void)          { return S_curr; }
+char   yDLST_line_restore   (void *a_line)  { S_curr = (tLINE*) a_line;  return 0; }
 
 
 
