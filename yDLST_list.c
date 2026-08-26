@@ -4,6 +4,37 @@
 
 
 
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2011 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might¦"    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 /*---(list of all lists)--------------*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 static      tLIST      *S_head      = NULL;   /* head node pointer                   */
@@ -62,6 +93,12 @@ ydlst_list__wipe        (tLIST *a_list)
    a_list->l_shead   = NULL;
    a_list->l_stail   = NULL;
    a_list->l_scount  =    0;
+   /*---(comes after)----------*/
+   DEBUG_INPT   yLOG_snote   ("report");
+   a_list->l_row     =    0;
+   a_list->l_col     =    0;
+   a_list->l_x       =    0;
+   a_list->l_y       =    0;
    /*---(complete)-------------*/
    DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
    return 1;
@@ -99,6 +136,12 @@ ydlst_list__memory       (tLIST *a_list)
    yENV_check_ptr    (a_list->l_shead);
    yENV_check_ptr    (a_list->l_stail);
    yENV_check_num    (a_list->l_scount);
+   yENV_check_spacer ();
+   /*---(comes after)----------*/
+   yENV_check_num    (a_list->l_row);
+   yENV_check_num    (a_list->l_col);
+   yENV_check_num    (a_list->l_x);
+   yENV_check_num    (a_list->l_y);
    yENV_check_end    ();
    /*---(complete)-----------------------*/
    return yENV_check ();
@@ -130,6 +173,11 @@ ydlst_list__rando        (tLIST *a_list)
    a_list->l_shead       = 0x05;
    a_list->l_stail       = 0x06;
    a_list->l_scount      = 0x07;
+   /*---(comes after)----------*/
+   a_list->l_row         = 0x08;
+   a_list->l_col         = 0x09;
+   a_list->l_x           = 0x0a;
+   a_list->l_y           = 0x0b;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -776,8 +824,8 @@ ydlst_list__entry       (tLIST *a_list)
    /*---(locals)-----------+-----+-----+-*/
    char        t           [LEN_HUND]  = "";
    /*---(short-cuts)---------------------*/
-   if (a_list == NULL) return "´·············· -···········  - ´·············· ´··············  ´·············· ´·············· ··-  ´·············· ´·············· ··-  ´·············· ´·············· ··-  Ï";
-   if (a_list == 0x01) return "---title------- ---data-----  l ---full-mprev-- ---mnext-------  ---line-nhead-- ---ntail------- cnt  ---pred-phead-- ---ptail------- cnt  ---succ-shead-- ---stail------- cnt  Ï";
+   if (a_list == NULL) return "´·············· -···········  - ´·············· ´··············  ´·············· ´·············· ··-  ´·············· ´·············· ··-  ´·············· ´·············· ··-  ·- ·- ···- ···-  Ï";
+   if (a_list == 0x01) return "---title------- ---data-----  l ---full-mprev-- ---mnext-------  ---line-nhead-- ---ntail------- cnt  ---pred-phead-- ---ptail------- cnt  ---succ-shead-- ---stail------- cnt  rw co xpos ypos  Ï";
    /*---(prepare)------------------------*/
    strcpy (unit_answer, "");
    /*---(master)-------------------------*/
@@ -833,6 +881,15 @@ ydlst_list__entry       (tLIST *a_list)
       ystrlcat (unit_answer, "´·············· ´·············· ", LEN_RECD);
    }
    ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_scount, '>', ',', 0, '-', '.', '-', '-',  3), LEN_RECD);
+   ystrlcat (unit_answer, "  ", LEN_RECD);
+   /*---(report)-------------------------*/
+   ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_row   , '>', ',', 0, '-', '.', '-', '-',  2), LEN_RECD);
+   ystrlcat (unit_answer, " ", LEN_RECD);
+   ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_col   , '>', ',', 0, '-', '.', '-', '-',  2), LEN_RECD);
+   ystrlcat (unit_answer, " ", LEN_RECD);
+   ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_x     , '>', ',', 0, '-', '.', '-', '-',  4), LEN_RECD);
+   ystrlcat (unit_answer, " ", LEN_RECD);
+   ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_y     , '>', ',', 0, '-', '.', '-', '-',  4), LEN_RECD);
    ystrlcat (unit_answer, "  ", LEN_RECD);
    /*---(final)--------------------------*/
    ystrlcat (unit_answer, "Ï", LEN_RECD);

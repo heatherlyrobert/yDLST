@@ -6,6 +6,37 @@
 
 
 
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2011 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might¦"    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 /*===[[ BEG_HEADER ]]=========================================================*/
 
 /*===[[ ONE_LINERS ]]=========================================================*/
@@ -41,9 +72,9 @@
 #define     P_CREATED   "2011-05"
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
-#define     P_VERMINOR  "1.1-, modernize code practices"
-#define     P_VERNUM    "1.1n"
-#define     P_VERTXT    "make string-testing ¶entry¶ functions public"
+#define     P_VERMINOR  "1.2-, bring in basic pert reporting"
+#define     P_VERNUM    "1.2a"
+#define     P_VERTXT    "added file-GPL notes and complex dataset for pert unit-testing"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -118,6 +149,11 @@ struct  cLIST {   /*   all list members begin with "l_"   */
    tSEQ       *l_shead;                /* succ head                      */
    tSEQ       *l_stail;                /* succ tail                      */
    int         l_scount;               /* succ count                     */
+   /*---(reporting)------------*/
+   uchar       l_col;                  /* reporting col/horz             */
+   uchar       l_row;                  /* reporting row/vert             */
+   short       l_x;                    /* report position (unit test)    */
+   short       l_y;                    /* report position (unit test)    */
    /*---(done)-----------------*/
 };
 
@@ -363,6 +399,12 @@ char        ydlst_seq_restore       (tSEQ *a_seq);
 char*       ydlst_seq__unit         (char *a_question, int a_num);
 /*········´ ´················DONE·´ ´·········································*/
 
+
+
+/*===[[ yDLST_rptg.c ]]=======================================================*/
+/*········´ ´·············cleanse·´ ´·········································*/
+char        ydlst__pert_clear       (void);
+/*········´ ´················DONE·´ ´·········································*/
 
 
 

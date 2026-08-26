@@ -1,0 +1,789 @@
+/*===========================[[ start-of-code ]]==============================*/
+#include    "yDLST.h"
+#include    "yDLST_priv.h"
+
+
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*¥¥∑∑∑∑∑∑∑∑∑1∑∑∑∑∑∑∑∑∑2∑∑∑∑∑∑∑∑∑3∑∑∑∑∑∑∑∑∑4∑∑∑∑∑∑∑∑∑5∑∑∑∑∑∑∑∑∑6∑∑∑∑∑∑∑∑∑7∑∑∑∑∑∑∑∑∑8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2011 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¶"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¶"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¶" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¶"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might¶"    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*¥¥∑∑∑∑∑∑∑∑∑1∑∑∑∑∑∑∑∑∑2∑∑∑∑∑∑∑∑∑3∑∑∑∑∑∑∑∑∑4∑∑∑∑∑∑∑∑∑5∑∑∑∑∑∑∑∑∑6∑∑∑∑∑∑∑∑∑7∑∑∑∑∑∑∑∑∑8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
+#define  MAX_Y      70
+#define  MAX_X     300
+
+#define  OFF_X      30
+#define  OFF_Y       7
+
+#define  END_X       2
+#define  END_Y       2
+
+static char     S_pert [MAX_Y][MAX_X];
+static int      S_xcol   = 0;
+static int      S_xrow   = 0;
+
+static int      S_nalpha = 0;
+static int      S_calpha = 0;
+static int      S_nomega = 0;
+static int      S_comega = 0;
+
+static int      S_maxy   = 0;
+static int      S_maxx   = 0;
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        pert charting                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___PERT____________________o (void) {;}
+
+char
+ydlst__pert_clear       (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tLIST      *x_group     = NULL;
+   int         n           =    0;
+   int         r, c;
+   /*---(header)-------------------------*/
+   DEBUG_LOOP  yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   rc = yDLST_list_by_cursor ('[', &x_group, NULL, NULL);
+   DEBUG_LOOP   yLOG_complex ("head"      , "%3d, %p", rc, x_group);
+   /*---(walk through groups)------------*/
+   while (rc >= 0 && x_group != NULL) {
+      DEBUG_LOOP   yLOG_complex ("GROUP"     , "%3d, %3d, %p, %-15.15s", n, rc, x_group, x_group->l_title);
+      x_group->l_row = x_group->l_col = 0;
+      x_group->l_x   = x_group->l_y   = 0;
+      ++n;
+      rc = yDLST_list_by_cursor ('>', &x_group, NULL, NULL);
+   }
+   /*---(graph)--------------------------*/
+   for (r = 0; r < MAX_Y; ++r) {
+      for (c = 0; c < MAX_X; ++c)  S_pert [r][c] = ' ';
+      S_pert [r][MAX_X - 1] = '\0';
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+/*> char                                                                                                                           <* 
+ *> rptg__pert_col          (void)                                                                                                 <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    tLIST      *x_group     = NULL;                                                                                             <* 
+ *>    int         x_ngroup    =    0;                                                                                             <* 
+ *>    tLIST      *x_pred      = NULL;                                                                                             <* 
+ *>    int         x_npred     =    0;                                                                                             <* 
+ *>    /+---(header)-------------------------+/                                                                                    <* 
+ *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                                    <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    rc = yDLST_list_by_index  (x_ngroup, NULL, &x_group, NULL);                                                                 <* 
+ *>    DEBUG_LOOP   yLOG_complex ("head"      , "%3d, %p", rc, x_group);                                                           <* 
+ *>    S_xcol = 0;                                                                                                                 <* 
+ *>    /+---(walk through groups)------------+/                                                                                    <* 
+ *>    while (rc >= 0) {                                                                                                           <* 
+ *>       if (x_group != NULL) {                                                                                                   <* 
+ *>          DEBUG_LOOP   yLOG_complex ("GROUP"     , "%3d, %p, %-15.15s, %2dr", rc, x_group, x_group->g_name, x_group->g_askd);   <* 
+ *>          x_npred = 0;                                                                                                          <* 
+ *>          rc = yDLST_seq_by_index  ('<', x_npred, NULL, NULL, &x_pred, NULL);                                                   <* 
+ *>          while (rc >= 0) {                                                                                                     <* 
+ *>             if (x_group->g_col < 1)  x_group->g_col = 1;                                                                       <* 
+ *>             if (x_pred != NULL) {                                                                                              <* 
+ *>                if (x_pred->g_col + 1 > x_group->g_col)  x_group->g_col = x_pred->g_col + 1;                                    <* 
+ *>             }                                                                                                                  <* 
+ *>             if (x_group->g_col > S_xcol)  S_xcol = x_group->g_col;                                                             <* 
+ *>             rc = yDLST_seq_by_index  ('<', ++x_npred, NULL, NULL, &x_pred, NULL);                                              <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       rc = yDLST_list_by_index  (++x_ngroup, NULL, &x_group, NULL);                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    ++S_xcol;                                                                                                                   <* 
+ *>    /+---(complete)-----------------------+/                                                                                    <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                    <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char                                                                                                            <* 
+ *> rptg__pert_rower        (void *a_list, char a_row)                                                              <* 
+ *> {                                                                                                               <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                     <* 
+ *>    char        rc          =    0;                                                                              <* 
+ *>    void       *x_list      = NULL;                                                                              <* 
+ *>    tLIST      *x_succ      = NULL;                                                                              <* 
+ *>    char        x_old       =    0;                                                                              <* 
+ *>    char        c           =    0;                                                                              <* 
+ *>    /+---(quick out)----------------------+/                                                                     <* 
+ *>    if (a_list == NULL)  return a_row;                                                                           <* 
+ *>    /+---(header)-------------------------+/                                                                     <* 
+ *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                     <* 
+ *>    /+---(set group as current)-----------+/                                                                     <* 
+ *>    rc = yDLST_list_restore  (a_list);                                                                           <* 
+ *>    DEBUG_LOOP  yLOG_complex ("args"      , "%p, %d", a_list, a_row);                                            <* 
+ *>    /+---(head successor)-----------------+/                                                                     <* 
+ *>    rc = yDLST_seq_by_index ('>', c++, NULL, &x_list, &x_succ, NULL);                                            <* 
+ *>    DEBUG_LOOP  yLOG_complex ("by_index"  , "%3d, %p, %p", rc, x_list, x_succ);                                  <* 
+ *>    if (x_list == NULL) {                                                                                        <* 
+ *>       DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                  <* 
+ *>       return a_row;                                                                                             <* 
+ *>    }                                                                                                            <* 
+ *>    if (x_succ != NULL && x_succ->g_row <= 0)  x_succ->g_row = a_row;                                            <* 
+ *>    /+---(walk successors)----------------+/                                                                     <* 
+ *>    while (rc >= 0) {                                                                                            <* 
+ *>       if (x_succ != NULL) {                                                                                     <* 
+ *>          /+---(update)----------------------+/                                                                  <* 
+ *>          x_old = x_succ->g_row;                                                                                 <* 
+ *>          if    (x_old <= 0)   x_succ->g_row = a_row;                                                            <* 
+ *>          DEBUG_LOOP  yLOG_complex ("succ"      , "%-15.15s, %3d, %3d", x_succ->g_name, x_old, x_succ->g_row);   <* 
+ *>          /+---(recurse)---------------------+/                                                                  <* 
+ *>          a_row = rptg__pert_rower (x_list, a_row);                                                              <* 
+ *>          DEBUG_LOOP  yLOG_value   ("a_row"     , a_row);                                                        <* 
+ *>       }                                                                                                         <* 
+ *>       /+---(update position)-------------+/                                                                     <* 
+ *>       if (rc >= 0 && x_succ != NULL && x_succ->g_row == a_row) ++a_row;                                         <* 
+ *>       /+---(next successor)--------------+/                                                                     <* 
+ *>       rc = yDLST_list_restore  (a_list);                                                                        <* 
+ *>       DEBUG_LOOP  yLOG_value   ("by_ptr"    , rc);                                                              <* 
+ *>       rc = yDLST_seq_by_index  ('>', c++, NULL, &x_list, &x_succ, NULL);                                        <* 
+ *>       DEBUG_LOOP  yLOG_complex ("by_index"  , "%3d, %p, %p", rc, x_list, x_succ);                               <* 
+ *>       /+---(done)------------------------+/                                                                     <* 
+ *>    }                                                                                                            <* 
+ *>    if (a_row > S_xrow)  S_xrow = a_row;                                                                         <* 
+ *>    /+---(complete)-----------------------+/                                                                     <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                     <* 
+ *>    return a_row;                                                                                                <* 
+ *> }                                                                                                               <*/
+
+/*> char                                                                                                                                              <* 
+ *> rptg__pert_row          (void)                                                                                                                    <* 
+ *> {                                                                                                                                                 <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                                       <* 
+ *>    char        rc          =    0;                                                                                                                <* 
+ *>    void       *x_list      = NULL;                                                                                                                <* 
+ *>    tLIST      *x_group     = NULL;                                                                                                                <* 
+ *>    int         x_ngroup    =    0;                                                                                                                <* 
+ *>    int         i           =    0;                                                                                                                <* 
+ *>    tLIST      *x_pred      = NULL;                                                                                                                <* 
+ *>    int         x_npred     =    0;                                                                                                                <* 
+ *>    /+---(header)-------------------------+/                                                                                                       <* 
+ *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                                                       <* 
+ *>    rc = yDLST_list_by_index  (x_ngroup, &x_list, &x_group, NULL);                                                                                 <* 
+ *>    S_xrow = 0;                                                                                                                                    <* 
+ *>    while (rc >= 0) {                                                                                                                              <* 
+ *>       /+---(prepare)---------------------+/                                                                                                       <* 
+ *>       DEBUG_LOOP  yLOG_complex ("by_index"  , "%2d, %3d, %p, %p, %s", x_ngroup, rc, x_list, x_group, (x_group == NULL) ? "" : x_group->g_name);   <* 
+ *>       rc = x_npred = i = 0;                                                                                                                       <* 
+ *>       /+---(count real preds)------------+/                                                                                                       <* 
+ *>       while (rc >= 0) {                                                                                                                           <* 
+ *>          rc = yDLST_seq_by_index ('<', i++, NULL, NULL, &x_pred, NULL);                                                                           <* 
+ *>          if (rc >= 0 && x_pred != NULL)  ++x_npred;                                                                                               <* 
+ *>       }                                                                                                                                           <* 
+ *>       DEBUG_LOOP  yLOG_value   ("x_npred"   , x_npred);                                                                                           <* 
+ *>       /+---(process)---------------------+/                                                                                                       <* 
+ *>       if (x_npred == 0) {                                                                                                                         <* 
+ *>          x_group->g_row = 1;                                                                                                                      <* 
+ *>          rc = rptg__pert_rower (x_list, 1);                                                                                                       <* 
+ *>       }                                                                                                                                           <* 
+ *>       /+---(next)------------------------+/                                                                                                       <* 
+ *>       rc = yDLST_list_by_index (++x_ngroup, &x_list, &x_group, NULL);                                                                             <* 
+ *>       /+---(done)------------------------+/                                                                                                       <* 
+ *>    }                                                                                                                                              <* 
+ *>    /+---(complete)-----------------------+/                                                                                                       <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                                       <* 
+ *>    return 0;                                                                                                                                      <* 
+ *> }                                                                                                                                                 <*/
+
+/*> char                                                                              <* 
+ *> rptg__pert_merge        (int y, int x, char *a_str)                               <* 
+ *> {                                                                                 <* 
+ *>    int         x_len       =    0;                                                <* 
+ *>    int         i           =    0;                                                <* 
+ *>    x_len = strlen (a_str);                                                        <* 
+ *>    for (i = 0; i < x_len; ++i) {                                                  <* 
+ *>       S_pert [y][x + i] = a_str [i];                                              <* 
+ *>    }                                                                              <* 
+ *> }                                                                                 <*/
+
+/*> char                                                                              <* 
+ *> rptg__pert_verter       (int a_top, int a_bot, int x, uchar a_ch)                 <* 
+ *> {                                                                                 <* 
+ *>    int         i           =    0;                                                <* 
+ *>    for (i = a_top; i <= a_bot; ++i) {                                             <* 
+ *>       if      (a_ch == (uchar) '∑' && i == a_top)   S_pert [i][x] = '≥';          <* 
+ *>       else if (a_ch == (uchar) '∑' && i == a_bot)   S_pert [i][x] = '≥';          <* 
+ *>       else                                          S_pert [i][x] = a_ch;         <* 
+ *>    }                                                                              <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
+
+/*> char                                                                              <* 
+ *> rptg__pert_horzer       (int y, int a_lef, int a_rig, uchar a_ch)                 <* 
+ *> {                                                                                 <* 
+ *>    int         i           =    0;                                                <* 
+ *>    for (i = a_lef; i <= a_rig; ++i) S_pert [y][i] = a_ch;                         <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
+
+/*> char rptg__pert_horz   (int y, int a_lef, int a_rig) { return rptg__pert_horzer (y, a_lef, a_rig, 'Ä'); }   <*/
+/*> char rptg__pert_vert   (int a_top, int a_bot, int x) { return rptg__pert_verter (a_top, a_bot, x, 'Å'); }   <*/
+/*> char rptg__pert_bound  (int a_top, int a_bot, int x) { return rptg__pert_verter (a_top, a_bot, x, '∑'); }   <*/
+
+/*> char                                                                              <* 
+ *> rptg__pert_end          (int y, int x, uchar a_name)                              <* 
+ *> {                                                                                 <* 
+ *>    char       *x_top       = "ÉÄÄÄÇ";                                             <* 
+ *>    char       *x_mid       = "Å   Å";                                             <* 
+ *>    char       *x_bot       = "ÑÄÄÄÖ";                                             <* 
+ *>    char        t           [LEN_TERSE] = "";                                      <* 
+ *>    char        o           = 14;                                                  <* 
+ *>    if (a_name == (uchar) 'ˇ') o = 0;                                              <* 
+ *>    rptg__pert_merge (y + 0, x + o, x_top);                                        <* 
+ *>    rptg__pert_merge (y + 1, x + o, x_mid);                                        <* 
+ *>    rptg__pert_merge (y + 2, x + o, x_mid);                                        <* 
+ *>    rptg__pert_merge (y + 3, x + o, x_mid);                                        <* 
+ *>    rptg__pert_merge (y + 4, x + o, x_bot);                                        <* 
+ *>    sprintf (t, "%c"     , a_name);                                                <* 
+ *>    rptg__pert_merge (y    , x + o + 2, t);                                        <* 
+ *>    if (a_name == (uchar) 'ˇ') {                                                   <* 
+ *>       switch (S_nomega) {                                                         <* 
+ *>       case 0  :  strcpy (t, "¿");  break;                                         <* 
+ *>       case 1  :  strcpy (t, "¡");  break;                                         <* 
+ *>       case 2  :  strcpy (t, "¬");  break;                                         <* 
+ *>       case 3  :  strcpy (t, "√");  break;                                         <* 
+ *>       case 4  :  strcpy (t, "ƒ");  break;                                         <* 
+ *>       default :  strcpy (t, "≈");  break;                                         <* 
+ *>       }                                                                           <* 
+ *>       rptg__pert_merge (y + 2, x + o + 1, t);                                     <* 
+ *>       rptg__pert_merge (y + 1, x + o + 4, "ç");                                   <* 
+ *>       rptg__pert_merge (y + 2, x + o + 4, "ç");                                   <* 
+ *>       rptg__pert_merge (y + 3, x + o + 4, "ç");                                   <* 
+ *>    } else {                                                                       <* 
+ *>       switch (S_nalpha) {                                                         <* 
+ *>       case 0  :  strcpy (t, "¿");  break;                                         <* 
+ *>       case 1  :  strcpy (t, "¡");  break;                                         <* 
+ *>       case 2  :  strcpy (t, "¬");  break;                                         <* 
+ *>       case 3  :  strcpy (t, "√");  break;                                         <* 
+ *>       case 4  :  strcpy (t, "ƒ");  break;                                         <* 
+ *>       default :  strcpy (t, "≈");  break;                                         <* 
+ *>       }                                                                           <* 
+ *>       rptg__pert_merge (y + 2, x + o + 3, t);                                     <* 
+ *>       rptg__pert_merge (y + 1, x + o    , "ç");                                   <* 
+ *>       rptg__pert_merge (y + 2, x + o    , "ç");                                   <* 
+ *>       rptg__pert_merge (y + 3, x + o    , "ç");                                   <* 
+ *>    }                                                                              <* 
+ *>    return 0;                                                                      <* 
+ *> }                                                                                 <*/
+
+/*> char                                                                                                                                         <* 
+ *> rptg__pert_box          (int y, int x, char *a_name, char a_procs, int a_beg, int a_end, int a_dur, char a_note, char a_pred, char a_succ)   <* 
+ *> {                                                                                                                                            <* 
+ *>    char       *x_top       = "ÉÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÇ";                                                                                          <* 
+ *>    char       *x_mid       = "Å                 Å";                                                                                          <* 
+ *>    char       *x_bot       = "ÑÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÖ";                                                                                          <* 
+ *>    char        t           [LEN_TERSE] = "";                                                                                                 <* 
+ *>    rptg__pert_merge (y + 0, x    , x_top);                                                                                                   <* 
+ *>    rptg__pert_merge (y + 1, x    , x_mid);                                                                                                   <* 
+ *>    rptg__pert_merge (y + 2, x    , x_mid);                                                                                                   <* 
+ *>    rptg__pert_merge (y + 3, x    , x_mid);                                                                                                   <* 
+ *>    rptg__pert_merge (y + 4, x    , x_bot);                                                                                                   <* 
+ *>    rptg__pert_merge (y + 0, x + 9 - strlen (a_name) / 2, a_name);                                                                            <* 
+ *>    switch (a_procs) {                                                                                                                        <* 
+ *>    case  0 : sprintf (t, "∑∑∑∑†∑∑∑∑");  break;                                                                                               <* 
+ *>    case  1 : sprintf (t, "∑∑∑∑œ∑∑∑∑");  break;                                                                                               <* 
+ *>    case  2 : sprintf (t, "∑∑∑œ∑œ∑∑∑");  break;                                                                                               <* 
+ *>    case  3 : sprintf (t, "∑∑œ∑œ∑œ∑∑");  break;                                                                                               <* 
+ *>    case  4 : sprintf (t, "∑œ∑œ∑œ∑œ∑");  break;                                                                                               <* 
+ *>    case  5 : sprintf (t, "œ∑œ∑œ∑œ∑œ");  break;                                                                                               <* 
+ *>    case  6 : sprintf (t, "∑œœœ∑œœœ∑");  break;                                                                                               <* 
+ *>    case  7 : sprintf (t, "œœ∑œœœ∑œœ");  break;                                                                                               <* 
+ *>    case  8 : sprintf (t, "œœœœ∑œœœœ");  break;                                                                                               <* 
+ *>    case  9 : sprintf (t, "œœœœœœœœœ");  break;                                                                                               <* 
+ *>    default : sprintf (t, "<œœœœœœœ>");  break;                                                                                               <* 
+ *>    }                                                                                                                                         <* 
+ *>    rptg__pert_merge (y + 2, x + 5, t);                                                                                                       <* 
+ *>    /+> sprintf (t, "[%02d]", a_procs);                                                <*                                                     <* 
+ *>     *> rptg__pert_merge (y + 3, x + 7                      , t);                      <+/                                                    <* 
+ *>    /+> sprintf (t, "b%-5d" , a_beg);                                                  <*                                                     <* 
+ *>     *> rptg__pert_merge (y + 1, x + 2                      , t);                      <+/                                                    <* 
+ *>    /+> sprintf (t, "%5de"   , a_end);                                                 <*                                                     <* 
+ *>     *> rptg__pert_merge (y + 1, x + 16 - 5                 , t);                      <+/                                                    <* 
+ *>    /+> sprintf (t, "%dd"    , a_dur);                                                 <*                                                     <* 
+ *>     *> rptg__pert_merge (y + 2, x + 9 - strlen (t) / 2     , t);                      <+/                                                    <* 
+ *>    switch (a_pred) {                                                                                                                         <* 
+ *>    case 0  :  strcpy (t, "¿");  break;                                                                                                       <* 
+ *>    case 1  :  strcpy (t, "¡");  break;                                                                                                       <* 
+ *>    case 2  :  strcpy (t, "¬");  break;                                                                                                       <* 
+ *>    case 3  :  strcpy (t, "√");  break;                                                                                                       <* 
+ *>    case 4  :  strcpy (t, "ƒ");  break;                                                                                                       <* 
+ *>    default :  strcpy (t, "≈");  break;                                                                                                       <* 
+ *>    }                                                                                                                                         <* 
+ *>    rptg__pert_merge (y + 2, x + 1                      , t);                                                                                 <* 
+ *>    switch (a_succ) {                                                                                                                         <* 
+ *>    case 0  :  strcpy (t, "¿");  break;                                                                                                       <* 
+ *>    case 1  :  strcpy (t, "¡");  break;                                                                                                       <* 
+ *>    case 2  :  strcpy (t, "¬");  break;                                                                                                       <* 
+ *>    case 3  :  strcpy (t, "√");  break;                                                                                                       <* 
+ *>    case 4  :  strcpy (t, "ƒ");  break;                                                                                                       <* 
+ *>    default :  strcpy (t, "≈");  break;                                                                                                       <* 
+ *>    }                                                                                                                                         <* 
+ *>    rptg__pert_merge (y + 2, x + 17                     , t);                                                                                 <* 
+ *>    /+> sprintf (t, "%c"     , a_note);                                                <*                                                     <* 
+ *>     *> rptg__pert_merge (y + 1, x + 9                      , t);                      <+/                                                    <* 
+ *>    return 0;                                                                                                                                 <* 
+ *> }                                                                                                                                            <*/
+
+/*> char                                                                                                               <* 
+ *> rptg__pert_line         (int y1, int x1, char a_asucc, char a_nsucc, int y2, int x2, char a_apred, char a_npred)   <* 
+ *> {                                                                                                                  <* 
+ *>    int         i           =    0;                                                                                 <* 
+ *>    char        s           =    2;                                                                                 <* 
+ *>    char        f           =    2;                                                                                 <* 
+ *>    char        l           =    0;                                                                                 <* 
+ *>    /+---(exit)---------------------------+/                                                                        <* 
+ *>    switch (a_asucc) {                                                                                              <* 
+ *>    case  1 :  s = 2;                 break;                                                                        <* 
+ *>    case  2 :  s = 1 + a_nsucc * 2;   break;                                                                        <* 
+ *>    case  3 :  s = 1 + a_nsucc;       break;                                                                        <* 
+ *>    case  4 :  s = a_nsucc;           break;                                                                        <* 
+ *>    case  5 :  s = a_nsucc;           break;                                                                        <* 
+ *>    }                                                                                                               <* 
+ *>    switch (a_apred) {                                                                                              <* 
+ *>    case  1 :  f = 2;                 break;                                                                        <* 
+ *>    case  2 :  f = 1 + a_npred * 2;   break;                                                                        <* 
+ *>    case  3 :  f = 1 + a_npred;       break;                                                                        <* 
+ *>    case  4 :  f = a_npred;           break;                                                                        <* 
+ *>    case  5 :  f = a_npred;           break;                                                                        <* 
+ *>    }                                                                                                               <* 
+ *>    /+---(start marker)-------------------+/                                                                        <* 
+ *>    switch (s) {                                                                                                    <* 
+ *>    case 4 :                                                                                                        <* 
+ *>       rptg__pert_merge (y1 + s, x1 - 1, "à");                                                                      <* 
+ *>       break;                                                                                                       <* 
+ *>    case 3 : case 2 : case 1 :                                                                                      <* 
+ *>       rptg__pert_merge (y1 + s, x1 - 1, "á");                                                                      <* 
+ *>       break;                                                                                                       <* 
+ *>    case 0 :                                                                                                        <* 
+ *>       rptg__pert_merge (y1 + s, x1 - 1, "â");                                                                      <* 
+ *>       break;                                                                                                       <* 
+ *>    }                                                                                                               <* 
+ *>    /+---(horizontal)---------------------+/                                                                        <* 
+ *>    if (y1 + s == y2 + f) {                                                                                         <* 
+ *>       for (i = x1; i < x2; ++i)  S_pert [y1 + s][i] = 'Ä';                                                         <* 
+ *>    }                                                                                                               <* 
+ *>    /+---(downward)-----------------------+/                                                                        <* 
+ *>    else if (y1 + s < y2 + f) {                                                                                     <* 
+ *>       l = 8 - (s * 2);                                                                                             <* 
+ *>       rptg__pert_horz  (y1 + s, x1    , x1 + l);                                                                   <* 
+ *>       rptg__pert_merge (y1 + s, x1 + l + 1, "Ç");                                                                  <* 
+ *>       rptg__pert_vert  (y1 + s + 1, y2 + f - 1, x1 + l + 1);                                                       <* 
+ *>       S_pert [y2 + f][x1 + l + 1] = 'Ñ';                                                                           <* 
+ *>       rptg__pert_horz  (y2 + f, x1 + l + 2, x2 - 1);                                                               <* 
+ *>    }                                                                                                               <* 
+ *>    /+---(upward)-------------------------+/                                                                        <* 
+ *>    else {                                                                                                          <* 
+ *>       l = 8 - (f * 2);                                                                                             <* 
+ *>       rptg__pert_horz  (y2 + f, x2 - l - 1, x2 - 1);                                                               <* 
+ *>       rptg__pert_merge (y2 + f, x2 - l - 2, "É");                                                                  <* 
+ *>       rptg__pert_vert  (y2 + f + 1, y1 + s - 1, x2 - l - 2);                                                       <* 
+ *>       S_pert [y1 + s][x2 - l - 2] = 'Ö';                                                                           <* 
+ *>       rptg__pert_horz  (y1 + s, x1, x2 - l - 3);                                                                   <* 
+ *>    }                                                                                                               <* 
+ *>    /+---(finish marker)------------------+/                                                                        <* 
+ *>    switch (f) {                                                                                                    <* 
+ *>    case 4 :                                                                                                        <* 
+ *>       rptg__pert_merge (y2 + f, x2 + 0, "â");                                                                      <* 
+ *>       break;                                                                                                       <* 
+ *>    case 3 : case 2 : case 1 :                                                                                      <* 
+ *>       rptg__pert_merge (y2 + f, x2 + 0, "Ü");                                                                      <* 
+ *>       break;                                                                                                       <* 
+ *>    case 0 :                                                                                                        <* 
+ *>       rptg__pert_merge (y2 + f, x2 + 0, "à");                                                                      <* 
+ *>       break;                                                                                                       <* 
+ *>    }                                                                                                               <* 
+ *>    /+---(complete)-----------------------+/                                                                        <* 
+ *>    return 0;                                                                                                       <* 
+ *> }                                                                                                                  <*/
+
+/*> char                                                                                              <* 
+ *> rptg__pert_write        (void)                                                                    <* 
+ *> {                                                                                                 <* 
+ *>    char        rc          =    0;                                                                <* 
+ *>    FILE       *f           = NULL;                                                                <* 
+ *>    tLIST      *x_group     = NULL;                                                                <* 
+ *>    int         i           =    0;                                                                <* 
+ *>    f = fopen ("/tmp/eos_pert.txt", "wt");                                                         <* 
+ *>    fprintf (f, "#!/usr/local/bin/eos --pert\n");                                                  <* 
+ *>    fprintf (f, "#  %s\n", P_ONELINE);                                                             <* 
+ *>    fprintf (f, "#  report of group/proc configuration in PERT format\n");                         <* 
+ *>    fprintf (f, "\n");                                                                             <* 
+ *>    /+> rc = yDLST_list_by_index  (i, NULL, &x_group, NULL);                                 <*    <* 
+ *>     *> while (rc >= 0) {                                                              <*          <* 
+ *>     *>    fprintf (f, "%p\n", x_group);                                               <*          <* 
+ *>     *>    S_pert [i + 10][0] = '*';                                                   <*          <* 
+ *>     *>    rc = yDLST_list_by_index (++i, NULL, &x_group, NULL);                             <*    <* 
+ *>     *> }                                                                              <+/         <* 
+ *>    for (i = 0; i < S_maxy; ++i)   fprintf (f, "%*.*s\n", S_maxx, S_maxx, S_pert [i]);             <* 
+ *>    fclose (f);                                                                                    <* 
+ *>    return 0;                                                                                      <* 
+ *> }                                                                                                 <*/
+
+/*> char                                                                                                        <* 
+ *> rptg__pert_connect      (tLIST  *a_group)                                                                   <* 
+ *> {                                                                                                           <* 
+ *>    char        rc          =    0;                                                                          <* 
+ *>    void       *x_beg       = NULL;                                                                          <* 
+ *>    void       *x_end       = NULL;                                                                          <* 
+ *>    int         x_asucc     =    0;                                                                          <* 
+ *>    int         x_nsucc     =    0;                                                                          <* 
+ *>    tLIST      *x_succ      = NULL;                                                                          <* 
+ *>    int         x_apred     =    0;                                                                          <* 
+ *>    int         x_npred     =    0;                                                                          <* 
+ *>    tLIST      *x_pred      = NULL;                                                                          <* 
+ *>    int         y1, x1, y2, x2;                                                                              <* 
+ *>    /+---(check start)--------------------+/                                                                 <* 
+ *>    if (a_group == NULL)  return 0;                                                                          <* 
+ *>    x_beg   = yDLST_list_current ();                                                                         <* 
+ *>    x_asucc = yDLST_seq_count ('>');                                                                         <* 
+ *>    /+---(set start position)-------------+/                                                                 <* 
+ *>    y1 = a_group->g_row * OFF_Y;                                                                             <* 
+ *>    x1 = a_group->g_col * OFF_X + 19;                                                                        <* 
+ *>    /+---(get first successor)------------+/                                                                 <* 
+ *>    rc = yDLST_seq_by_index  ('>', x_nsucc = 0, NULL, &x_end, &x_succ, NULL);                                <* 
+ *>    while (rc >= 0) {                                                                                        <* 
+ *>       /+---(handle successor)------------+/                                                                 <* 
+ *>       if (x_succ != NULL) {                                                                                 <* 
+ *>          /+---(set end position)---------+/                                                                 <* 
+ *>          y2 = x_succ->g_row * OFF_Y;                                                                        <* 
+ *>          x2 = x_succ->g_col * OFF_X;                                                                        <* 
+ *>          /+---(go to successor)----------+/                                                                 <* 
+ *>          yDLST_list_restore (x_end);                                                                        <* 
+ *>          x_apred = yDLST_seq_count ('<');                                                                   <* 
+ *>          /+---(go to first predecessor)--+/                                                                 <* 
+ *>          rc = yDLST_seq_by_index ('<', x_npred = 0, NULL, NULL, &x_pred, NULL);                             <* 
+ *>          while (rc >= 0) {                                                                                  <* 
+ *>             /+---(draw connector)-------+/                                                                  <* 
+ *>             if (x_pred == a_group)  rptg__pert_line (y1, x1, x_asucc, x_nsucc, y2, x2, x_apred, x_npred);   <* 
+ *>             /+---(next predecessor)-----+/                                                                  <* 
+ *>             rc = yDLST_seq_by_index  ('<', ++x_npred, NULL, NULL, &x_pred, NULL);                           <* 
+ *>             /+---(done)-----------------+/                                                                  <* 
+ *>          }                                                                                                  <* 
+ *>          /+---(done)---------------------+/                                                                 <* 
+ *>       }                                                                                                     <* 
+ *>       /+---(handle omega end)------------+/                                                                 <* 
+ *>       else {                                                                                                <* 
+ *>          y2 = (S_xrow - 1) * OFF_Y;                                                                         <* 
+ *>          x2 = S_xcol * OFF_X;                                                                               <* 
+ *>          rptg__pert_line (y1, x1, 0, 0, y2, x2, S_nomega, S_comega++);                                      <* 
+ *>       }                                                                                                     <* 
+ *>       /+---(next)------------------------+/                                                                 <* 
+ *>       yDLST_list_restore (x_beg);                                                                           <* 
+ *>       rc = yDLST_seq_by_index  ('>', ++x_nsucc, NULL, &x_end, &x_succ, NULL);                               <* 
+ *>       /+---(done)------------------------+/                                                                 <* 
+ *>    }                                                                                                        <* 
+ *>    /+---(handle alpha end)---------------+/                                                                 <* 
+ *>    if (a_group->g_col == 1) {                                                                               <* 
+ *>       y2 = y1;                                                                                              <* 
+ *>       x2 = x1 - 19;                                                                                         <* 
+ *>       y1 = 7;                                                                                               <* 
+ *>       x1 = 19;                                                                                              <* 
+ *>       rptg__pert_line (y1, x1, S_nalpha, S_calpha++, y2, x2, 0, 0);                                         <* 
+ *>    }                                                                                                        <* 
+ *>    /+---(complete)-----------------------+/                                                                 <* 
+ *>    return 0;                                                                                                <* 
+ *> }                                                                                                           <*/
+
+/*> char                                                                                                                                                                                                                          <* 
+ *> rptg__pert_groups       (void)                                                                                                                                                                                                <* 
+ *> {                                                                                                                                                                                                                             <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                                                                                                                   <* 
+ *>    char        rc          =    0;                                                                                                                                                                                            <* 
+ *>    tLIST      *x_group     = NULL;                                                                                                                                                                                            <* 
+ *>    int         x_ngroup    =    0;                                                                                                                                                                                            <* 
+ *>    int         i           =    0;                                                                                                                                                                                            <* 
+ *>    /+---(header)-------------------------+/                                                                                                                                                                                   <* 
+ *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                                                                                                                                   <* 
+ *>    /+---(prepare)------------------------+/                                                                                                                                                                                   <* 
+ *>    S_nalpha = yDLST_alpha_count ();                                                                                                                                                                                           <* 
+ *>    DEBUG_LOOP  yLOG_value   ("S_nalpha"  , S_nalpha);                                                                                                                                                                         <* 
+ *>    S_nomega = yDLST_omega_count ();                                                                                                                                                                                           <* 
+ *>    DEBUG_LOOP  yLOG_value   ("S_nomega"  , S_nomega);                                                                                                                                                                         <* 
+ *>    S_calpha = S_comega = 0;                                                                                                                                                                                                   <* 
+ *>    /+---(walk)---------------------------+/                                                                                                                                                                                   <* 
+ *>    rc = yDLST_list_by_index  (x_ngroup, NULL, &x_group, NULL);                                                                                                                                                                <* 
+ *>    DEBUG_LOOP  yLOG_complex ("head"      , "%4d, %4d, %p", x_ngroup, rc, x_group);                                                                                                                                            <* 
+ *>    while (rc >= 0 && x_group != NULL) {                                                                                                                                                                                       <* 
+ *>       DEBUG_LOOP  yLOG_complex ("group"     , "%-12.12s %2d< %2d>", x_group->g_name, yDLST_seq_count ('<'), yDLST_seq_count ('>'));                                                                                           <* 
+ *>       x_group->g_y = x_group->g_row * OFF_Y;                                                                                                                                                                                  <* 
+ *>       x_group->g_x = x_group->g_col * OFF_X;                                                                                                                                                                                  <* 
+ *>       rptg__pert_box     (x_group->g_row * OFF_Y, x_group->g_col * OFF_X, x_group->g_name, x_group->g_askd, x_group->g_beg, x_group->g_end, x_group->g_act, x_group->g_note, yDLST_seq_count ('<'), yDLST_seq_count ('>'));   <* 
+ *>       rc = yDLST_list_by_index (++x_ngroup, NULL, &x_group, NULL);                                                                                                                                                            <* 
+ *>       DEBUG_LOOP  yLOG_complex ("next"      , "%4d, %4d, %p", x_ngroup, rc, x_group);                                                                                                                                         <* 
+ *>    }                                                                                                                                                                                                                          <* 
+ *>    /+---(ends)---------------------------+/                                                                                                                                                                                   <* 
+ *>    rptg__pert_end     (OFF_Y           , 0                 , 'Ë');                                                                                                                                                            <* 
+ *>    rptg__pert_end     ((S_xrow - 1) * OFF_Y, S_xcol * OFF_X, 'ˇ');                                                                                                                                                            <* 
+ *>    /+---(bounds)-------------------------+/                                                                                                                                                                                   <* 
+ *>    rptg__pert_bound   (3, S_xrow * OFF_Y - 2, 10);                                                                                                                                                                            <* 
+ *>    rptg__pert_bound   (3, S_xrow * OFF_Y - 2, S_xcol * OFF_X + 8);                                                                                                                                                            <* 
+ *>    S_maxy = S_xrow * OFF_Y - 2 + 5;                                                                                                                                                                                           <* 
+ *>    S_maxx = S_xcol * OFF_X + 8 + 5;                                                                                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                                                                                                                   <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                                                                                                                   <* 
+ *>    return  0;                                                                                                                                                                                                                 <* 
+ *> }                                                                                                                                                                                                                             <*/
+
+/*> char                                                                              <* 
+ *> rptg__pert_network      (void)                                                    <* 
+ *> {                                                                                 <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                       <* 
+ *>    char        rc          =    0;                                                <* 
+ *>    tLIST      *x_group     = NULL;                                                <* 
+ *>    int         x_ngroup    =    0;                                                <* 
+ *>    int         i           =    0;                                                <* 
+ *>    /+---(header)-------------------------+/                                       <* 
+ *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                       <* 
+ *>    rc = yDLST_list_by_index  (x_ngroup, NULL, &x_group, NULL);                    <* 
+ *>    while (rc >= 0) {                                                              <* 
+ *>       if (x_group != NULL) rptg__pert_connect (x_group);                          <* 
+ *>       rc = yDLST_list_by_index (++x_ngroup, NULL, &x_group, NULL);                <* 
+ *>    }                                                                              <* 
+ *>    /+---(complete)-----------------------+/                                       <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                       <* 
+ *>    return  rc;                                                                    <* 
+ *> }                                                                                 <*/
+
+/*> char                                                                                        <* 
+ *> rptg_pert               (void)                                                              <* 
+ *> {                                                                                           <* 
+ *>    rptg__pert_clear   ();                                                                   <* 
+ *>    rptg__pert_col     ();                                                                   <* 
+ *>    rptg__pert_row     ();                                                                   <* 
+ *>    rptg__pert_groups  ();                                                                   <* 
+ *>    /+> rptg__pert_network ();                                                         <+/   <* 
+ *>    rptg__pert_write   ();                                                                   <* 
+ *>    return 0;                                                                                <* 
+ *> }                                                                                           <*/
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        pert charting                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___GANTT___________________o (void) {;}
+
+static int   s_gmax  = 0;
+static float s_scale = 0.0;
+
+/*> char                                                                                                                           <* 
+ *> rptg__gantt_max         (void)                                                                                                 <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    tLIST      *x_group     = NULL;                                                                                             <* 
+ *>    int         x_ngroup    =    0;                                                                                             <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    rc = yDLST_list_by_index  (x_ngroup, NULL, &x_group, NULL);                                                                 <* 
+ *>    DEBUG_LOOP   yLOG_complex ("head"      , "%3d, %p", rc, x_group);                                                           <* 
+ *>    s_gmax = 0;                                                                                                                 <* 
+ *>    /+---(walk through groups)------------+/                                                                                    <* 
+ *>    while (rc >= 0) {                                                                                                           <* 
+ *>       if (x_group != NULL) {                                                                                                   <* 
+ *>          DEBUG_LOOP   yLOG_complex ("GROUP"     , "%3d, %p, %-15.15s, %2dr", rc, x_group, x_group->g_name, x_group->g_askd);   <* 
+ *>          if (x_group->g_end > s_gmax)  s_gmax = x_group->g_end;                                                                <* 
+ *>       }                                                                                                                        <* 
+ *>       rc = yDLST_list_by_index  (++x_ngroup, NULL, &x_group, NULL);                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    s_scale = 200.0 / s_gmax;                                                                                                   <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+/*> char                                                                                                                           <* 
+ *> rptg_gantt              (void)                                                                                                 <* 
+ *> {                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
+ *>    char        rc          =    0;                                                                                             <* 
+ *>    tLIST      *x_group     = NULL;                                                                                             <* 
+ *>    int         x_ngroup    =    0;                                                                                             <* 
+ *>    tPROC      *x_proc      = NULL;                                                                                             <* 
+ *>    int         x_nproc     =    0;                                                                                             <* 
+ *>    int         x_beg       =    0;                                                                                             <* 
+ *>    int         x_end       =    0;                                                                                             <* 
+ *>    int         i           =    0;                                                                                             <* 
+ *>    /+---(prepare)------------------------+/                                                                                    <* 
+ *>    rptg__gantt_max ();                                                                                                         <* 
+ *>    rc = yDLST_list_by_index  (x_ngroup, NULL, &x_group, NULL);                                                                 <* 
+ *>    DEBUG_LOOP   yLOG_complex ("head"      , "%3d, %p", rc, x_group);                                                           <* 
+ *>    /+---(walk through groups)------------+/                                                                                    <* 
+ *>    while (rc >= 0) {                                                                                                           <* 
+ *>       if (x_group != NULL) {                                                                                                   <* 
+ *>          DEBUG_LOOP   yLOG_complex ("GROUP"     , "%3d, %p, %-15.15s, %2dr", rc, x_group, x_group->g_name, x_group->g_askd);   <* 
+ *>          x_beg = x_group->g_beg * s_scale;                                                                                     <* 
+ *>          x_end = x_group->g_end * s_scale;                                                                                     <* 
+ *>          printf ("\n");                                                                                                        <* 
+ *>          for (i = 0    ; i < x_beg; i++)  printf (" ");                                                                        <* 
+ *>          printf ("%s\n", x_group->g_name);                                                                                     <* 
+ *>          for (i = 0    ; i < x_beg; i++)  printf (" ");                                                                        <* 
+ *>          printf ("[");                                                                                                         <* 
+ *>          for (i = x_beg + 1; i < x_end - 1; i++)  printf ("=");                                                                <* 
+ *>          printf ("]\n");                                                                                                       <* 
+ *>          rc = yDLST_line_by_index  ('-', x_nproc = 0, NULL, &x_proc, NULL);                                                    <* 
+ *>          while (rc >= 0) {                                                                                                     <* 
+ *>             if (x_proc != NULL) {                                                                                              <* 
+ *>                for (i = 0    ; i < x_beg; i++)  printf (" ");                                                                  <* 
+ *>                printf ("%s (%c)\n", x_proc->p_name, x_proc->p_yexec);                                                          <* 
+ *>             }                                                                                                                  <* 
+ *>             rc = yDLST_line_by_index  ('-', ++x_nproc, NULL, &x_proc, NULL);                                                   <* 
+ *>          }                                                                                                                     <* 
+ *>       }                                                                                                                        <* 
+ *>       rc = yDLST_list_by_index  (++x_ngroup, NULL, &x_group, NULL);                                                            <* 
+ *>    }                                                                                                                           <* 
+ *>    return 0;                                                                                                                   <* 
+ *> }                                                                                                                              <*/
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        pert charting                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___DUMP____________________o (void) {;}
+
+
+
+/*> char                                                                                                                                                                                                                  <* 
+ *> rptg_dump               (void)                                                                                                                                                                                        <* 
+ *> {                                                                                                                                                                                                                     <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                                                                                                           <* 
+ *>    char        rce         =  -10;                                                                                                                                                                                    <* 
+ *>    char        rc          =    0;                                                                                                                                                                                    <* 
+ *>    FILE       *f           = NULL;                                                                                                                                                                                    <* 
+ *>    tLIST      *x_group     = NULL;                                                                                                                                                                                    <* 
+ *>    tPROC      *x_proc      = NULL;                                                                                                                                                                                    <* 
+ *>    int         c           =    0;                                                                                                                                                                                    <* 
+ *>                                                                                                                                                                                                                       <* 
+ *>                                                                                                                                                                                                                       <* 
+ *>    /+---(header)-------------------------+/                                                                                                                                                                           <* 
+ *>    DEBUG_OUTP  yLOG_enter   (__FUNCTION__);                                                                                                                                                                           <* 
+ *>    /+---(open report file)---------------+/                                                                                                                                                                           <* 
+ *>    DEBUG_OUTP  yLOG_info    ("n_perf" , my.n_perf);                                                                                                                                                                   <* 
+ *>    f = fopen (my.n_perf, "wt");                                                                                                                                                                                       <* 
+ *>    DEBUG_OUTP  yLOG_point   ("f"         , f);                                                                                                                                                                        <* 
+ *>    --rce;  if (f == NULL) {                                                                                                                                                                                           <* 
+ *>       DEBUG_OUTP  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                                                                   <* 
+ *>       return rce;                                                                                                                                                                                                     <* 
+ *>    }                                                                                                                                                                                                                  <* 
+ *>    /+---(header)-------------------------+/                                                                                                                                                                           <* 
+ *>    if (my.run_as == IAM_EOS) {                                                                                                                                                                                        <* 
+ *>       fprintf (f, "##/sbin/eos (system initialization)\n");                                                                                                                                                           <* 
+ *>       fprintf (f, "##   eos-rhododactylos (rosy-fingered dawn) -- simple, reliable, and transparent system initialization\n");                                                                                        <* 
+ *>    } else {                                                                                                                                                                                                           <* 
+ *>       fprintf (f, "##/sbin/astraios (system shutdown)\n");                                                                                                                                                            <* 
+ *>       fprintf (f, "##   astraios-aeolus (sparkling wind father) -- simple, reliable, and transparent system shutdown\n");                                                                                             <* 
+ *>    }                                                                                                                                                                                                                  <* 
+ *>    fprintf (f, "##   performance report with major tracking information\n");                                                                                                                                          <* 
+ *>    fprintf (f, "##\n");                                                                                                                                                                                               <* 
+ *>    fprintf (f, "#num ß ---group------- ß ---proc-------- ß ---description-------------------------- ß t ß ---user--- ß uid- ß -est-- ß -minest- ß -maxest- ß --beg--- ß -rpid- ß y ß ret- ß --end--- ß --dur- ß ");   <* 
+ *>    fprintf (f, "\n");                                                                                                                                                                                                 <* 
+ *>    /+---(check all groups)---------------+/                                                                                                                                                                           <* 
+ *>    for (yDLST_list_by_cursor ('[', NULL, &x_group, NULL); x_group != NULL; yDLST_list_by_cursor ('>', NULL, &x_group, NULL)) {                                                                                        <* 
+ *>       for (yDLST_line_by_cursor ('-', '[', NULL, &x_proc, NULL); x_proc != NULL; yDLST_line_by_cursor ('-', '>', NULL, &x_proc, NULL)) {                                                                              <* 
+ *>          if (c % 5 == 0)  fprintf (f, "\n");                                                                                                                                                                          <* 
+ *>          fprintf (f, "%4d ß %-15.15s ß %-15.15s ß %-40.40s ß %c ß ",                                                                                                                                                  <* 
+ *>                x_proc->p_line, x_group->g_name, x_proc->p_name, x_proc->p_desc, x_proc->p_type);                                                                                                                      <* 
+ *>          fprintf (f, "%-10.10s ß %4d ß ",                                                                                                                                                                             <* 
+ *>                x_proc->p_user, x_proc->p_uid);                                                                                                                                                                        <* 
+ *>          fprintf (f, "%6d ß %8d ß %8d ß ",                                                                                                                                                                            <* 
+ *>                x_proc->p_est , x_proc->p_min, x_proc->p_max);                                                                                                                                                         <* 
+ *>          fprintf (f, "%8d ß %6d ß %c ß ",                                                                                                                                                                             <* 
+ *>                x_proc->p_beg, x_proc->p_rpid, x_proc->p_yexec);                                                                                                                                                       <* 
+ *>          fprintf (f, "%4d ß %8d ß %6d ß ",                                                                                                                                                                            <* 
+ *>                x_proc->p_rc, x_proc->p_end, x_proc->p_act);                                                                                                                                                           <* 
+ *>          fprintf (f, "\n");                                                                                                                                                                                           <* 
+ *>          ++c;                                                                                                                                                                                                         <* 
+ *>       }                                                                                                                                                                                                               <* 
+ *>    }                                                                                                                                                                                                                  <* 
+ *>    /+---(footer)-------------------------+/                                                                                                                                                                           <* 
+ *>    fprintf (f, "\n");                                                                                                                                                                                                 <* 
+ *>    fprintf (f, "#num ß ---group------- ß ---proc-------- ß ---description-------------------------- ß t ß ---user--- ß uid- ß -est-- ß -minest- ß -maxest- ß --beg--- ß -rpid- ß y ß ret- ß --end--- ß --dur- ß ");   <* 
+ *>    fprintf (f, "##\n");                                                                                                                                                                                               <* 
+ *>    fprintf (f, "## complete with %d lines\n", c);                                                                                                                                                                     <* 
+ *>    /+---(close report file)--------------+/                                                                                                                                                                           <* 
+ *>    rc = fclose (f);                                                                                                                                                                                                   <* 
+ *>    DEBUG_OUTP  yLOG_value   ("close"     , rc);                                                                                                                                                                       <* 
+ *>    --rce;  if (rc < 0) {                                                                                                                                                                                              <* 
+ *>       DEBUG_OUTP  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                                                                   <* 
+ *>       return rce;                                                                                                                                                                                                     <* 
+ *>    }                                                                                                                                                                                                                  <* 
+ *>    /+---(complete)-----------------------+/                                                                                                                                                                           <* 
+ *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                                                                                                           <* 
+ *>    return 0;                                                                                                                                                                                                          <* 
+ *> }                                                                                                                                                                                                                     <*/
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      unit test accessor                      ----===*/
+/*====================------------------------------------====================*/
+static void      o___UNITTEST________________o (void) {;}
+
+/*> char*                                                                                                                                                                          <* 
+ *> rptg__unit              (char *a_question, int a_num)                                                                                                                          <* 
+ *> {                                                                                                                                                                              <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                                                                                                    <* 
+ *>    char        rc          =    0;                                                                                                                                             <* 
+ *>    char        t           [LEN_RECD]  = "[ALPHA]";                                                                                                                            <* 
+ *>    tLIST      *x_group     = NULL;                                                                                                                                             <* 
+ *>    /+---(prepare)------------------------+/                                                                                                                                    <* 
+ *>    ystrlcpy  (unit_answer, "RPTG             : question not understood", LEN_RECD);                                                                                            <* 
+ *>    /+---(crontab name)-------------------+/                                                                                                                                    <* 
+ *>    yDLST_backup ();                                                                                                                                                            <* 
+ *>    if      (strcmp (a_question, "pos"     )        == 0) {                                                                                                                     <* 
+ *>       yDLST_list_by_index (a_num, NULL, &x_group, NULL);                                                                                                                       <* 
+ *>       if (x_group != NULL) {                                                                                                                                                   <* 
+ *>          sprintf (t, "%2d[%-.15s]", strlen (x_group->g_name), x_group->g_name);                                                                                                <* 
+ *>          snprintf (unit_answer, LEN_RECD, "RPTG pos    (%2d) : %-19.19s    %3dc  %3dr    %3dx  %3dy", a_num, t, x_group->g_col, x_group->g_row, x_group->g_x, x_group->g_y);   <* 
+ *>       } else {                                                                                                                                                                 <* 
+ *>          snprintf (unit_answer, LEN_RECD, "RPTG pos    (%2d) :  -[]                     ∑c    ∑r      ∑x    ∑y", a_num);                                                       <* 
+ *>       }                                                                                                                                                                        <* 
+ *>    }                                                                                                                                                                           <* 
+ *>    else if (strcmp (a_question, "pert"    )        == 0) {                                                                                                                     <* 
+ *>       if (a_num < MAX_Y)  snprintf (unit_answer, LEN_RECD, "RPTG pert   (%2d) : Â%sÊ", a_num, S_pert [a_num]);                                                                 <* 
+ *>       else                snprintf (unit_answer, LEN_RECD, "RPTG pert   (%2d) : n/a" , a_num);                                                                                 <* 
+ *>    }                                                                                                                                                                           <* 
+ *>    yDLST_restore ();                                                                                                                                                           <* 
+ *>    /+---(complete)-----------------------+/                                                                                                                                    <* 
+ *>    return unit_answer;                                                                                                                                                         <* 
+ *> }                                                                                                                                                                              <*/
+
+
+
+
+
+
