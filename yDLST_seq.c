@@ -43,8 +43,8 @@ static      int         S_nseq      =    0;  /* count of sequence master list */
 
 static      tSEQ       *S_rseq      = NULL;  /* reporting position            */
 
-static      tLIST      *s_alpha     = NULL;
-static      tLIST      *s_omega     = NULL;
+tLIST      *G_alpha     = NULL;
+tLIST      *G_omega     = NULL;
 
 
 static      char        s_print     [LEN_RECD] = "";
@@ -533,7 +533,7 @@ ydlst_seq__balance_chk  (tLIST *a_list)
    }
    /*---(quick-out)----------------------*/
    DEBUG_YDLST  yLOG_info    ("->l_title" , a_list->l_title);
-   if (a_list == s_alpha || a_list == s_omega) {
+   if (a_list == G_alpha || a_list == G_omega) {
       DEBUG_YDLST  yLOG_note    ("nothing to fix on SEQ_ALPHA or SEQ_OMEGA");
       DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
       return 0;
@@ -568,13 +568,13 @@ ydlst_seq__balance_pred (tLIST *a_list)
    /*---(prepare)------------------------*/
    c = a_list->l_pcount;
    DEBUG_YDLST  yLOG_value   ("c"         , c);
-   DEBUG_YDLST  yLOG_point   ("s_alpha"   , s_alpha);
-   DEBUG_YDLST  yLOG_info    ("->l_title" , s_alpha->l_title);
+   DEBUG_YDLST  yLOG_point   ("G_alpha"   , G_alpha);
+   DEBUG_YDLST  yLOG_info    ("->l_title" , G_alpha->l_title);
    /*---(just SEQ_ALPHA)-----------------*/
    if (c == 1) {
       DEBUG_YDLST  yLOG_point   ("->l_phead" , a_list->l_phead);
       DEBUG_YDLST  yLOG_info    ("->l_title" , a_list->l_phead->q_pred->l_title);
-      if (a_list->l_phead->q_pred == s_alpha) {
+      if (a_list->l_phead->q_pred == G_alpha) {
          DEBUG_YDLST  yLOG_note    ("attached only to SEQ_ALPHA, good to go");
          DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
          return 2;
@@ -588,14 +588,14 @@ ydlst_seq__balance_pred (tLIST *a_list)
       DEBUG_YDLST  yLOG_note    ("no preds, make after SEQ_ALPHA");
       rc = ydlst_seq__new (&o);
       DEBUG_YDLST  yLOG_value   ("new"       , rc);
-      rc = ydlst_seq__hook (s_alpha, a_list, o);
+      rc = ydlst_seq__hook (G_alpha, a_list, o);
       DEBUG_YDLST  yLOG_value   ("hook"      , rc);
       DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
       return 3;
    }
    /*---(check for SEQ_ALPHA)------------*/
-   DEBUG_YDLST  yLOG_point   ("alpha"     , s_alpha->l_shead);
-   o = s_alpha->l_shead;
+   DEBUG_YDLST  yLOG_point   ("alpha"     , G_alpha->l_shead);
+   o = G_alpha->l_shead;
    while (o != NULL) {
       DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", o, o->q_succ, o->q_succ->l_title);
       if (o->q_succ == a_list) {
@@ -640,13 +640,13 @@ ydlst_seq__balance_succ (tLIST *a_list)
    /*---(prepare)------------------------*/
    c = a_list->l_scount;
    DEBUG_YDLST  yLOG_value   ("c"         , c);
-   DEBUG_YDLST  yLOG_point   ("s_omega"   , s_omega);
-   DEBUG_YDLST  yLOG_info    ("->l_title" , s_omega->l_title);
+   DEBUG_YDLST  yLOG_point   ("G_omega"   , G_omega);
+   DEBUG_YDLST  yLOG_info    ("->l_title" , G_omega->l_title);
    /*---(just SEQ_ALPHA)-----------------*/
    if (c == 1) {
       DEBUG_YDLST  yLOG_point   ("->l_shead" , a_list->l_shead);
       DEBUG_YDLST  yLOG_info    ("->l_title" , a_list->l_shead->q_succ->l_title);
-      if (a_list->l_shead->q_succ == s_omega) {
+      if (a_list->l_shead->q_succ == G_omega) {
          DEBUG_YDLST  yLOG_note    ("attached only to SEQ_OMEGA, good to go");
          DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
          return 2;
@@ -660,13 +660,13 @@ ydlst_seq__balance_succ (tLIST *a_list)
       DEBUG_YDLST  yLOG_note    ("no preds, make after SEQ_ALPHA");
       rc = ydlst_seq__new (&o);
       DEBUG_YDLST  yLOG_value   ("new"       , rc);
-      rc = ydlst_seq__hook (a_list, s_omega, o);
+      rc = ydlst_seq__hook (a_list, G_omega, o);
       DEBUG_YDLST  yLOG_value   ("hook"      , rc);
       DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
       return 3;
    }
    /*---(check for SEQ_OMEGA)------------*/
-   o = s_omega->l_phead;
+   o = G_omega->l_phead;
    while (o != NULL) {
       DEBUG_YDLST  yLOG_complex ("check"     , "%-10p, %-10p, %s", o, o->q_pred, o->q_pred->l_title);
       if (o->q_pred == a_list) {
@@ -833,8 +833,8 @@ yDLST_seq_count         (char a_scope)
    return rce;
 }
 
-int yDLST_alpha_count    (void) { return s_alpha->l_scount; }
-int yDLST_omega_count    (void) { return s_omega->l_pcount; }
+int yDLST_alpha_count    (void) { return G_alpha->l_scount; }
+int yDLST_omega_count    (void) { return G_omega->l_pcount; }
 
 char       /*--> find a list using sequential pos ----------------------------*/
 yDLST_seq_by_index      (char a_scope, int n, void **r_seq, void **r_list, void **r_data, char d_entry [LEN_RECD])
@@ -1212,7 +1212,7 @@ ydlst_seq__purge_list   (tLIST *a_list)
    DEBUG_YDLST  yLOG_point   ("->l_phead" , x_seq);
    while (x_seq != NULL) {
       DEBUG_YDLST  yLOG_complex ("handle"    , "%-10p, %-10p, %s", x_seq, x_seq->q_pred, x_seq->q_pred->l_title);
-      if (x_seq->q_pred == s_alpha) {
+      if (x_seq->q_pred == G_alpha) {
          DEBUG_YDLST  yLOG_note    ("skipping");
          x_seq = x_seq->q_pnext;
          continue;
@@ -1227,7 +1227,7 @@ ydlst_seq__purge_list   (tLIST *a_list)
    DEBUG_YDLST  yLOG_point   ("->l_shead" , x_seq);
    while (x_seq != NULL) {
       DEBUG_YDLST  yLOG_complex ("handle"    , "%-10p, %-10p, %s", x_seq, x_seq->q_succ, x_seq->q_succ->l_title);
-      if (x_seq->q_succ == s_omega) {
+      if (x_seq->q_succ == G_omega) {
          DEBUG_YDLST  yLOG_note    ("skipping");
          x_seq = x_seq->q_snext;
          continue;
@@ -1237,11 +1237,11 @@ ydlst_seq__purge_list   (tLIST *a_list)
       x_seq = a_list->l_shead;
    }
    /*---(remove SEQ_ALPHA seq)-----------*/
-   rc = ydlst_seq__unmake (s_alpha, a_list);
-   DEBUG_YDLST  yLOG_value   ("s_alpha"   , rc);
+   rc = ydlst_seq__unmake (G_alpha, a_list);
+   DEBUG_YDLST  yLOG_value   ("G_alpha"   , rc);
    /*---(remove SEQ_OMEGA seq)-----------*/
-   rc = ydlst_seq__unmake (a_list, s_omega);
-   DEBUG_YDLST  yLOG_value   ("s_omega"   , rc);
+   rc = ydlst_seq__unmake (a_list, G_omega);
+   DEBUG_YDLST  yLOG_value   ("G_omega"   , rc);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1274,7 +1274,7 @@ yDLST_seq_after         (char *a_before)
    DEBUG_YDLST  yLOG_note    (x_list->l_title);
    /*---(check for alpha)----------------*/
    if (strcmp (a_before, "SEQ_ALPHA") == 0) {
-      x_before = s_alpha;
+      x_before = G_alpha;
    }
    /*---(find predecessor)---------------*/
    else {
@@ -1339,7 +1339,7 @@ yDLST_seq_before        (char *a_after)
    DEBUG_YDLST  yLOG_note    (x_list->l_title);
    /*---(find list)----------------------*/
    if (strcmp (a_after , "SEQ_OMEGA") == 0) {
-      x_after  = s_omega;
+      x_after  = G_omega;
    }
    /*---(find successor)-----------------*/
    else {
@@ -1393,8 +1393,8 @@ ydlst_seq_init          (void)
    S_hseq    = NULL;
    S_tseq    = NULL;
    S_nseq   =    0;
-   ydlst_list_create ("SEQ_ALPHA", NULL, &s_alpha);
-   ydlst_list_create ("SEQ_OMEGA", NULL, &s_omega);
+   ydlst_list_create ("SEQ_ALPHA", NULL, &G_alpha);
+   ydlst_list_create ("SEQ_OMEGA", NULL, &G_omega);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1433,8 +1433,8 @@ ydlst_seq_wrap          (void)
    DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
    /*---(initialize)---------------------*/
    ydlst_seq__purge ();
-   ydlst_list_destroy (s_alpha->l_title, &s_alpha);
-   ydlst_list_destroy (s_omega->l_title, &s_omega);
+   ydlst_list_destroy (G_alpha->l_title, &G_alpha);
+   ydlst_list_destroy (G_omega->l_title, &G_omega);
    /*---(complete)-----------------------*/
    DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
    return 0;

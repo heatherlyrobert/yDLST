@@ -73,8 +73,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.2-, bring in basic pert reporting"
-#define     P_VERNUM    "1.2a"
-#define     P_VERTXT    "added file-GPL notes and complex dataset for pert unit-testing"
+#define     P_VERNUM    "1.2b"
+#define     P_VERTXT    "created a pert challenge dataset, updated columns logic, passes columns unit-testing"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -157,6 +157,11 @@ struct  cLIST {   /*   all list members begin with "l_"   */
    /*---(done)-----------------*/
 };
 
+extern tLIST      *G_alpha;
+extern tLIST      *G_omega;
+
+
+
 struct  cLINE {   /*   all line members begin with "n_"   */
    /*---(ref name)-------------*/
    char       *n_title;                /* name of list                             */
@@ -178,6 +183,7 @@ struct  cLINE {   /*   all line members begin with "n_"   */
    tLINE      *n_anext;                /* forward  link in list of active links    */
    /*---(done)-----------------*/
 };
+
 
 
 struct   cSEQ {   /*   all sequence members begin with "q_"   */
@@ -404,6 +410,12 @@ char*       ydlst_seq__unit         (char *a_question, int a_num);
 /*===[[ yDLST_rptg.c ]]=======================================================*/
 /*········´ ´·············cleanse·´ ´·········································*/
 char        ydlst__pert_clear       (void);
+char        ydlst__pert_rando       (void);
+/*········´ ´················grid·´ ´·········································*/
+char        ydlst__pert_col_detail  (char a_col, tLIST *a_list, int *b_looks, int *b_changes);
+char        ydlst__pert_columns     (void);
+char        ydlst__pert_rower       (tLIST *a_list, char a_row);
+char        ydlst__pert_rows        (void);
 /*········´ ´················DONE·´ ´·········································*/
 
 

@@ -59,9 +59,9 @@ static int      S_maxx   = 0;
 
 
 /*====================------------------------------------====================*/
-/*===----                        pert charting                         ----===*/
+/*===----                      clearing data                           ----===*/
 /*====================------------------------------------====================*/
-static void      o___PERT____________________o (void) {;}
+static void      o___CLEAR_______________o (void) {;}
 
 char
 ydlst__pert_clear       (void)
@@ -94,132 +94,266 @@ ydlst__pert_clear       (void)
    return 0;
 }
 
-/*> char                                                                                                                           <* 
- *> rptg__pert_col          (void)                                                                                                 <* 
- *> {                                                                                                                              <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                                                                    <* 
- *>    char        rc          =    0;                                                                                             <* 
- *>    tLIST      *x_group     = NULL;                                                                                             <* 
- *>    int         x_ngroup    =    0;                                                                                             <* 
- *>    tLIST      *x_pred      = NULL;                                                                                             <* 
- *>    int         x_npred     =    0;                                                                                             <* 
- *>    /+---(header)-------------------------+/                                                                                    <* 
- *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                                    <* 
- *>    /+---(prepare)------------------------+/                                                                                    <* 
- *>    rc = yDLST_list_by_index  (x_ngroup, NULL, &x_group, NULL);                                                                 <* 
- *>    DEBUG_LOOP   yLOG_complex ("head"      , "%3d, %p", rc, x_group);                                                           <* 
- *>    S_xcol = 0;                                                                                                                 <* 
- *>    /+---(walk through groups)------------+/                                                                                    <* 
- *>    while (rc >= 0) {                                                                                                           <* 
- *>       if (x_group != NULL) {                                                                                                   <* 
- *>          DEBUG_LOOP   yLOG_complex ("GROUP"     , "%3d, %p, %-15.15s, %2dr", rc, x_group, x_group->g_name, x_group->g_askd);   <* 
- *>          x_npred = 0;                                                                                                          <* 
- *>          rc = yDLST_seq_by_index  ('<', x_npred, NULL, NULL, &x_pred, NULL);                                                   <* 
- *>          while (rc >= 0) {                                                                                                     <* 
- *>             if (x_group->g_col < 1)  x_group->g_col = 1;                                                                       <* 
- *>             if (x_pred != NULL) {                                                                                              <* 
- *>                if (x_pred->g_col + 1 > x_group->g_col)  x_group->g_col = x_pred->g_col + 1;                                    <* 
- *>             }                                                                                                                  <* 
- *>             if (x_group->g_col > S_xcol)  S_xcol = x_group->g_col;                                                             <* 
- *>             rc = yDLST_seq_by_index  ('<', ++x_npred, NULL, NULL, &x_pred, NULL);                                              <* 
- *>          }                                                                                                                     <* 
- *>       }                                                                                                                        <* 
- *>       rc = yDLST_list_by_index  (++x_ngroup, NULL, &x_group, NULL);                                                            <* 
- *>    }                                                                                                                           <* 
- *>    ++S_xcol;                                                                                                                   <* 
- *>    /+---(complete)-----------------------+/                                                                                    <* 
- *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                    <* 
- *>    return 0;                                                                                                                   <* 
- *> }                                                                                                                              <*/
+char
+ydlst__pert_rando       (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tLIST      *x_group     = NULL;
+   int         n           =    0;
+   /*---(walk)---------------------------*/
+   rc = yDLST_list_by_cursor ('[', &x_group, NULL, NULL);
+   while (rc >= 0 && x_group != NULL) {
+      x_group->l_row = ++n;
+      x_group->l_col = ++n;
+      x_group->l_x   = ++n;
+      x_group->l_y   = ++n;
+      rc = yDLST_list_by_cursor ('>', &x_group, NULL, NULL);
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
 
-/*> char                                                                                                            <* 
- *> rptg__pert_rower        (void *a_list, char a_row)                                                              <* 
- *> {                                                                                                               <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                                                     <* 
- *>    char        rc          =    0;                                                                              <* 
- *>    void       *x_list      = NULL;                                                                              <* 
- *>    tLIST      *x_succ      = NULL;                                                                              <* 
- *>    char        x_old       =    0;                                                                              <* 
- *>    char        c           =    0;                                                                              <* 
- *>    /+---(quick out)----------------------+/                                                                     <* 
- *>    if (a_list == NULL)  return a_row;                                                                           <* 
- *>    /+---(header)-------------------------+/                                                                     <* 
- *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                     <* 
- *>    /+---(set group as current)-----------+/                                                                     <* 
- *>    rc = yDLST_list_restore  (a_list);                                                                           <* 
- *>    DEBUG_LOOP  yLOG_complex ("args"      , "%p, %d", a_list, a_row);                                            <* 
- *>    /+---(head successor)-----------------+/                                                                     <* 
- *>    rc = yDLST_seq_by_index ('>', c++, NULL, &x_list, &x_succ, NULL);                                            <* 
- *>    DEBUG_LOOP  yLOG_complex ("by_index"  , "%3d, %p, %p", rc, x_list, x_succ);                                  <* 
- *>    if (x_list == NULL) {                                                                                        <* 
- *>       DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                  <* 
- *>       return a_row;                                                                                             <* 
- *>    }                                                                                                            <* 
- *>    if (x_succ != NULL && x_succ->g_row <= 0)  x_succ->g_row = a_row;                                            <* 
- *>    /+---(walk successors)----------------+/                                                                     <* 
- *>    while (rc >= 0) {                                                                                            <* 
- *>       if (x_succ != NULL) {                                                                                     <* 
- *>          /+---(update)----------------------+/                                                                  <* 
- *>          x_old = x_succ->g_row;                                                                                 <* 
- *>          if    (x_old <= 0)   x_succ->g_row = a_row;                                                            <* 
- *>          DEBUG_LOOP  yLOG_complex ("succ"      , "%-15.15s, %3d, %3d", x_succ->g_name, x_old, x_succ->g_row);   <* 
- *>          /+---(recurse)---------------------+/                                                                  <* 
- *>          a_row = rptg__pert_rower (x_list, a_row);                                                              <* 
- *>          DEBUG_LOOP  yLOG_value   ("a_row"     , a_row);                                                        <* 
- *>       }                                                                                                         <* 
- *>       /+---(update position)-------------+/                                                                     <* 
- *>       if (rc >= 0 && x_succ != NULL && x_succ->g_row == a_row) ++a_row;                                         <* 
- *>       /+---(next successor)--------------+/                                                                     <* 
- *>       rc = yDLST_list_restore  (a_list);                                                                        <* 
- *>       DEBUG_LOOP  yLOG_value   ("by_ptr"    , rc);                                                              <* 
- *>       rc = yDLST_seq_by_index  ('>', c++, NULL, &x_list, &x_succ, NULL);                                        <* 
- *>       DEBUG_LOOP  yLOG_complex ("by_index"  , "%3d, %p, %p", rc, x_list, x_succ);                               <* 
- *>       /+---(done)------------------------+/                                                                     <* 
- *>    }                                                                                                            <* 
- *>    if (a_row > S_xrow)  S_xrow = a_row;                                                                         <* 
- *>    /+---(complete)-----------------------+/                                                                     <* 
- *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                     <* 
- *>    return a_row;                                                                                                <* 
- *> }                                                                                                               <*/
 
-/*> char                                                                                                                                              <* 
- *> rptg__pert_row          (void)                                                                                                                    <* 
- *> {                                                                                                                                                 <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                                                                                       <* 
- *>    char        rc          =    0;                                                                                                                <* 
- *>    void       *x_list      = NULL;                                                                                                                <* 
- *>    tLIST      *x_group     = NULL;                                                                                                                <* 
- *>    int         x_ngroup    =    0;                                                                                                                <* 
- *>    int         i           =    0;                                                                                                                <* 
- *>    tLIST      *x_pred      = NULL;                                                                                                                <* 
- *>    int         x_npred     =    0;                                                                                                                <* 
- *>    /+---(header)-------------------------+/                                                                                                       <* 
- *>    DEBUG_LOOP  yLOG_enter   (__FUNCTION__);                                                                                                       <* 
- *>    rc = yDLST_list_by_index  (x_ngroup, &x_list, &x_group, NULL);                                                                                 <* 
- *>    S_xrow = 0;                                                                                                                                    <* 
- *>    while (rc >= 0) {                                                                                                                              <* 
- *>       /+---(prepare)---------------------+/                                                                                                       <* 
- *>       DEBUG_LOOP  yLOG_complex ("by_index"  , "%2d, %3d, %p, %p, %s", x_ngroup, rc, x_list, x_group, (x_group == NULL) ? "" : x_group->g_name);   <* 
- *>       rc = x_npred = i = 0;                                                                                                                       <* 
- *>       /+---(count real preds)------------+/                                                                                                       <* 
- *>       while (rc >= 0) {                                                                                                                           <* 
- *>          rc = yDLST_seq_by_index ('<', i++, NULL, NULL, &x_pred, NULL);                                                                           <* 
- *>          if (rc >= 0 && x_pred != NULL)  ++x_npred;                                                                                               <* 
- *>       }                                                                                                                                           <* 
- *>       DEBUG_LOOP  yLOG_value   ("x_npred"   , x_npred);                                                                                           <* 
- *>       /+---(process)---------------------+/                                                                                                       <* 
- *>       if (x_npred == 0) {                                                                                                                         <* 
- *>          x_group->g_row = 1;                                                                                                                      <* 
- *>          rc = rptg__pert_rower (x_list, 1);                                                                                                       <* 
- *>       }                                                                                                                                           <* 
- *>       /+---(next)------------------------+/                                                                                                       <* 
- *>       rc = yDLST_list_by_index (++x_ngroup, &x_list, &x_group, NULL);                                                                             <* 
- *>       /+---(done)------------------------+/                                                                                                       <* 
- *>    }                                                                                                                                              <* 
- *>    /+---(complete)-----------------------+/                                                                                                       <* 
- *>    DEBUG_OUTP  yLOG_exit    (__FUNCTION__);                                                                                                       <* 
- *>    return 0;                                                                                                                                      <* 
- *> }                                                                                                                                                 <*/
+
+/*====================------------------------------------====================*/
+/*===----                       grid assignment                        ----===*/
+/*====================------------------------------------====================*/
+static void      o___GRID________________o (void) {;}
+
+char
+ydlst__pert_col_detail  (char a_col, tLIST *a_list, int *b_looks, int *b_changes)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        n           =    0;
+   tSEQ       *x_seq       = NULL;
+   tLIST      *x_succ      = NULL;
+   tLIST      *x_save      = NULL;
+   int         x_looks     =    0;
+   int         x_changes   =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YDLST  yLOG_value   ("a_col"     , a_col);
+   --rce;  if (a_col < 0 || a_col > 20) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YDLST  yLOG_point   ("a_list"    , a_list);
+   --rce;  if (a_list == NULL) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YDLST  yLOG_info    ("->l_title" , a_list->l_title);
+   /*---(prepare)------------------------*/
+   DEBUG_YDLST  yLOG_point   ("b_looks"   , b_looks);
+   if (b_looks   != NULL)  x_looks   = *b_looks;
+   DEBUG_YDLST  yLOG_point   ("b_changes" , b_changes);
+   if (b_changes != NULL)  x_changes = *b_changes;
+   /*---(handle current)-----------------*/
+   DEBUG_LOOP   yLOG_complex ("GROUP"     , "%4d/%4d   (%2d) %-15.15s (%2d)", x_looks, x_changes, a_col, a_list->l_title, a_list->l_col);
+   if (b_looks   != NULL)  *b_looks  = ++x_looks;
+   if (a_list->l_col < a_col) {
+      DEBUG_YDLST  yLOG_note    ("updating column");
+      a_list->l_col = a_col;
+      if (b_changes != NULL) *b_changes = ++x_changes;
+   } else {
+      DEBUG_YDLST  yLOG_note    ("column stays");
+   }
+   /*---(prepare list)-------------------*/
+   x_save = yDLST_list_current ();
+   yDLST_list_restore (a_list);
+   /*---(walk successors)----------------*/
+   while (1) {
+      rc = yDLST_seq_by_index ('>', n, &x_seq, &x_succ, NULL, NULL);
+      if (rc < 0 || x_seq == NULL) break;
+      DEBUG_LOOP  yLOG_complex ("seq"       , "%2d) %-20.20s to %-20.20s", n, x_seq->q_pred->l_title, x_seq->q_succ->l_title);
+      rc = ydlst__pert_col_detail (a_col + 1, x_seq->q_succ, b_looks, b_changes);
+      DEBUG_YDLST  yLOG_value   ("recurse"   , rc);
+      if (rc < 0) {
+         DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rc);
+         return rc;
+      }
+      ++n;
+   }
+   /*---(restore list)-------------------*/
+   yDLST_list_restore (x_save);
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+ydlst__pert_columns     (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tLIST      *x_start     = NULL;
+   tLIST      *x_save      = NULL;
+   int         x_looks     =    0;
+   int         x_changes   =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YDLST  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   x_start = G_alpha;
+   DEBUG_YDLST  yLOG_point   ("x_start"   , x_start);
+   --rce;  if (x_start == NULL) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(save)---------------------------*/
+   x_save = yDLST_list_current ();
+   /*---(start)--------------------------*/
+   rc = ydlst__pert_col_detail (0, x_start, &x_looks, &x_changes);
+   DEBUG_YDLST  yLOG_value   ("detail"    , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YDLST  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_LOOP   yLOG_complex ("stats"     , "%4d/%4d", x_looks, x_changes);
+   /*---(restory-------------------------*/
+   yDLST_list_restore (x_save);
+   /*---(complete)-----------------------*/
+   DEBUG_YDLST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+ydlst__pert_columns_OLD (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tLIST      *x_group     = NULL;
+   int         x_ngroup    =    0;
+   tLIST      *x_pred      = NULL;
+   int         x_npred     =    0;
+   tSEQ       *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOOP  yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   rc = yDLST_list_by_index  (x_ngroup, &x_group, NULL, NULL);
+   DEBUG_LOOP   yLOG_complex ("head"      , "%3d, %p", rc, x_group);
+   S_xcol = 0;
+   /*---(walk through groups)------------*/
+   while (rc >= 0) {
+      if (x_group != NULL) {
+         DEBUG_LOOP   yLOG_complex ("GROUP"     , "%3d, %p, %-15.15s", rc, x_group, x_group->l_title);
+         x_npred = 0;
+         /*-- walk predecessors)---------*/
+         rc = yDLST_seq_by_index  ('<', x_npred, &x_seq, &x_pred, NULL, NULL);
+         while (rc >= 0) {
+            DEBUG_LOOP  yLOG_complex ("seq"       , "%2d) %-20.20s to %-20.20s", x_npred, x_seq->q_pred->l_title, x_seq->q_succ->l_title);
+            if (x_group->l_col < 1)  x_group->l_col = 1;
+            if (x_pred != NULL) {
+               if (x_pred->l_col + 1 > x_group->l_col)  x_group->l_col = x_pred->l_col + 1;
+            }
+            if (x_group->l_col > S_xcol)  S_xcol = x_group->l_col;
+            rc = yDLST_seq_by_index  ('<', ++x_npred, &x_seq, &x_pred, NULL, NULL);
+         }
+      }
+      rc = yDLST_list_by_index  (++x_ngroup, &x_group, NULL, NULL);
+   }
+   ++S_xcol;
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+ydlst__pert_rower       (tLIST *a_list, char a_row)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   void       *x_list      = NULL;
+   tLIST      *x_succ      = NULL;
+   char        x_old       =    0;
+   char        c           =    0;
+   /*---(quick out)----------------------*/
+   if (a_list == NULL)  return a_row;
+   /*---(header)-------------------------*/
+   DEBUG_LOOP  yLOG_enter   (__FUNCTION__);
+   /*---(set group as current)-----------*/
+   rc = yDLST_list_restore  (a_list);
+   DEBUG_LOOP  yLOG_complex ("args"      , "%p, %d", a_list, a_row);
+   /*---(head successor)-----------------*/
+   rc = yDLST_seq_by_index ('>', c++, NULL, &x_list, &x_succ, NULL);
+   DEBUG_LOOP  yLOG_complex ("by_index"  , "%3d, %p, %p", rc, x_list, x_succ);
+   if (x_list == NULL) {
+      DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+      return a_row;
+   }
+   if (x_succ != NULL && x_succ->l_row <= 0)  x_succ->l_row = a_row;
+   /*---(walk successors)----------------*/
+   while (rc >= 0) {
+      if (x_succ != NULL) {
+         /*---(update)----------------------*/
+         x_old = x_succ->l_row;
+         if    (x_old <= 0)   x_succ->l_row = a_row;
+         DEBUG_LOOP  yLOG_complex ("succ"      , "%-15.15s, %3d, %3d", x_succ->l_title, x_old, x_succ->l_row);
+         /*---(recurse)---------------------*/
+         a_row = ydlst__pert_rower (x_list, a_row);
+         DEBUG_LOOP  yLOG_value   ("a_row"     , a_row);
+      }
+      /*---(update position)-------------*/
+      if (rc >= 0 && x_succ != NULL && x_succ->l_row == a_row) ++a_row;
+      /*---(next successor)--------------*/
+      rc = yDLST_list_restore  (a_list);
+      DEBUG_LOOP  yLOG_value   ("by_ptr"    , rc);
+      rc = yDLST_seq_by_index  ('>', c++, NULL, &x_list, &x_succ, NULL);
+      DEBUG_LOOP  yLOG_complex ("by_index"  , "%3d, %p, %p", rc, x_list, x_succ);
+      /*---(done)------------------------*/
+   }
+   if (a_row > S_xrow)  S_xrow = a_row;
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return a_row;
+}
+
+char
+ydlst__pert_rows        (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   tLIST      *x_group     = NULL;
+   int         x_ngroup    =    0;
+   int         i           =    0;
+   tLIST      *x_pred      = NULL;
+   int         x_npred     =    0;
+   tSEQ       *x_seq       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_LOOP  yLOG_enter   (__FUNCTION__);
+   rc = yDLST_list_by_index  (x_ngroup, &x_group, NULL, NULL);
+   S_xrow = 0;
+   while (rc >= 0) {
+      /*---(prepare)---------------------*/
+      DEBUG_LOOP  yLOG_complex ("LIST"    , "%2d, %3d, %p, %s", x_ngroup, rc, x_group, (x_group == NULL) ? "" : x_group->l_title);
+      rc = x_npred = i = 0;
+      /*---(count real preds)------------*/
+      while (rc >= 0) {
+         rc = yDLST_seq_by_index ('<', i++, &x_seq, &x_pred, NULL, NULL);
+         if (rc >= 0 && x_pred != NULL) {
+            ++x_npred;
+            DEBUG_LOOP  yLOG_complex ("seq"       , "%2d) %-20.20s to %-20.20s", x_npred, x_seq->q_pred->l_title, x_seq->q_succ->l_title);
+            if (x_group->l_row < x_pred->l_row)   x_group->l_row = x_pred->l_row;
+         }
+      }
+      /*---(process)---------------------*/
+      DEBUG_LOOP  yLOG_value   ("x_npred"   , x_npred);
+      if (x_npred == 0) {
+         x_group->l_row = 1;
+         rc = ydlst__pert_rower (x_group, 1);
+      }
+      /*---(next)------------------------*/
+      rc = yDLST_list_by_index (++x_ngroup, &x_group, NULL, NULL);
+      /*---(done)------------------------*/
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 /*> char                                                                              <* 
  *> rptg__pert_merge        (int y, int x, char *a_str)                               <* 

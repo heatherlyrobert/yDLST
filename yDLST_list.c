@@ -825,7 +825,7 @@ ydlst_list__entry       (tLIST *a_list)
    char        t           [LEN_HUND]  = "";
    /*---(short-cuts)---------------------*/
    if (a_list == NULL) return "´·············· -···········  - ´·············· ´··············  ´·············· ´·············· ··-  ´·············· ´·············· ··-  ´·············· ´·············· ··-  ·- ·- ···- ···-  Ï";
-   if (a_list == 0x01) return "---title------- ---data-----  l ---full-mprev-- ---mnext-------  ---line-nhead-- ---ntail------- cnt  ---pred-phead-- ---ptail------- cnt  ---succ-shead-- ---stail------- cnt  rw co xpos ypos  Ï";
+   if (a_list == 0x01) return "---title------- ---data-----  l ---full-mprev-- ---mnext-------  ---line-nhead-- ---ntail------- cnt  ---pred-phead-- ---ptail------- cnt  ---succ-shead-- ---stail------- cnt  co rw xpos ypos  Ï";
    /*---(prepare)------------------------*/
    strcpy (unit_answer, "");
    /*---(master)-------------------------*/
@@ -883,9 +883,9 @@ ydlst_list__entry       (tLIST *a_list)
    ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_scount, '>', ',', 0, '-', '.', '-', '-',  3), LEN_RECD);
    ystrlcat (unit_answer, "  ", LEN_RECD);
    /*---(report)-------------------------*/
-   ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_row   , '>', ',', 0, '-', '.', '-', '-',  2), LEN_RECD);
-   ystrlcat (unit_answer, " ", LEN_RECD);
    ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_col   , '>', ',', 0, '-', '.', '-', '-',  2), LEN_RECD);
+   ystrlcat (unit_answer, " ", LEN_RECD);
+   ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_row   , '>', ',', 0, '-', '.', '-', '-',  2), LEN_RECD);
    ystrlcat (unit_answer, " ", LEN_RECD);
    ystrlcat (unit_answer, ystrl4quick ((double) a_list->l_x     , '>', ',', 0, '-', '.', '-', '-',  4), LEN_RECD);
    ystrlcat (unit_answer, " ", LEN_RECD);
