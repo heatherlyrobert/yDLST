@@ -1,4 +1,5 @@
 /*===========================[[ start-of-code ]]==============================*/
+/*·········´·················´················································*/
 #include   "yDLST.h"
 #include   "yDLST_priv.h"
 
@@ -270,14 +271,14 @@ yDLST_focus_by_cursor   (char a_move, void **r_line, void **r_data, char d_entry
       /*---(non-bounce)------------------*/
       if (strchr (YDLST_DREL, a_move) != NULL) {
          S_curr = x_line;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
       x_line = S_head;
-      DEBUG_DATA   yLOG_spoint  (x_line);
+      DEBUG_YDLST   yLOG_spoint  (x_line);
       if (x_line == NULL) {
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
    }
@@ -311,11 +312,11 @@ yDLST_focus_by_cursor   (char a_move, void **r_line, void **r_data, char d_entry
       /*---(no bounce)-------------------*/
       if (x_line == NULL) {
          S_curr = x_line;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(mark trouble)----------------*/
-      DEBUG_DATA   yLOG_snote   ("BOUNCE");
+      DEBUG_YDLST   yLOG_snote   ("BOUNCE");
       rc = rce;
       /*---(done)------------------------*/
    }

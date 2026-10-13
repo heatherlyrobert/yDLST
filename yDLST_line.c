@@ -1,6 +1,7 @@
 /*===========================[[ start-of-code ]]==============================*/
-#include    "yDLST.h"
-#include    "yDLST_priv.h"
+/*·········´·················´················································*/
+#include   "yDLST.h"
+#include   "yDLST_priv.h"
 
 
 
@@ -59,39 +60,39 @@ ydlst_line__wipe        (tLINE *a_line)
    /*---(lcoals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_line);
+   DEBUG_YDLST   yLOG_spoint  (a_line);
    --rce;  if (a_line == NULL) {
-      DEBUG_INPT   yLOG_snote   ("null pointer");
-      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("null pointer");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return  rce;
    }
    /*---(master)-------------------------*/
-   DEBUG_INPT   yLOG_snote   ("master");
+   DEBUG_YDLST   yLOG_snote   ("master");
    a_line->n_title   = NULL;
    a_line->n_data    = NULL;
    /*---(line list)------------*/
-   DEBUG_INPT   yLOG_snote   ("full lines");
+   DEBUG_YDLST   yLOG_snote   ("full lines");
    a_line->n_mprev   = NULL;
    a_line->n_mnext   = NULL;
    /*---(list)-----------------*/
-   DEBUG_INPT   yLOG_snote   ("list lines");
+   DEBUG_YDLST   yLOG_snote   ("list lines");
    a_line->n_parent  = NULL;
    a_line->n_lprev   = NULL;
    a_line->n_lnext   = NULL;
    /*---(focus)----------------*/
-   DEBUG_INPT   yLOG_snote   ("focus lines");
+   DEBUG_YDLST   yLOG_snote   ("focus lines");
    a_line->n_focus   = YDLST_OFF;
    a_line->n_fprev   = NULL;
    a_line->n_fnext   = NULL;
    /*---(active)---------------*/
-   DEBUG_INPT   yLOG_snote   ("active lines");
+   DEBUG_YDLST   yLOG_snote   ("active lines");
    a_line->n_active  = YDLST_OFF;
    a_line->n_aprev   = NULL;
    a_line->n_anext   = NULL;
    /*---(complete)-------------*/
-   DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YDLST   yLOG_sexit   (__FUNCTION__);
    return 1;
 }
 
@@ -592,21 +593,21 @@ yDLST_line_by_cursor    (char a_scope, char a_move, void **r_line, void **r_data
       if (strchr (YDLST_DREL, a_move) != NULL) {
          DEBUG_YDLST  yLOG_snote   ("non-bounce");
          S_curr = x_curr;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(curr/show)-------------------*/
       if (a_move == YDLST_CURR || a_move == YDLST_DCURR) {
          DEBUG_YDLST  yLOG_snote   ("current-only, quick-out");
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
       DEBUG_YDLST  yLOG_snote   ("bounce, reset to head");
       x_curr = S_head;
-      DEBUG_DATA   yLOG_spoint  (x_curr);
+      DEBUG_YDLST   yLOG_spoint  (x_curr);
       if (x_curr == NULL) {
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
    }
@@ -666,11 +667,11 @@ yDLST_line_by_cursor    (char a_scope, char a_move, void **r_line, void **r_data
       if (x_curr == NULL) {
          DEBUG_YDLST  yLOG_snote   ("non-bounce");
          S_curr = x_curr;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(mark trouble)----------------*/
-      DEBUG_DATA   yLOG_snote   ("BOUNCE");
+      DEBUG_YDLST   yLOG_snote   ("BOUNCE");
       rc = rce;
       /*---(done)------------------------*/
    }

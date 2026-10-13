@@ -1,6 +1,7 @@
 /*===========================[[ start-of-code ]]==============================*/
-#include    "yDLST.h"
-#include    "yDLST_priv.h"
+/*·········´·················´················································*/
+#include   "yDLST.h"
+#include   "yDLST_priv.h"
 
 
 
@@ -61,46 +62,46 @@ ydlst_list__wipe        (tLIST *a_list)
    /*---(lcoals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_list);
+   DEBUG_YDLST   yLOG_spoint  (a_list);
    --rce;  if (a_list == NULL) {
-      DEBUG_INPT   yLOG_snote   ("null pointer");
-      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("null pointer");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return  rce;
    }
    /*---(master)-------------------------*/
-   DEBUG_INPT   yLOG_snote   ("master");
+   DEBUG_YDLST   yLOG_snote   ("master");
    a_list->l_title   = NULL;
    a_list->l_data    = NULL;
    /*---(list of lists)--------*/
-   DEBUG_INPT   yLOG_snote   ("list-of-lists");
+   DEBUG_YDLST   yLOG_snote   ("list-of-lists");
    a_list->l_linked  = YDLST_FLOATER;
    a_list->l_mprev   = NULL;
    a_list->l_mnext   = NULL;
    /*---(list of lines)--------*/
-   DEBUG_INPT   yLOG_snote   ("list-of-lines");
+   DEBUG_YDLST   yLOG_snote   ("list-of-lines");
    a_list->l_nhead   = NULL;
    a_list->l_ntail   = NULL;
    a_list->l_ncount  =    0;
    /*---(comes before)---------*/
-   DEBUG_INPT   yLOG_snote   ("preds");
+   DEBUG_YDLST   yLOG_snote   ("preds");
    a_list->l_phead   = NULL;
    a_list->l_ptail   = NULL;
    a_list->l_pcount  =    0;
    /*---(comes after)----------*/
-   DEBUG_INPT   yLOG_snote   ("succs");
+   DEBUG_YDLST   yLOG_snote   ("succs");
    a_list->l_shead   = NULL;
    a_list->l_stail   = NULL;
    a_list->l_scount  =    0;
    /*---(comes after)----------*/
-   DEBUG_INPT   yLOG_snote   ("report");
+   DEBUG_YDLST   yLOG_snote   ("report");
    a_list->l_row     =    0;
    a_list->l_col     =    0;
    a_list->l_x       =    0;
    a_list->l_y       =    0;
    /*---(complete)-------------*/
-   DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YDLST   yLOG_sexit   (__FUNCTION__);
    return 1;
 }
 
@@ -206,12 +207,12 @@ ydlst_list__hook        (tLIST *a_list)
    /*---(lcoals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_list);
+   DEBUG_YDLST   yLOG_spoint  (a_list);
    --rce;  if (a_list == NULL) {
-      DEBUG_INPT   yLOG_snote   ("null pointer");
-      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("null pointer");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return  rce;
    }
    /*---(check for floater)--------------*/
@@ -234,7 +235,7 @@ ydlst_list__hook        (tLIST *a_list)
    ++S_count;
    DEBUG_YDLST  yLOG_sint    (S_count);
    /*---(done)---------------------------*/
-   DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YDLST   yLOG_sexit   (__FUNCTION__);
    return 1;
 }
 
@@ -244,12 +245,12 @@ ydlst_list__unhook      (tLIST *a_list)
    /*---(lcoals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_list);
+   DEBUG_YDLST   yLOG_spoint  (a_list);
    --rce;  if (a_list == NULL) {
-      DEBUG_INPT   yLOG_snote   ("null pointer");
-      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("null pointer");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return  rce;
    }
    /*---(check for floater)--------------*/
@@ -267,7 +268,7 @@ ydlst_list__unhook      (tLIST *a_list)
    --S_count;
    DEBUG_YDLST  yLOG_sint    (S_count);
    /*---(done)---------------------------*/
-   DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YDLST   yLOG_sexit   (__FUNCTION__);
    return 1;
 }
 
@@ -585,14 +586,14 @@ yDLST_list_by_cursor    (char a_move, void **r_list, void **r_data, char d_entry
       /*---(non-bounce)------------------*/
       if (strchr (YDLST_DREL, a_move) != NULL) {
          S_curr = x_curr;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
       x_curr = S_head;
-      DEBUG_DATA   yLOG_spoint  (x_curr);
+      DEBUG_YDLST   yLOG_spoint  (x_curr);
       if (x_curr == NULL) {
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
    }
@@ -627,11 +628,11 @@ yDLST_list_by_cursor    (char a_move, void **r_list, void **r_data, char d_entry
       /*---(no bounce)-------------------*/
       if (x_curr == NULL) {
          S_curr = x_curr;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(mark trouble)----------------*/
-      DEBUG_DATA   yLOG_snote   ("BOUNCE");
+      DEBUG_YDLST   yLOG_snote   ("BOUNCE");
       rc = rce;
       /*---(done)------------------------*/
    }

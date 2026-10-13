@@ -1,4 +1,5 @@
 /*===========================[[ start-of-code ]]==============================*/
+/*·········´·················´················································*/
 #include   "yDLST.h"
 #include   "yDLST_priv.h"
 
@@ -62,30 +63,30 @@ ydlst_seq__wipe         (tSEQ *a_seq)
    /*---(lcoals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_senter  (__FUNCTION__);
+   DEBUG_YDLST   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_INPT   yLOG_spoint  (a_seq);
+   DEBUG_YDLST   yLOG_spoint  (a_seq);
    --rce;  if (a_seq == NULL) {
-      DEBUG_INPT   yLOG_snote   ("null pointer");
-      DEBUG_PROG   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YDLST   yLOG_snote   ("null pointer");
+      DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
       return  rce;
    }
    /*---(line list)------------*/
-   DEBUG_INPT   yLOG_snote   ("full seq");
+   DEBUG_YDLST   yLOG_snote   ("full seq");
    a_seq->q_mprev   = NULL;
    a_seq->q_mnext   = NULL;
    /*---(pred)-----------------*/
-   DEBUG_INPT   yLOG_snote   ("pred");
+   DEBUG_YDLST   yLOG_snote   ("pred");
    a_seq->q_pred    = NULL;
    a_seq->q_pprev   = NULL;
    a_seq->q_pnext   = NULL;
    /*---(focus)----------------*/
-   DEBUG_INPT   yLOG_snote   ("succ");
+   DEBUG_YDLST   yLOG_snote   ("succ");
    a_seq->q_succ    = YDLST_OFF;
    a_seq->q_sprev   = NULL;
    a_seq->q_snext   = NULL;
    /*---(complete)-------------*/
-   DEBUG_PROG   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YDLST   yLOG_sexit   (__FUNCTION__);
    return 1;
 }
 
@@ -976,7 +977,7 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list,
       /*---(non-bounce)------------------*/
       if (strchr (YDLST_DREL, a_move) != NULL) {
          S_cseq = x_seq;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(bounce types)----------------*/
@@ -985,9 +986,9 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list,
       case YDLST_LPRED  :  x_seq = x_list->l_phead;    break;
       case YDLST_LSUCC  :  x_seq = x_list->l_shead;    break;
       }
-      DEBUG_DATA   yLOG_spoint  (x_seq);
+      DEBUG_YDLST   yLOG_spoint  (x_seq);
       if (x_seq == NULL) {
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
    }
@@ -1049,11 +1050,11 @@ yDLST_seq_by_cursor     (char a_scope, char a_move, void **r_seq, void **r_list,
       /*---(no bounce)-------------------*/
       if (x_seq == NULL) {
          S_cseq = x_seq;
-         DEBUG_DATA   yLOG_sexitr  (__FUNCTION__, rce);
+         DEBUG_YDLST   yLOG_sexitr  (__FUNCTION__, rce);
          return rce;
       }
       /*---(mark trouble)----------------*/
-      DEBUG_DATA   yLOG_snote   ("BOUNCE");
+      DEBUG_YDLST   yLOG_snote   ("BOUNCE");
       rc = rce;
       /*---(done)------------------------*/
    }

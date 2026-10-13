@@ -20,4 +20,6 @@ PREP          include the prototype headers                                    
    global     create a data object                 - - - - - - - - - - - - -   tLINE    *U_tail    = NULL;                                                     
    global     create a data object                 - - - - - - - - - - - - -   tLINE    *U_more    = NULL;                                                     
    global     create a data object                 - - - - - - - - - - - - -   tLINE    *U_save    = NULL;                                                     
+   global     create a data object                 - - - - - - - - - - - - -   char     *U_pert    = "/tmp/pert.txt";                                          
+
 

@@ -1,7 +1,8 @@
 /*===========================[[ start-of-code ]]==============================*/
-#include    "yDLST.h"
-#include    "yDLST_priv.h"
-#include    "unit_code.h"
+/*·········´·················´················································*/
+#include   "yDLST.h"
+#include   "yDLST_priv.h"
+#include   "unit_code.h"
 
 
 
@@ -23,9 +24,9 @@ ydlst__test_quiet    (void)
    char       *x_argv [1]  = { "yDLST" };
    getcwd (u_home, LEN_PATH);
    rc = yURG_logger  (x_argc, x_argv);
-   DEBUG_PROG   yLOG_value   ("logger"    , rc);
+   DEBUG_YDLST   yLOG_value   ("logger"    , rc);
    rc = yURG_urgs    (x_argc, x_argv);
-   DEBUG_PROG   yLOG_value   ("urgs"      , rc);
+   DEBUG_YDLST   yLOG_value   ("urgs"      , rc);
    yDLST_init (NULL, NULL);
    return 0;
 }
@@ -38,9 +39,9 @@ ydlst__test_loud  (void)
    char       *x_argv [3]  = { "yDLST_unit", "@@kitchen", "@@ydlst" };
    getcwd (u_home, LEN_PATH);
    rc = yURG_logger  (x_argc, x_argv);
-   DEBUG_PROG   yLOG_value   ("logger"    , rc);
+   DEBUG_YDLST   yLOG_value   ("logger"    , rc);
    rc = yURG_urgs    (x_argc, x_argv);
-   DEBUG_PROG   yLOG_value   ("urgs"      , rc);
+   DEBUG_YDLST   yLOG_value   ("urgs"      , rc);
    DEBUG_YDLST  yLOG_info   ("yDLST"   , yDLST_version   ());
    yDLST_init (NULL, NULL);
    return 0;

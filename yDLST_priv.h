@@ -1,8 +1,7 @@
-/*============================----beg-of-source---============================*/
-
 /*===[[ HEADER GUARD ]]=======================================================*/
-#ifndef YDLST_priv_hguard
-#define YDLST_priv_hguard loaded
+/*·········´·················´················································*/
+#ifndef    YDLST_priv_guard
+#define    YDLST_priv_guard  loaded
 
 
 
@@ -73,8 +72,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, production"
 #define     P_VERMINOR  "1.2-, bring in basic pert reporting"
-#define     P_VERNUM    "1.2b"
-#define     P_VERTXT    "created a pert challenge dataset, updated columns logic, passes columns unit-testing"
+#define     P_VERNUM    "1.2c"
+#define     P_VERTXT    "little fixes to header guards and all (but pert) unit testing is clean"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -96,6 +95,7 @@
 #include  <ySTR.h>
 #include  <yLOG.h>
 #include  <yENV.h>
+#include  <yASCII.h>
 
 
 
@@ -409,13 +409,22 @@ char*       ydlst_seq__unit         (char *a_question, int a_num);
 
 /*===[[ yDLST_rptg.c ]]=======================================================*/
 /*········´ ´·············cleanse·´ ´·········································*/
-char        ydlst__pert_clear       (void);
-char        ydlst__pert_rando       (void);
-/*········´ ´················grid·´ ´·········································*/
-char        ydlst__pert_col_detail  (char a_col, tLIST *a_list, int *b_looks, int *b_changes);
-char        ydlst__pert_columns     (void);
-char        ydlst__pert_rower       (tLIST *a_list, char a_row);
-char        ydlst__pert_rows        (void);
+char        ydlst_pert__clear       (void);
+char        ydlst_pert__rando       (void);
+/*········´ ´·············columns·´ ´·········································*/
+char        ydlst_pert__defense     (char a_depth, char a_order, char *a_grid, tLIST *a_list);
+char        ydlst_pert__col_detail  (char a_depth, char a_order, char a_col, tLIST *a_list, int *b_looks, int *b_changes);
+char        ydlst_pert__columns     (void);
+/*········´ ´················rows·´ ´·········································*/
+char        ydlst_pert__row_detail  (char a_depth, char a_order, char *b_row, tLIST *a_list, int *b_looks, int *b_changes);
+char        ydlst_pert__rows        (void);
+/*········´ ´·············drawing·´ ´·········································*/
+char        ydlst_pert__ends        (int y, int x, uchar a_name);
+char        ydlst_pert__box         (int y, int x, char a_name [LEN_LABEL], char a_procs, int a_beg, int a_end, int a_dur, char a_note, char a_pred, char a_succ);
+/*········´ ´·············drawing·´ ´·········································*/
+char        ydlst_pert__setter      (void);
+char        ydlst_pert__lists       (void);
+char        ydlst_pert              (void);
 /*········´ ´················DONE·´ ´·········································*/
 
 
